@@ -8,9 +8,30 @@ https://ue.ucsc.edu/academic-misconduct.html
 
 We acknowledge that each partner in a programming pair
 is responsible for the work performed by the other partner,
-and all work has been reviewed by both partnersworking
+and all work has been reviewed by both partners working
 together. Both of us have read the details for submitting
 the README and PARTNER files.
 
 --Perry Ralston (pdralston@ucsc.edu)
 --Sasank Madineni (smadinen@ucsc.edu)
+
+Files:
+(a) vstring.h, vstring.c -- implements a variable string into which
+     characters can be accumulated, using array doubling when the
+     length of the string is exceeded.
+(b) wordlist.h, wordlist.c -- implements a list sorted
+     lexicographically with each element of the list containing a word
+     and a count.
+(c) main.c -- iterates over all of the files specified on the command
+     line, or the standard input if none.  For each word found in each
+     line, insert into the list, updating the count.  At end of file,
+     print out all of the words in lexicographic order along with the
+     count of the number of times each word appears.
+(d) Makefile targets:
+    - all :  builds the executable binary.
+    - ${EXECBIN} :  builds the executable from the object files.
+    - %.o :  builds object files from source files.
+    - clean :  removes the object files.
+    - spotless :  first does clean, then removes any files not part
+      of the source.
+    - Makefile.deps :  builds the dependency file.
