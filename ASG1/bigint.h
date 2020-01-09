@@ -14,6 +14,8 @@ using namespace std;
 #include "ubigint.h"
 
 class bigint {
+  //Big Integer Class:
+  //
    friend ostream& operator<< (ostream&, const bigint&);
    private:
       ubigint uvalue;
@@ -39,4 +41,3 @@ class bigint {
 };
 
 #endif
-
