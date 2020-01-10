@@ -31,10 +31,10 @@ MEMCHECK       = valgrind --leak-check=full -v
 
 all : $(EXECBIN)
 
-$(EXECBIN) : $(OBJS)
+$(EXECBIN) : $(OBJECTS)
 	$(LINK) $@ $^
 
-%.o : %.c
+%.o : %.cpp
 	$(COMPILE) $<
 
 clean :
