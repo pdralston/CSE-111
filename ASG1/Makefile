@@ -44,7 +44,6 @@ clean :
 spotless : clean
 	- rm ${EXECBIN} ${LISTING} ${LISTING:.ps=.pdf}
 
-
 deps : ${CPPSOURCE} ${CPPHEADER}
 	@ echo "# ${DEPSFILE} created `LC_TIME=C date`" >${DEPSFILE}
 	${MAKEDEPSCPP} ${CPPSOURCE} >>${DEPSFILE}
