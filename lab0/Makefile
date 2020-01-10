@@ -14,25 +14,27 @@
 EXECBIN        = wordcount
 MODULES        = vstring wordList
 MKFILE         = Makefile
-SOURCES        = ${MODULES:=.cpp} main.cpp
+SOURCES        = $(MODULES:=.cpp) main.cpp
 OBJECTS        = $(SOURCES:.cpp=.o)
 HEADERS        = $(MODULES:.cpp=.hpp)
 ALLSOURCES     = $(HEADERS) $(SOURCES) $(MKFILE)
 DEPSFILE       = $(MKFILE).deps
+GPPWARN        = -Wall -Wextra -Wpedantic -Wshadow -Wold-style-cast
+GPPOPTS        = $(GPPWARN) -fdiagnostics-color=never
 NOINCL         = ci clean spotless
-NEEDINCL       = ${filter ${NOINCL}, ${MAKECMDGOALS}}
-MAKEDEPSCPP    = g++ -std=gnu++2a -MM ${GPPOPTS}
-COMPILE        = gcc -c -Wall -Wextra
-LINK           = gcc -o
+NEEDINCL       = $(filter $(NOINCL), $(MAKECMDGOALS))
+MAKEDEPSCPP    = g++ -std=gnu++2a -MM $(GPPOPTS)
+COMPILE        = g++ -c -Wall -Wextra
+LINK           = g++ -o
 REMOVE         = rm -f
 MEMCHECK       = valgrind --leak-check=full -v
 
 all : $(EXECBIN)
 
-$(EXECBIN) : $(OBJS)
+$(EXECBIN) : $(OBJECTS)
 	$(LINK) $@ $^
 
-%.o : %.c
+%.o : %.cpp
 	$(COMPILE) $<
 
 clean :
@@ -51,8 +53,8 @@ deps : $(HEADERS) $(SOURCES)
 	@ echo "# $(DEPSFILE) created `LC_TIME=C date`" >$(DEPSFILE)
 	$^ >>${DEPSFILE}
 
-ifeq (${NEEDINCL}, )
-include ${DEPSFILE}
+ifeq ($(NEEDINCL), )
+include $(DEPSFILE)
 endif
 
   # someTarget: foo.c bar.c baz.check
