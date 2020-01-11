@@ -38,7 +38,7 @@ $(EXECBIN) : $(OBJECTS)
 	$(COMPILE) $<
 
 clean :
-	$(REMOVE) $(OBJS) 
+	$(REMOVE) $(OBJECTS)
 
 spotless : clean 
 	$(REMOVE) $(EXECBIN)
