@@ -20,6 +20,7 @@ MODULESRC   = ${foreach MOD, ${MODULES}, ${MOD}.h ${MOD}.cpp}
 OTHERSRC    = ${filter-out ${MODULESRC}, ${CPPHEADER} ${CPPSOURCE}}
 ALLSOURCES  = ${MODULESRC} ${OTHERSRC} ${MKFILE}
 LISTING     = Listing.ps
+MEMCHECK    = valgrind --leak-check=full -v
 
 all : ${EXECBIN}
 
@@ -54,6 +55,12 @@ ${DEPSFILE} :
 
 again :
 	${GMAKE} spotless deps ci all lis
+
+memcheck : ${EXECBIN}
+	${MEMCHECK} ./$^
+
+submit : ${ALLSOURCES} README
+	submit  cse111-wm.w20 asg1 $^
 
 ifeq (${NEEDINCL}, )
 include ${DEPSFILE}
