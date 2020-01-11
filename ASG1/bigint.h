@@ -13,8 +13,9 @@ using namespace std;
 #include "relops.h"
 #include "ubigint.h"
 
+
+//Big Integer Class Definition
 class bigint {
-  //Big Integer Class Definition
    friend ostream& operator<< (ostream&, const bigint&);
    private:
       ubigint uvalue; //magnitude of bigint
@@ -26,17 +27,26 @@ class bigint {
       bigint (const ubigint&, bool is_negative = false);
       explicit bigint (const string&);
 
-      bigint operator+() const; //unary operation, used to determine if bigint is positive.
-      bigint operator-() const; //unary operation, used to determine if bigint is negative.
+      //unary operation, used to determine if bigint is positive.
+      bigint operator+() const;
+      //unary operation, used to determine if bigint is negative.
+      bigint operator-() const;
 
-      bigint operator+ (const bigint&) const; //binary operation, used to sum two bigints and return a bigint.
-      bigint operator- (const bigint&) const; //binary operation, used to subtract two bigints and return a bigint.
-      bigint operator* (const bigint&) const; //binary operation, used to multiply two bigints and return a bigint.
-      bigint operator/ (const bigint&) const; //binary operation, used to divide two bigints and return a bigint.
-      bigint operator% (const bigint&) const; //binary operation, used to divide two bigints and return the remainder as a bigint.
+      //binary operation, used to sum two bigints and return a bigint.
+      bigint operator+ (const bigint&) const;
+      //binary operation, used to subtract two bigints and return a bigint.
+      bigint operator- (const bigint&) const;
+      //binary operation, used to multiply two bigints and return a bigint.
+      bigint operator* (const bigint&) const;
+      //binary operation, used to divide two bigints and return a bigint.
+      bigint operator/ (const bigint&) const;
+      //binary operation, used to divide two bigints and return the remainder as a bigint.
+      bigint operator% (const bigint&) const;
 
-      bool operator== (const bigint&) const; //binary operation, used to check the equality of two bigints and return the result as a boolean.
-      bool operator<  (const bigint&) const; //binary operation, used to check if one bigint is less than another bigint and return the result as a boolean.
+      //binary operation, used to check the equality of two bigints and return the result as a boolean.
+      bool operator== (const bigint&) const;
+      //binary operation, used to check if one bigint is less than another bigint and return the result as a boolean.
+      bool operator<  (const bigint&) const;
 };
 
 #endif
