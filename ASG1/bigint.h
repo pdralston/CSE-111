@@ -14,12 +14,11 @@ using namespace std;
 #include "ubigint.h"
 
 class bigint {
-  //Big Integer Class:
-  //
+  //Big Integer Class Definition
    friend ostream& operator<< (ostream&, const bigint&);
    private:
-      ubigint uvalue;
-      bool is_negative {false};
+      ubigint uvalue; //magnitude of bigint
+      bool is_negative {false}; //sign of bigint
    public:
 
       bigint() = default; // Needed or will be suppressed.
@@ -30,14 +29,14 @@ class bigint {
       bigint operator+() const; //unary operation, used to determine if bigint is positive.
       bigint operator-() const; //unary operation, used to determine if bigint is negative.
 
-      bigint operator+ (const bigint&) const; //binary operation, used to sum two big ints and return a bigint.
-      bigint operator- (const bigint&) const;
-      bigint operator* (const bigint&) const;
-      bigint operator/ (const bigint&) const;
-      bigint operator% (const bigint&) const;
+      bigint operator+ (const bigint&) const; //binary operation, used to sum two bigints and return a bigint.
+      bigint operator- (const bigint&) const; //binary operation, used to subtract two bigints and return a bigint.
+      bigint operator* (const bigint&) const; //binary operation, used to multiply two bigints and return a bigint.
+      bigint operator/ (const bigint&) const; //binary operation, used to divide two bigints and return a bigint.
+      bigint operator% (const bigint&) const; //binary operation, used to divide two bigints and return the remainder as a bigint.
 
-      bool operator== (const bigint&) const;
-      bool operator<  (const bigint&) const;
+      bool operator== (const bigint&) const; //binary operation, used to check the equality of two bigints and return the result as a boolean.
+      bool operator<  (const bigint&) const; //binary operation, used to check if one bigint is less than another bigint and return the result as a boolean.
 };
 
 #endif

@@ -13,13 +13,14 @@ using namespace std;
 #include "relops.h"
 
 class ubigint {
+  //Unsigned Big Integer Class
    friend ostream& operator<< (ostream&, const ubigint&);
    private:
       using unumber = unsigned long;
-      unumber uvalue {};
+      unumber uvalue {}; //magnitude of ubigint
    public:
-      void multiply_by_2();
-      void divide_by_2();
+      void multiply_by_2(); //function used to multiply by 2 (bitshift left)
+      void divide_by_2(); //function used to divide by 2 (bitshift right)
 
       ubigint() = default; // Need default ctor as well.
       ubigint (unsigned long);
@@ -36,4 +37,3 @@ class ubigint {
 };
 
 #endif
-
