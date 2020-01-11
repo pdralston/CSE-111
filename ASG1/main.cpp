@@ -100,7 +100,7 @@ void do_function (bigint_stack& stack, const char oper) {
 
 //
 // scan_options
-//    Options analysis:  The only option is -Dflags. 
+//    Options analysis:  The only option is -Dflags.
 //
 void scan_options (int argc, char** argv) {
    opterr = 0;
@@ -129,7 +129,7 @@ void scan_options (int argc, char** argv) {
 int main (int argc, char** argv) {
    exec::execname (argv[0]);
    scan_options (argc, argv);
-   bigint_stack operand_stack;
+   bigint_stack operand_stack; //stack used to hold bigints before operations are passed
    scanner input;
    try {
       for (;;) {
@@ -159,4 +159,3 @@ int main (int argc, char** argv) {
    }
    return exec::status();
 }
-

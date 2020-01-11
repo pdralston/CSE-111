@@ -13,11 +13,13 @@ using namespace std;
 #include "relops.h"
 #include "ubigint.h"
 
+
+//Big Integer Class Definition
 class bigint {
    friend ostream& operator<< (ostream&, const bigint&);
    private:
-      ubigint uvalue;
-      bool is_negative {false};
+      ubigint uvalue; //magnitude of bigint
+      bool is_negative {false}; //sign of bigint
    public:
 
       bigint() = default; // Needed or will be suppressed.
@@ -25,18 +27,26 @@ class bigint {
       bigint (const ubigint&, bool is_negative = false);
       explicit bigint (const string&);
 
+      //unary operation, used to determine if bigint is positive.
       bigint operator+() const;
+      //unary operation, used to determine if bigint is negative.
       bigint operator-() const;
 
+      //binary operation, used to sum two bigints and return a bigint.
       bigint operator+ (const bigint&) const;
+      //binary operation, used to subtract two bigints and return a bigint.
       bigint operator- (const bigint&) const;
+      //binary operation, used to multiply two bigints and return a bigint.
       bigint operator* (const bigint&) const;
+      //binary operation, used to divide two bigints and return a bigint.
       bigint operator/ (const bigint&) const;
+      //binary operation, used to divide two bigints and return the remainder as a bigint.
       bigint operator% (const bigint&) const;
 
+      //binary operation, used to check the equality of two bigints and return the result as a boolean.
       bool operator== (const bigint&) const;
+      //binary operation, used to check if one bigint is less than another bigint and return the result as a boolean.
       bool operator<  (const bigint&) const;
 };
 
 #endif
-
