@@ -27,10 +27,10 @@ class bigint {
       bigint (const ubigint&, bool is_negative = false);
       explicit bigint (const string&);
 
-      bigint operator+() const;
-      bigint operator-() const;
+      bigint operator+() const; //unary operation, used to determine if bigint is positive.
+      bigint operator-() const; //unary operation, used to determine if bigint is negative.
 
-      bigint operator+ (const bigint&) const;
+      bigint operator+ (const bigint&) const; //binary operation, used to sum two big ints and return a bigint.
       bigint operator- (const bigint&) const;
       bigint operator* (const bigint&) const;
       bigint operator/ (const bigint&) const;
