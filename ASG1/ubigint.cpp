@@ -13,8 +13,16 @@ using namespace std;
 #include "debug.h"
 
 const int BASE = 10;
+const int MAX_DIGIT = 9;
+const int MIN_DIGIT = 0;
 
-ubigint::ubigint (unsigned long that) {
+/** Constructor
+ *  Constructor takes an unsigned long and stores it as a vector
+ *  of unsigned char values.
+ *  @param that an unsigned long representing the numeric value of the
+ *   ubigint
+ */
+ubigint::ubigint (unsigned long that) : carry(0){
    //DEBUGF ('~', this << " -> " << ubig_value)
    if (that == 0) return;
    ubig_value.push_back(that % BASE);
@@ -23,9 +31,16 @@ ubigint::ubigint (unsigned long that) {
    }
 }
 
-ubigint::ubigint (const string& that){
+/** Constructor
+ *  Constructor takes a string representation and stores it as a vector
+ *  of unsigned char values equal to the digit values of the number. i.e.
+ *  a '6' would be stored as 6 in the vector.
+ *  @param that a string representation of the numeric value of the
+ *   ubigint
+ */
+ubigint::ubigint (const string& that) : carry(0){
    DEBUGF ('~', "that = \"" << that << "\"");
-   std::for_each(that.rbegin(), that.rend(), [this, that] (char const &digit) {
+   for_each(that.rbegin(), that.rend(), [this, that] (char const &digit) {
       if (not isdigit (digit)) {
          throw invalid_argument ("ubigint::ubigint(" + that + ")");
       }
@@ -85,7 +100,63 @@ ubigint ubigint::operator/ (const ubigint& that) const {
 ubigint ubigint::operator% (const ubigint& that) const {
    return udivide (*this, that).remainder;
 }
+*/
+/** Operator+=
+ *  Add two ubigints in place.
+ *  @param that ubigint to be added to this
+ */
+void ubigint::operator+= (const ubigint& that) {
+   unsigned int index = 0;
+   //iterate from LSB to MSB of this and add corresponding digits of that.
+   for (; index < ubig_value.size(); index++) {
+      ubig_value[index] += that.ubig_value.size() < index ? carry + that.ubig_value[index] : carry;
+      carry = 0;
+      if (ubig_value[index] > MAX_DIGIT) {
+         carry = 1;
+         ubig_value[index] -= BASE;
+      }
+   }
+   //deal with the case where that has more digits than this
+   while (index < that.ubig_value.size()) {
+      ubig_value.push_back(carry + that.ubig_value[index]);
+      carry = 0;
+      index++;
+   }
+   //deal with dangling carry over
+   if (carry != 0) {
+      ubig_value.push_back(carry);
+   }
+}
 
+/** Operator-=
+ *  Subtract two ubigints in place.
+ *  @param that ubigint to be subtracted from this
+ */
+void ubigint::operator-= (const ubigint& that) {
+   unsigned int index = 0;
+   int temp;
+   //iterate from LSB to MSB of this and subtract corresponding digits of that.
+   for (; index < ubig_value.size(); index++) {
+      temp = that.ubig_value.size() < index ? 
+         ubig_value[index] - that.ubig_value[index] - carry : -carry;
+      carry = 0;
+      if (temp < 0) {
+         carry = 1;
+         temp += BASE;
+      }
+      ubig_value[index] = temp;
+   }
+   //deal with the case where that has more digits than this
+   while (index < that.ubig_value.size()) {
+      ubig_value.push_back(that.ubig_value[index] - carry);
+      carry = 0;
+      index++;
+   }
+   //dangling carry should not be possible since this is unsigned arithmetic
+   //and the caller is responsible for not calling this function A -= B
+   // where B > A
+}
+/*
 bool ubigint::operator== (const ubigint& that) const {
    return ubig_value == that.ubig_value;
 }
