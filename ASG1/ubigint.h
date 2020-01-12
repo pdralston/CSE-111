@@ -17,6 +17,7 @@ using namespace std;
 class ubigint {
    friend ostream& operator<< (ostream&, const ubigint&);
    private:
+      using uint = unsigned int;
       using udigit_t = unsigned char;
       using ubigvalue_t = vector<udigit_t>;
       ubigvalue_t ubig_value;
