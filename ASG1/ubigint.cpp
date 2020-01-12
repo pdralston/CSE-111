@@ -5,47 +5,55 @@
 #include <exception>
 #include <stack>
 #include <stdexcept>
+#include <cmath>
+#include <algorithm>
 using namespace std;
 
 #include "ubigint.h"
 #include "debug.h"
 
-ubigint::ubigint (unsigned long that): uvalue (that) {
-   DEBUGF ('~', this << " -> " << uvalue)
-}
+const int BASE = 10;
 
-ubigint::ubigint (const string& that): uvalue(0) {
-   DEBUGF ('~', "that = \"" << that << "\"");
-   for (char digit: that) {
-      if (not isdigit (digit)) {
-         throw invalid_argument ("ubigint::ubigint(" + that + ")");
-      }
-      uvalue = uvalue * 10 + digit - '0';
+ubigint::ubigint (unsigned long that) {
+   //DEBUGF ('~', this << " -> " << ubig_value)
+   if (that == 0) return;
+   ubig_value.push_back(that % BASE);
+   for(uint i = BASE; i <= that; i*=BASE) {
+      ubig_value.push_back(that / i % BASE);
    }
 }
 
+ubigint::ubigint (const string& that){
+   DEBUGF ('~', "that = \"" << that << "\"");
+   std::for_each(that.rbegin(), that.rend(), [this, that] (char const &digit) {
+      if (not isdigit (digit)) {
+         throw invalid_argument ("ubigint::ubigint(" + that + ")");
+      }
+      ubig_value.push_back(digit - '0');
+   });
+}
+/*
 ubigint ubigint::operator+ (const ubigint& that) const {
-   return ubigint (uvalue + that.uvalue);
+   return ubigint (ubig_value + that.ubig_value);
 }
 
 ubigint ubigint::operator- (const ubigint& that) const {
    if (*this < that) throw domain_error ("ubigint::operator-(a<b)");
-   return ubigint (uvalue - that.uvalue);
+   return ubigint (ubig_value - that.ubig_value);
 }
 
 ubigint ubigint::operator* (const ubigint& that) const {
-   return ubigint (uvalue * that.uvalue);
+   return ubigint (ubig_value * that.ubig_value);
 }
 
 void ubigint::multiply_by_2() {
-   uvalue *= 2;
+   ubig_value *= 2;
 }
 
 void ubigint::divide_by_2() {
-   uvalue /= 2;
+   ubig_value /= 2;
 }
 
-
 struct quo_rem { ubigint quotient; ubigint remainder; };
 quo_rem udivide (const ubigint& dividend, const ubigint& divisor_) {
    // NOTE: udivide is a non-member function.
@@ -79,14 +87,14 @@ ubigint ubigint::operator% (const ubigint& that) const {
 }
 
 bool ubigint::operator== (const ubigint& that) const {
-   return uvalue == that.uvalue;
+   return ubig_value == that.ubig_value;
 }
 
 bool ubigint::operator< (const ubigint& that) const {
-   return uvalue < that.uvalue;
+   return ubig_value < that.ubig_value;
 }
 
 ostream& operator<< (ostream& out, const ubigint& that) { 
-   return out << "ubigint(" << that.uvalue << ")";
+   return out << "ubigint(" << that.ubig_value << ")";
 }
-
+*/
