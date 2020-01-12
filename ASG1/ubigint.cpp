@@ -31,6 +31,7 @@ ubigint::ubigint (unsigned long that) : carry(0){
    }
 }
 
+
 /** Constructor
  *  Constructor takes a string representation and stores it as a vector
  *  of unsigned char values equal to the digit values of the number. i.e.
