@@ -59,7 +59,10 @@ bigint bigint::operator- (const bigint& that) const {
    if(this.is_negative != that.is_negative) {
      //case 1: A - B where A and B are not the same sign.
      result.uvalue = this.uvalue + that.uvalue;
-     neg =  this.uvalue > that.uvalue ? this.is_negative : that.is_negative;
+     //since A and B are not the same sign, if A < 0, then B > 0,
+     //which means A - B = -(abs(A) + B)
+     //and vice-versa which means A - B = A - (-B) = A + B
+     neg = this.is_negative;
    }
    else {
      //case 2: A - B where A and B are the same sign.
