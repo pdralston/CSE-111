@@ -10,15 +10,13 @@ using namespace std;
 #include "debug.h"
 #include "relops.h"
 
-bigint::bigint (long that) {
-   this.uvalue = that;
-   this.is_negative = that < 0;
+bigint::bigint (long that): uvalue (that), is_negative (that < 0){
    DEBUGF ('~', this << " -> " << uvalue)
 }
 
-bigint::bigint (const ubigint& uvalue_, bool is_negative_){
-  this.uvalue = uvalue_;
-  this.is_negative = is_negative_;
+bigint::bigint (const ubigint& uvalue_, bool is_negative_):
+                uvalue(uvalue_), is_negative(is_negative_){
+                  DEBUGF("~", this << "->" << uvalue)
 }
 
 bigint::bigint (const string& that) {
@@ -41,11 +39,16 @@ bigint bigint::operator+ (const bigint& that) const {
   if(this.is_negative == that.is_negative) {
     //case 1: A + B where A and B are the same sign.
     result.uvalue = this.uvalue + that.uvalue;
+    neg = this.uvalue;
   }
   else {
     //case 2: A + B where either A or B is negative.
-    result.uvalue = this.uvalue - that.uvalue;
-    neg = this.uvalue > that.uvalue ? this.is_negative : that.is_negative;
+    boolean this_greater = this.uvalue > that.uvalue; //true if A > B.
+    //making sure that mag(left hand operand) > mag(right hand operand) when doing ubigint subtraction
+    result.uvalue = this_greater ? this.uvalue - that.uvalue : that.uvalue - this.uvalue;
+    //if mag(left hand operand) > mag(right hand operand), then sign(result) = sign(left hand operator)
+    //and vice-versa
+    neg = this_greater ? this.is_negative : that.is_negative;
   }
   return new bigint(result, neg)
 }
@@ -67,22 +70,22 @@ bigint bigint::operator- (const bigint& that) const {
        neg = false;
      }
      else if(this_greater) {
-       //if mag_A > mag_B, then abs(A - B) > 0
+       //if mag(A) > mag(B), then abs(A - B) > 0
        result.uvalue = this.uvalue - that.uvalue;
        neg = this.is_negative;
      }
-     else {
+     else { //mag(B) > mag(A)
        //if mag_A < mag_B, then abs(A - B) < 0
        result.uvalue = that.uvalue - this.uvalue;
-       neg = !this.is_negative;
+       neg = that.is_negative;
      }
    }
    return new bigint(result, neg);
 }
-
 
 bigint bigint::operator* (const bigint& that) const {
-   bigint result = uvalue * that.uvalue;
+   bigint result = new bigint();
+   result.is_negative = (this.is_negative || that.is_negative) && !(this.is_negative && that.is_negative);
    return result;
 }
 
