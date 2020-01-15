@@ -56,26 +56,13 @@ bigint bigint::operator+ (const bigint& that) const {
 bigint bigint::operator- (const bigint& that) const {
    ubigint result;
    boolean neg = false;
-   if(this.is_negative != that.is_negative) {
-     //case 1: A - B where A and B are not the same sign.
-     result.uvalue = this.uvalue + that.uvalue;
-     //since A and B are not the same sign, if A < 0, then B > 0,
-     //which means A - B = -(abs(A) + B)
-     //and vice-versa which means A - B = A - (-B) = A + B
-     neg = this.is_negative;
-   }
-   else {
-     //case 2: A - B where A and B are the same sign.
-     boolean this_greater = this.uvalue > that.uvalue;
-     if (this.uvalue == that.uvalue) {
-       //if A == B, then A - B = 0
-       result.uvalue = 0;
-       neg = false;
-     }
-     else if(this_greater) {
+   if(this.is_negative == that.is_negative) {
+     //case 1: A - B where A and B are the same sign.
+     boolean this_greater = that.uvalue < this.uvalue;
+     if(this_greater) {
        //if mag(A) > mag(B), then abs(A - B) > 0
        result.uvalue = this.uvalue - that.uvalue;
-       neg = this.is_negative;
+       neg = result.uvalue == 0 ? false : this.is_negative;
      }
      else { //mag(B) > mag(A)
        //if mag_A < mag_B, then abs(A - B) < 0
