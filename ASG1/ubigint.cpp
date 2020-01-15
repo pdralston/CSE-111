@@ -168,8 +168,10 @@ bool ubigint::operator< (const ubigint& that) const {
                  and not(*this == that);
    if (isLess) {
       if (ubig_value.size() == that.ubig_value.size()) {
-         for(int i = ubig_value.size() - 1; i >= 0; --i) {
-            if (that.ubig_value[i] < ubig_value[i]) {
+         using charIter = vector<unsigned char>::const_reverse_iterator;
+         for (pair<charIter, charIter> i(ubig_value.crbegin(), that.ubig_value.crbegin()); 
+              i.first != ubig_value.crend(); ++i.first, ++i.second) {
+            if (*(i.second) < *(i.first)) {
                isLess = false;
                break;
             }
