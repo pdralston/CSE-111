@@ -93,49 +93,64 @@ void ubigint::operator-= (const ubigint& that) {
       }
       ubig_value[index] = temp;
    }
-   //deal with the case where that has more digits than this
-   while (index < that.ubig_value.size()) {
-      ubig_value.push_back(that.ubig_value[index] - carry);
-      carry = 0;
-      index++;
-   }
-   //dangling carry should not be possible since this is unsigned arithmetic
+   //dangling carry is not be possible since this is unsigned arithmetic
    //and the caller is responsible for not calling this function A -= B
-   // where B > A
+   // where A > B
+   
+   //deal with case of leading zeroes
+   this->clearZeroes();
 }
 
 ubigint ubigint::operator+ (const ubigint& that) const {
-   ubigint sum = new ubigint;
+   ubigint sum;
    unsigned int index = 0;
    for (; index < ubig_value.size(); index++) {
-      sum.ubig_value.pushback(that.ubig_value.size() < index ?
-                    carry + ubig_value + that.ubig_value[index] :
-                    carry + ubig_value;
-      carry = 0;
+      sum.ubig_value.push_back(that.ubig_value.size() < index ?
+                    sum.carry + ubig_value[index] + that.ubig_value[index] :
+                    sum.carry + ubig_value[index]);
+      sum.carry = 0;
       if (ubig_value[index] > MAX_DIGIT) {
-         carry = 1;
-         ubig_value[index] -= BASE;
+         sum.carry = 1;
+         sum.ubig_value[index] -= BASE;
       }
    }
    //deal with the case where that has more digits than this
    while (index < that.ubig_value.size()) {
-      sum.ubig_value.push_back(carry + that.ubig_value[index]);
-      carry = 0;
+      sum.ubig_value.push_back(sum.carry + that.ubig_value[index]);
+      sum.carry = 0;
       index++;
    }
    //deal with dangling carry over
-   if (carry != 0) {
-      sum.ubig_value.push_back(carry);
+   if (sum.carry != 0) {
+      sum.ubig_value.push_back(sum.carry);
    }
    return sum;
 }
 
-/*
+
 ubigint ubigint::operator- (const ubigint& that) const {
-   if (*this < that) throw domain_error ("ubigint::operator-(a<b)");
-   return ubigint (ubig_value - that.ubig_value);
+//TODO define operator< and uncomment   if (*this < that) throw domain_error ("ubigint::operator-(a<b)");
+   ubigint diff;
+   unsigned int index = 0;
+   for (; index < ubig_value.size(); index++) {
+      diff.ubig_value.push_back(that.ubig_value.size() < index ?
+                    diff.carry + ubig_value[index] + that.ubig_value[index] :
+                    diff.carry + ubig_value[index]);
+      diff.carry = 0;
+      if (ubig_value[index] > MAX_DIGIT) {
+         diff.carry = 1;
+         diff.ubig_value[index] -= BASE;
+      }
+   }
+   
+   //dangling carry is not be possible since this is unsigned arithmetic
+   //and the caller is responsible for not calling this function C = A - B
+   // where A > B
+   diff.clearZeroes();
+   return diff;
 }
 
+/*
 ubigint ubigint::operator* (const ubigint& that) const {
    return ubigint (ubig_value * that.ubig_value);
 }
@@ -184,7 +199,7 @@ bool ubigint::operator== (const ubigint& that) const {
    return ubig_value == that.ubig_value;
 }
 
-bool ubigint::operator< (const ubigint& that) const {
+bool ubigint::operator< (onst ubigint& that) const {
    return ubig_value < that.ubig_value;
 }
 
@@ -192,3 +207,9 @@ ostream& operator<< (ostream& out, const ubigint& that) {
    return out << "ubigint(" << that.ubig_value << ")";
 }
 */
+
+void ubigint::clearZeroes() {
+  while (ubig_value.size() > 0 and ubig_value.back() == 0) {
+    ubig_value.pop_back();
+  }
+}
