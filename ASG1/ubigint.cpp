@@ -164,8 +164,19 @@ bool ubigint::operator== (const ubigint& that) const {
 }
 
 bool ubigint::operator< (const ubigint& that) const {
-   //this is defined for vectors and works as expected
-   return ubig_value < that.ubig_value;
+   bool isLess = ubig_value.size() <= that.ubig_value.size()
+                 and not(*this == that);
+   if (isLess) {
+      if (ubig_value.size() == that.ubig_value.size()) {
+         for(int i = ubig_value.size() - 1; i >= 0; --i) {
+            if (that.ubig_value[i] < ubig_value[i]) {
+               isLess = false;
+               break;
+            }
+         }
+      }
+   }
+   return isLess;
 }
 /*
 ostream& operator<< (ostream& out, const ubigint& that) { 
