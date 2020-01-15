@@ -157,15 +157,17 @@ void ubigint::operator-= (const ubigint& that) {
    //and the caller is responsible for not calling this function A -= B
    // where B > A
 }
-/*
+
 bool ubigint::operator== (const ubigint& that) const {
+   //this is defined for vectors and works as expected
    return ubig_value == that.ubig_value;
 }
 
 bool ubigint::operator< (const ubigint& that) const {
+   //this is defined for vectors and works as expected
    return ubig_value < that.ubig_value;
 }
-
+/*
 ostream& operator<< (ostream& out, const ubigint& that) { 
    return out << "ubigint(" << that.ubig_value << ")";
 }
