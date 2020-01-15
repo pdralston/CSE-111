@@ -45,7 +45,8 @@ bigint bigint::operator+ (const bigint& that) const {
     //case 2: A + B where either A or B is negative.
     boolean this_greater = this.uvalue > that.uvalue; //true if A > B.
     //making sure that mag(left hand operand) > mag(right hand operand) when doing ubigint subtraction
-    result.uvalue = this_greater ? this.uvalue - that.uvalue : that.uvalue - this.uvalue;
+    result.uvalue = this_greater ? this.uvalue - that.uvalue
+                                 : that.uvalue - this.uvalue;
     //if mag(left hand operand) > mag(right hand operand), then sign(result) = sign(left hand operator)
     //and vice-versa
     neg = this_greater ? this.is_negative : that.is_negative;
