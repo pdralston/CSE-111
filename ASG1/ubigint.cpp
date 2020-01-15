@@ -31,7 +31,6 @@ ubigint::ubigint (unsigned long that) : carry(0){
    }
 }
 
-
 /** Constructor
  *  Constructor takes a string representation and stores it as a vector
  *  of unsigned char values equal to the digit values of the number. i.e.
@@ -48,60 +47,7 @@ ubigint::ubigint (const string& that) : carry(0){
       ubig_value.push_back(digit - '0');
    });
 }
-/*
-ubigint ubigint::operator+ (const ubigint& that) const {
-   return ubigint (ubig_value + that.ubig_value);
-}
 
-ubigint ubigint::operator- (const ubigint& that) const {
-   if (*this < that) throw domain_error ("ubigint::operator-(a<b)");
-   return ubigint (ubig_value - that.ubig_value);
-}
-
-ubigint ubigint::operator* (const ubigint& that) const {
-   return ubigint (ubig_value * that.ubig_value);
-}
-
-void ubigint::multiply_by_2() {
-   ubig_value *= 2;
-}
-
-void ubigint::divide_by_2() {
-   ubig_value /= 2;
-}
-
-struct quo_rem { ubigint quotient; ubigint remainder; };
-quo_rem udivide (const ubigint& dividend, const ubigint& divisor_) {
-   // NOTE: udivide is a non-member function.
-   ubigint divisor {divisor_};
-   ubigint zero {0};
-   if (divisor == zero) throw domain_error ("udivide by zero");
-   ubigint power_of_2 {1};
-   ubigint quotient {0};
-   ubigint remainder {dividend}; // left operand, dividend
-   while (divisor < remainder) {
-      divisor.multiply_by_2();
-      power_of_2.multiply_by_2();
-   }
-   while (power_of_2 > zero) {
-      if (divisor <= remainder) {
-         remainder = remainder - divisor;
-         quotient = quotient + power_of_2;
-      }
-      divisor.divide_by_2();
-      power_of_2.divide_by_2();
-   }
-   return {.quotient = quotient, .remainder = remainder};
-}
-
-ubigint ubigint::operator/ (const ubigint& that) const {
-   return udivide (*this, that).quotient;
-}
-
-ubigint ubigint::operator% (const ubigint& that) const {
-   return udivide (*this, that).remainder;
-}
-*/
 /** Operator+=
  *  Add two ubigints in place.
  *  @param that ubigint to be added to this
@@ -157,7 +103,83 @@ void ubigint::operator-= (const ubigint& that) {
    //and the caller is responsible for not calling this function A -= B
    // where B > A
 }
+
+ubigint ubigint::operator+ (const ubigint& that) const {
+   ubigint sum = new ubigint;
+   unsigned int index = 0;
+   for (; index < ubig_value.size(); index++) {
+      sum.ubig_value.pushback(that.ubig_value.size() < index ?
+                    carry + ubig_value + that.ubig_value[index] :
+                    carry + ubig_value;
+      carry = 0;
+      if (ubig_value[index] > MAX_DIGIT) {
+         carry = 1;
+         ubig_value[index] -= BASE;
+      }
+   }
+   //deal with the case where that has more digits than this
+   while (index < that.ubig_value.size()) {
+      sum.ubig_value.push_back(carry + that.ubig_value[index]);
+      carry = 0;
+      index++;
+   }
+   //deal with dangling carry over
+   if (carry != 0) {
+      sum.ubig_value.push_back(carry);
+   }
+   return sum;
+}
+
 /*
+ubigint ubigint::operator- (const ubigint& that) const {
+   if (*this < that) throw domain_error ("ubigint::operator-(a<b)");
+   return ubigint (ubig_value - that.ubig_value);
+}
+
+ubigint ubigint::operator* (const ubigint& that) const {
+   return ubigint (ubig_value * that.ubig_value);
+}
+
+void ubigint::multiply_by_2() {
+   ubig_value *= 2;
+}
+
+void ubigint::divide_by_2() {
+   ubig_value /= 2;
+}
+
+struct quo_rem { ubigint quotient; ubigint remainder; };
+quo_rem udivide (const ubigint& dividend, const ubigint& divisor_) {
+   // NOTE: udivide is a non-member function.
+   ubigint divisor {divisor_};
+   ubigint zero {0};
+   if (divisor == zero) throw domain_error ("udivide by zero");
+   ubigint power_of_2 {1};
+   ubigint quotient {0};
+   ubigint remainder {dividend}; // left operand, dividend
+   while (divisor < remainder) {
+      divisor.multiply_by_2();
+      power_of_2.multiply_by_2();
+   }
+   while (power_of_2 > zero) {
+      if (divisor <= remainder) {
+         remainder = remainder - divisor;
+         quotient = quotient + power_of_2;
+      }
+      divisor.divide_by_2();
+      power_of_2.divide_by_2();
+   }
+   return {.quotient = quotient, .remainder = remainder};
+}
+
+ubigint ubigint::operator/ (const ubigint& that) const {
+   return udivide (*this, that).quotient;
+}
+
+ubigint ubigint::operator% (const ubigint& that) const {
+   return udivide (*this, that).remainder;
+}
+
 bool ubigint::operator== (const ubigint& that) const {
    return ubig_value == that.ubig_value;
 }
