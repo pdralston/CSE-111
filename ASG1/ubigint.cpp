@@ -180,8 +180,9 @@ bool ubigint::operator< (const ubigint& that) const {
    }
    return isLess;
 }
-/*
-ostream& operator<< (ostream& out, const ubigint& that) { 
-   return out << "ubigint(" << that.ubig_value << ")";
-}
-*/
+
+ostream& operator<< (ostream& out, const ubigint& that) {
+   for (auto it = that.ubig_value.crbegin(); it != that.ubig_value.crend(); ++it) {
+      out << static_cast<unsigned>(*it);
+   }
+   return out;
