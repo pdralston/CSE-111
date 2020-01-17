@@ -31,7 +31,6 @@ ubigint::ubigint (unsigned long that) : carry(0){
    }
 }
 
-
 /** Constructor
  *  Constructor takes a string representation and stores it as a vector
  *  of unsigned char values equal to the digit values of the number. i.e.
@@ -48,60 +47,7 @@ ubigint::ubigint (const string& that) : carry(0){
       ubig_value.push_back(digit - '0');
    });
 }
-/*
-ubigint ubigint::operator+ (const ubigint& that) const {
-   return ubigint (ubig_value + that.ubig_value);
-}
 
-ubigint ubigint::operator- (const ubigint& that) const {
-   if (*this < that) throw domain_error ("ubigint::operator-(a<b)");
-   return ubigint (ubig_value - that.ubig_value);
-}
-
-ubigint ubigint::operator* (const ubigint& that) const {
-   return ubigint (ubig_value * that.ubig_value);
-}
-
-void ubigint::multiply_by_2() {
-   ubig_value *= 2;
-}
-
-void ubigint::divide_by_2() {
-   ubig_value /= 2;
-}
-
-struct quo_rem { ubigint quotient; ubigint remainder; };
-quo_rem udivide (const ubigint& dividend, const ubigint& divisor_) {
-   // NOTE: udivide is a non-member function.
-   ubigint divisor {divisor_};
-   ubigint zero {0};
-   if (divisor == zero) throw domain_error ("udivide by zero");
-   ubigint power_of_2 {1};
-   ubigint quotient {0};
-   ubigint remainder {dividend}; // left operand, dividend
-   while (divisor < remainder) {
-      divisor.multiply_by_2();
-      power_of_2.multiply_by_2();
-   }
-   while (power_of_2 > zero) {
-      if (divisor <= remainder) {
-         remainder = remainder - divisor;
-         quotient = quotient + power_of_2;
-      }
-      divisor.divide_by_2();
-      power_of_2.divide_by_2();
-   }
-   return {.quotient = quotient, .remainder = remainder};
-}
-
-ubigint ubigint::operator/ (const ubigint& that) const {
-   return udivide (*this, that).quotient;
-}
-
-ubigint ubigint::operator% (const ubigint& that) const {
-   return udivide (*this, that).remainder;
-}
-*/
 /** Operator+=
  *  Add two ubigints in place.
  *  @param that ubigint to be added to this
@@ -147,15 +93,105 @@ void ubigint::operator-= (const ubigint& that) {
       }
       ubig_value[index] = temp;
    }
+   //dangling carry is not be possible since this is unsigned arithmetic
+   //and the caller is responsible for not calling this function A -= B
+   // where A > B
+   
+   //deal with case of leading zeroes
+   this->clearZeroes();
+}
+
+ubigint ubigint::operator+ (const ubigint& that) const {
+   ubigint sum;
+   unsigned int index = 0;
+   for (; index < ubig_value.size(); index++) {
+      sum.ubig_value.push_back(that.ubig_value.size() < index ?
+                    sum.carry + ubig_value[index] + that.ubig_value[index] :
+                    sum.carry + ubig_value[index]);
+      sum.carry = 0;
+      if (ubig_value[index] > MAX_DIGIT) {
+         sum.carry = 1;
+         sum.ubig_value[index] -= BASE;
+      }
+   }
    //deal with the case where that has more digits than this
    while (index < that.ubig_value.size()) {
-      ubig_value.push_back(that.ubig_value[index] - carry);
-      carry = 0;
+      sum.ubig_value.push_back(sum.carry + that.ubig_value[index]);
+      sum.carry = 0;
       index++;
    }
-   //dangling carry should not be possible since this is unsigned arithmetic
-   //and the caller is responsible for not calling this function A -= B
-   // where B > A
+   //deal with dangling carry over
+   if (sum.carry != 0) {
+      sum.ubig_value.push_back(sum.carry);
+   }
+   return sum;
+}
+
+ubigint ubigint::operator- (const ubigint& that) const {
+//TODO define operator< and uncomment   if (*this < that) throw domain_error ("ubigint::operator-(a<b)");
+   ubigint diff;
+   unsigned int index = 0;
+   for (; index < ubig_value.size(); index++) {
+      diff.ubig_value.push_back(that.ubig_value.size() < index ?
+                    diff.carry + ubig_value[index] + that.ubig_value[index] :
+                    diff.carry + ubig_value[index]);
+      diff.carry = 0;
+      if (ubig_value[index] > MAX_DIGIT) {
+         diff.carry = 1;
+         diff.ubig_value[index] -= BASE;
+      }
+   }
+   
+   //dangling carry is not be possible since this is unsigned arithmetic
+   //and the caller is responsible for not calling this function C = A - B
+   // where A > B
+   diff.clearZeroes();
+   return diff;
+}
+
+/*
+ubigint ubigint::operator* (const ubigint& that) const {
+   return ubigint (ubig_value * that.ubig_value);
+}
+
+void ubigint::multiply_by_2() {
+   ubig_value *= 2;
+}
+
+void ubigint::divide_by_2() {
+   ubig_value /= 2;
+}
+
+struct quo_rem { ubigint quotient; ubigint remainder; };
+quo_rem udivide (const ubigint& dividend, const ubigint& divisor_) {
+   // NOTE: udivide is a non-member function.
+   ubigint divisor {divisor_};
+   ubigint zero {0};
+   if (divisor == zero) throw domain_error ("udivide by zero");
+   ubigint power_of_2 {1};
+   ubigint quotient {0};
+   ubigint remainder {dividend}; // left operand, dividend
+   while (divisor < remainder) {
+      divisor.multiply_by_2();
+      power_of_2.multiply_by_2();
+   }
+   while (power_of_2 > zero) {
+      if (divisor <= remainder) {
+         remainder = remainder - divisor;
+         quotient = quotient + power_of_2;
+      }
+      divisor.divide_by_2();
+      power_of_2.divide_by_2();
+   }
+   return {.quotient = quotient, .remainder = remainder};
+}
+
+ubigint ubigint::operator/ (const ubigint& that) const {
+   return udivide (*this, that).quotient;
+}
+
+ubigint ubigint::operator% (const ubigint& that) const {
+   return udivide (*this, that).remainder;
 }
 
 bool ubigint::operator== (const ubigint& that) const {
@@ -178,7 +214,6 @@ bool ubigint::operator< (const ubigint& that) const {
          }
       }
    }
-   return isLess;
 }
 
 ostream& operator<< (ostream& out, const ubigint& that) {
@@ -186,3 +221,10 @@ ostream& operator<< (ostream& out, const ubigint& that) {
       out << static_cast<unsigned>(*it);
    }
    return out;
+}
+
+void ubigint::clearZeroes() {
+  while (ubig_value.size() > 0 and ubig_value.back() == 0) {
+    ubig_value.pop_back();
+  }
+}
