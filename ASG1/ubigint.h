@@ -22,6 +22,7 @@ class ubigint {
       using ubigvalue_t = vector<udigit_t>;
       ubigvalue_t ubig_value;
       uint carry;
+      void clearZeroes();
 
    public:
       //function used to multiply by 2 (bitshift left)
