@@ -127,7 +127,6 @@ ubigint ubigint::operator+ (const ubigint& that) const {
    return sum;
 }
 
-
 ubigint ubigint::operator- (const ubigint& that) const {
 //TODO define operator< and uncomment   if (*this < that) throw domain_error ("ubigint::operator-(a<b)");
    ubigint diff;
@@ -196,13 +195,26 @@ ubigint ubigint::operator% (const ubigint& that) const {
 }
 
 bool ubigint::operator== (const ubigint& that) const {
+   //this is defined for vectors and works as expected
    return ubig_value == that.ubig_value;
 }
 
-bool ubigint::operator< (onst ubigint& that) const {
-   return ubig_value < that.ubig_value;
+bool ubigint::operator< (const ubigint& that) const {
+   bool isLess = ubig_value.size() <= that.ubig_value.size()
+                 and not(*this == that);
+   if (isLess) {
+      if (ubig_value.size() == that.ubig_value.size()) {
+         using charIter = vector<unsigned char>::const_reverse_iterator;
+         for (pair<charIter, charIter> i(ubig_value.crbegin(), that.ubig_value.crbegin()); 
+              i.first != ubig_value.crend(); ++i.first, ++i.second) {
+            if (*(i.second) < *(i.first)) {
+               isLess = false;
+               break;
+            }
+         }
+      }
+   }
 }
-*/
 
 ostream& operator<< (ostream& out, const ubigint& that) {
    for (auto it = that.ubig_value.crbegin(); it != that.ubig_value.crend(); ++it) {
