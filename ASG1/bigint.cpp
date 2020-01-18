@@ -109,9 +109,9 @@ bigint bigint::operator- (const bigint& that) const {
   }
 
   bool bigint::operator< (const bigint& that) const {
-     if (this.is_negative != that.is_negative) return is_negative;
-     return is_negative ? this.uvalue < that.uvalue //this < 0 and that > 0
-                        : this.uvalue > that.uvalue; //this > 0 and that < 0
+     if (this.is_negative != that.is_negative) return this.is_negative;
+     return is_negative ? this.uvalue > that.uvalue //this < that and this < 0
+                        : this.uvalue < that.uvalue; //this > that and this > 0
   }
 
   ostream& operator<< (ostream& out, const bigint& that) {
