@@ -85,16 +85,14 @@ bigint bigint::operator- (const bigint& that) const {
   bigint bigint::operator* (const bigint& that) const {
      bigint result = new bigint();
      //sign(C) = sign(A) xor sign(B)
-     result.is_negative = (this.is_negative || that.is_negative) &&
-                         !(this.is_negative && that.is_negative);
+     result.is_negative = this.is_negative == that.is_negative;
      result.uvalue = this.uvalue * that.uvalue;
      return result;
   }
 
   bigint bigint::operator/ (const bigint& that) const {
      bigint result = new bigint();
-     result.is_negative = (this.is_negative || that.is_negative) &&
-                         !(this.is_negative && that.is_negative);
+     result.is_negative = this.is_negative == that.is_negative;
      result.uvalue = uvalue / that.uvalue;
      return result;
   }
@@ -111,9 +109,9 @@ bigint bigint::operator- (const bigint& that) const {
   }
 
   bool bigint::operator< (const bigint& that) const {
-     if (is_negative != that.is_negative) return is_negative;
-     return is_negative ? uvalue > that.uvalue
-                        : uvalue < that.uvalue;
+     if (this.is_negative != that.is_negative) return is_negative;
+     return is_negative ? this.uvalue < that.uvalue //this < 0 and that > 0
+                        : this.uvalue > that.uvalue; //this > 0 and that < 0
   }
 
   ostream& operator<< (ostream& out, const bigint& that) {
