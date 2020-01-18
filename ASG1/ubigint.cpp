@@ -22,7 +22,7 @@ const int MIN_DIGIT = 0;
  *  @param that an unsigned long representing the numeric value of the
  *   ubigint
  */
-ubigint::ubigint (unsigned long that) : carry(0){
+ubigint::ubigint (unsigned long that){
    //DEBUGF ('~', this << " -> " << ubig_value)
    if (that == 0) return;
    ubig_value.push_back(that % BASE);
@@ -39,7 +39,7 @@ ubigint::ubigint (unsigned long that) : carry(0){
  *  @param that a string representation of the numeric value of the
  *   ubigint
  */
-ubigint::ubigint (const string& that) : carry(0){
+ubigint::ubigint (const string& that){
    DEBUGF ('~', "that = \"" << that << "\"");
    for_each(that.rbegin(), that.rend(), [this, that] (char const &digit) {
       if (not isdigit (digit)) {
@@ -57,11 +57,20 @@ ubigint ubigint::operator- (const ubigint& that) const {
    if (*this < that) throw domain_error ("ubigint::operator-(a<b)");
    return ubigint (ubig_value - that.ubig_value);
 }
-
+*/
 ubigint ubigint::operator* (const ubigint& that) const {
-   return ubigint (ubig_value * that.ubig_value);
+   ubigint product;
+   int carry = 0;
+   long addZeros = 0;
+   for (unsigned i = 0; i < that.ubig_value.size(); ++i) {
+      for (auto j : ubig_value) {
+         //do a thing
+      }
+   }
+   return product;
 }
 
+/*
 void ubigint::multiply_by_2() {
    ubig_value *= 2;
 }
@@ -69,7 +78,7 @@ void ubigint::multiply_by_2() {
 void ubigint::divide_by_2() {
    ubig_value /= 2;
 }
-
+*/
 struct quo_rem { ubigint quotient; ubigint remainder; };
 quo_rem udivide (const ubigint& dividend, const ubigint& divisor_) {
    // NOTE: udivide is a non-member function.
@@ -101,13 +110,14 @@ ubigint ubigint::operator/ (const ubigint& that) const {
 ubigint ubigint::operator% (const ubigint& that) const {
    return udivide (*this, that).remainder;
 }
-*/
+
 /** Operator+=
  *  Add two ubigints in place.
  *  @param that ubigint to be added to this
  */
 void ubigint::operator+= (const ubigint& that) {
    unsigned int index = 0;
+   int carry = 0;
    //iterate from LSB to MSB of this and add corresponding digits of that.
    for (; index < ubig_value.size(); index++) {
       ubig_value[index] += that.ubig_value.size() < index ? carry + that.ubig_value[index] : carry;
@@ -135,6 +145,7 @@ void ubigint::operator+= (const ubigint& that) {
  */
 void ubigint::operator-= (const ubigint& that) {
    unsigned int index = 0;
+   int carry = 0;
    int temp;
    //iterate from LSB to MSB of this and subtract corresponding digits of that.
    for (; index < ubig_value.size(); index++) {
