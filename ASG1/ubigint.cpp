@@ -48,17 +48,6 @@ ubigint::ubigint (const string& that){
    });
 }
 
-/*
-ubigint ubigint::operator+ (const ubigint& that) const {
-   return ubigint (ubig_value + that.ubig_value);
-}
-
-ubigint ubigint::operator- (const ubigint& that) const {
-   if (*this < that) throw domain_error ("ubigint::operator-(a<b)");
-   return ubigint (ubig_value - that.ubig_value);
-}
-*/
-
 /** Operator*
  *  Returns the result of multiplying two unsigned bigints
  * @param big into to multiply this by
@@ -195,25 +184,26 @@ void ubigint::operator-= (const ubigint& that) {
 ubigint ubigint::operator+ (const ubigint& that) const {
    ubigint sum;
    unsigned int index = 0;
+   unsigned char carry {};
    for (; index < ubig_value.size(); index++) {
       sum.ubig_value.push_back(that.ubig_value.size() < index ?
-                    sum.carry + ubig_value[index] + that.ubig_value[index] :
-                    sum.carry + ubig_value[index]);
-      sum.carry = 0;
+                    carry + ubig_value[index] + that.ubig_value[index] :
+                    carry + ubig_value[index]);
+      carry = 0;
       if (ubig_value[index] > MAX_DIGIT) {
-         sum.carry = 1;
+         carry = 1;
          sum.ubig_value[index] -= BASE;
       }
    }
    //deal with the case where that has more digits than this
    while (index < that.ubig_value.size()) {
-      sum.ubig_value.push_back(sum.carry + that.ubig_value[index]);
-      sum.carry = 0;
+      sum.ubig_value.push_back(carry + that.ubig_value[index]);
+      carry = 0;
       index++;
    }
    //deal with dangling carry over
-   if (sum.carry != 0) {
-      sum.ubig_value.push_back(sum.carry);
+   if (carry != 0) {
+      sum.ubig_value.push_back(carry);
    }
    return sum;
 }
@@ -222,13 +212,14 @@ ubigint ubigint::operator- (const ubigint& that) const {
 //TODO define operator< and uncomment   if (*this < that) throw domain_error ("ubigint::operator-(a<b)");
    ubigint diff;
    unsigned int index = 0;
+   unsigned char carry {};
    for (; index < ubig_value.size(); index++) {
       diff.ubig_value.push_back(that.ubig_value.size() < index ?
-                    diff.carry + ubig_value[index] + that.ubig_value[index] :
-                    diff.carry + ubig_value[index]);
-      diff.carry = 0;
+                    carry + ubig_value[index] + that.ubig_value[index] :
+                    carry + ubig_value[index]);
+      carry = 0;
       if (ubig_value[index] > MAX_DIGIT) {
-         diff.carry = 1;
+         carry = 1;
          diff.ubig_value[index] -= BASE;
       }
    }
@@ -239,12 +230,7 @@ ubigint ubigint::operator- (const ubigint& that) const {
    diff.clearZeroes();
    return diff;
 }
-
 /*
-ubigint ubigint::operator* (const ubigint& that) const {
-   return ubigint (ubig_value * that.ubig_value);
-}
-
 void ubigint::multiply_by_2() {
    ubig_value *= 2;
 }
@@ -276,15 +262,7 @@ quo_rem udivide (const ubigint& dividend, const ubigint& divisor_) {
    }
    return {.quotient = quotient, .remainder = remainder};
 }
-
-ubigint ubigint::operator/ (const ubigint& that) const {
-   return udivide (*this, that).quotient;
-}
-
-ubigint ubigint::operator% (const ubigint& that) const {
-   return udivide (*this, that).remainder;
-}
-
+*/
 bool ubigint::operator== (const ubigint& that) const {
    //this is defined for vectors and works as expected
    return ubig_value == that.ubig_value;
@@ -305,6 +283,7 @@ bool ubigint::operator< (const ubigint& that) const {
          }
       }
    }
+   return isLess;
 }
 
 ostream& operator<< (ostream& out, const ubigint& that) {
