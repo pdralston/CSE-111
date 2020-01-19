@@ -116,6 +116,6 @@ bigint bigint::operator- (const bigint& that) const {
 
   ostream& operator<< (ostream& out, const bigint& that) {
      //output to out: bigint(+/-, mag_A)
-     return out << (that.is_negative ? "-" : "+")
+     return out << (that.is_negative ? "-" : "")
                 << that.uvalue;
   }
