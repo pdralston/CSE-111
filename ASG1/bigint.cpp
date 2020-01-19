@@ -92,8 +92,8 @@ bigint bigint::operator- (const bigint& that) const {
 
   bigint bigint::operator/ (const bigint& that) const {
      bigint result;
-     result.is_negative = is_negative == that.is_negative;
-     result.uvalue = uvalue / that.uvalue;
+     result.is_negative = !(is_negative == that.is_negative);
+     result.uvalue = that.uvalue / uvalue;
      return result;
   }
 
