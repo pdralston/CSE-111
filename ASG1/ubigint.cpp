@@ -58,13 +58,28 @@ ubigint ubigint::operator- (const ubigint& that) const {
    return ubigint (ubig_value - that.ubig_value);
 }
 */
+
+/** Operator*
+ *  Returns the result of multiplying two unsigned bigints
+ * @param big into to multiply this by
+ * @return a new bigint representing the product of this and that
+ */
 ubigint ubigint::operator* (const ubigint& that) const {
    ubigint product;
-   int carry = 0;
-   long addZeros = 0;
-   for (unsigned i = 0; i < that.ubig_value.size(); ++i) {
-      for (auto j : ubig_value) {
-         //do a thing
+   //An empty vector signifies a value of 0.
+   if (ubig_value.size() > 0 and that.ubig_value.size() > 0) {
+      unsigned char carry, interimProd;
+      //fill product vector with 0's equal in number to sum of num digits in args
+      fill_n(back_inserter(product.ubig_value), ubig_value.size() + that.ubig_value.size(), 0);
+      for(unsigned i = 0; i < ubig_value.size(); ++i) {
+         carry = 0;
+         for(unsigned j = 0; i < that.ubig_value.size(); ++j) {
+         interimProd = product.ubig_value[i+j] + ubig_value[i] * that.ubig_value[i] + carry;
+         product.ubig_value[i+j] = interimProd % MAX_DIGIT;
+         carry = interimProd / MAX_DIGIT;
+         }
+         //carry will always be less than MAX_DIGIT since 9*9 = 81 and 81 / 10 = 8
+         product.ubig_value[i+that.ubig_value.size()] = carry;
       }
    }
    return product;
@@ -79,6 +94,7 @@ void ubigint::divide_by_2() {
    ubig_value /= 2;
 }
 */
+
 struct quo_rem { ubigint quotient; ubigint remainder; };
 quo_rem udivide (const ubigint& dividend, const ubigint& divisor_) {
    // NOTE: udivide is a non-member function.
@@ -103,10 +119,20 @@ quo_rem udivide (const ubigint& dividend, const ubigint& divisor_) {
    return {.quotient = quotient, .remainder = remainder};
 }
 
+/** Operator/
+ *  Returns the quotient result of dividing two unsigned bigints
+ * @param that bigint into to divide this by
+ * @return a new bigint representing the quotient of this and that
+ */
 ubigint ubigint::operator/ (const ubigint& that) const {
    return udivide (*this, that).quotient;
 }
 
+/** Operator%
+ *  Returns the remainder result of dividing two unsigned bigints
+ * @param that bigint to divide this by
+ * @return a new bigint representing the remainder of this / that
+ */
 ubigint ubigint::operator% (const ubigint& that) const {
    return udivide (*this, that).remainder;
 }
