@@ -35,7 +35,7 @@ bigint bigint::operator- () const {
 
 bigint bigint::operator+ (const bigint& that) const {
   ubigint result; //the magnitude of the result
-  boolean neg = false; //the negativity of the result
+  bool neg = false; //the negativity of the result
   if(this.is_negative == that.is_negative) {
     //case 1: A + B where A and B are the same sign.
     result.uvalue = this.uvalue + that.uvalue;
@@ -43,7 +43,7 @@ bigint bigint::operator+ (const bigint& that) const {
   }
   else {
     //case 2: A + B where either A or B is negative.
-    boolean this_greater = this.uvalue > that.uvalue; //true if A > B.
+    bool this_greater = this.uvalue > that.uvalue; //true if A > B.
     //making sure that mag(left hand operand) > mag(right hand operand) when doing ubigint subtraction
     result.uvalue = this_greater ? this.uvalue - that.uvalue
                                  : that.uvalue - this.uvalue;
@@ -56,10 +56,10 @@ bigint bigint::operator+ (const bigint& that) const {
 
 bigint bigint::operator- (const bigint& that) const {
    ubigint result;
-   boolean neg = false;
+   bool neg = false;
    if(this.is_negative == that.is_negative) {
      //case 1: A - B where A and B are the same sign.
-     boolean this_greater = that.uvalue < this.uvalue;
+     bool this_greater = that.uvalue < this.uvalue;
      if(this_greater) {
        //if mag(A) > mag(B), then abs(A - B) > 0
        result.uvalue = this.uvalue - that.uvalue;
