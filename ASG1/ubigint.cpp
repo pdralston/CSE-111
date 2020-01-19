@@ -62,10 +62,10 @@ ubigint ubigint::operator* (const ubigint& that) const {
       fill_n(back_inserter(product.ubig_value), ubig_value.size() + that.ubig_value.size(), 0);
       for(unsigned i = 0; i < ubig_value.size(); ++i) {
          carry = 0;
-         for(unsigned j = 0; i < that.ubig_value.size(); ++j) {
-         interimProd = product.ubig_value[i+j] + ubig_value[i] * that.ubig_value[i] + carry;
-         product.ubig_value[i+j] = interimProd % MAX_DIGIT;
-         carry = interimProd / MAX_DIGIT;
+         for(unsigned j = 0; j < that.ubig_value.size(); ++j) {
+            interimProd = product.ubig_value[i+j] + ubig_value[i] * that.ubig_value[j] + carry;
+            product.ubig_value[i+j] = interimProd % BASE;
+            carry = interimProd / BASE;
          }
          //carry will always be less than MAX_DIGIT since 9*9 = 81 and 81 / 10 = 8
          product.ubig_value[i+that.ubig_value.size()] = carry;
@@ -82,8 +82,8 @@ void ubigint::multiply_by_2() {
    udigit_t carry = 0;
    for (auto digit = ubig_value.begin(); digit != ubig_value.end(); ++digit) {
       *digit = *digit * 2 + carry;
-      carry = *digit / MAX_DIGIT;
-      *digit %= MAX_DIGIT;
+      carry = *digit / BASE;
+      *digit %= BASE;
    }
    if (carry != 0) {
       ubig_value.push_back(carry);
