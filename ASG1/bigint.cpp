@@ -93,7 +93,7 @@ bigint bigint::operator- (const bigint& that) const {
   bigint bigint::operator/ (const bigint& that) const {
      bigint result;
      result.is_negative = !(is_negative == that.is_negative);
-     result.uvalue = that.uvalue / uvalue;
+     result.uvalue = uvalue / that.uvalue;
      return result;
   }
 
@@ -116,6 +116,6 @@ bigint bigint::operator- (const bigint& that) const {
 
   ostream& operator<< (ostream& out, const bigint& that) {
      //output to out: bigint(+/-, mag_A)
-     return out << "bigint(" << (that.is_negative ? "-" : "+")
-                << "," << that.uvalue << ")";
+     return out << (that.is_negative ? "-" : "+")
+                << that.uvalue;
   }
