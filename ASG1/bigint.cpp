@@ -44,10 +44,12 @@ bigint bigint::operator+ (const bigint& that) const {
   else {
     //case 2: A + B where either A or B is negative.
     bool this_greater = uvalue > that.uvalue; //true if A > B.
-    //making sure that mag(left hand operand) > mag(right hand operand) when doing ubigint subtraction
+    //making sure that mag(left hand operand) > mag(right hand operand)
+    //when doing ubigint subtraction
     result = this_greater ? uvalue - that.uvalue
                                  : that.uvalue - uvalue;
-    //if mag(left hand operand) > mag(right hand operand), then sign(result) = sign(left hand operator)
+    //if mag(left hand operand) > mag(right hand operand),
+    //then sign(result) = sign(left hand operator)
     //and vice-versa
     neg = this_greater ? is_negative : that.is_negative;
   }
@@ -110,8 +112,8 @@ bigint bigint::operator- (const bigint& that) const {
 
   bool bigint::operator< (const bigint& that) const {
      if (is_negative != that.is_negative) return is_negative;
-     return is_negative ? uvalue > that.uvalue //this < that and this < 0
-                        : uvalue < that.uvalue; //this > that and this > 0
+     return is_negative ? uvalue > that.uvalue
+                        : uvalue < that.uvalue;
   }
 
   ostream& operator<< (ostream& out, const bigint& that) {

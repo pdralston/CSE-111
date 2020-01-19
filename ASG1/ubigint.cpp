@@ -40,12 +40,13 @@ ubigint::ubigint (unsigned long that){
  */
 ubigint::ubigint (const string& that){
    DEBUGF ('~', "that = \"" << that << "\"");
-   for_each(that.rbegin(), that.rend(), [this, that] (char const &digit) {
-      if (not isdigit (digit)) {
-         throw invalid_argument ("ubigint::ubigint(" + that + ")");
-      }
-      ubig_value.push_back(digit - '0');
-   });
+   for_each(that.rbegin(), that.rend(), [this, that]
+           (char const &digit) {
+              if (not isdigit (digit)) {
+                 throw invalid_argument ("ubigint::ubigint(" + that + ")");
+              }
+              ubig_value.push_back(digit - '0');
+           });
 }
 
 /** Operator*
@@ -58,16 +59,20 @@ ubigint ubigint::operator* (const ubigint& that) const {
    //An empty vector signifies a value of 0.
    if (ubig_value.size() > 0 and that.ubig_value.size() > 0) {
       udigit_t carry, interimProd;
-      //fill product vector with 0's equal in number to sum of num digits in args
-      fill_n(back_inserter(product.ubig_value), ubig_value.size() + that.ubig_value.size(), 0);
+      //fill product vector with 0's equal in number
+      //to sum of num digits in args
+      fill_n(back_inserter(product.ubig_value),
+             ubig_value.size() + that.ubig_value.size(), 0);
       for(unsigned i = 0; i < ubig_value.size(); ++i) {
          carry = 0;
          for(unsigned j = 0; j < that.ubig_value.size(); ++j) {
-            interimProd = product.ubig_value[i+j] + ubig_value[i] * that.ubig_value[j] + carry;
+            interimProd = product.ubig_value[i+j] + ubig_value[i]
+                        * that.ubig_value[j] + carry;
             product.ubig_value[i+j] = interimProd % BASE;
             carry = interimProd / BASE;
          }
-         //carry will always be less than MAX_DIGIT since 9*9 = 81 and 81 / 10 = 8
+         //carry will always be less than MAX_DIGIT
+         //since 9*9 = 81 and 81 / 10 = 8
          product.ubig_value[i+that.ubig_value.size()] = carry;
       }
    }
@@ -80,11 +85,12 @@ ubigint ubigint::operator* (const ubigint& that) const {
  */
 void ubigint::multiply_by_2() {
    udigit_t carry = 0;
-   for (auto digit = ubig_value.begin(); digit != ubig_value.end(); ++digit) {
-      *digit = *digit * 2 + carry;
-      carry = *digit / BASE;
-      *digit %= BASE;
-   }
+   for (auto digit = ubig_value.begin();
+        digit != ubig_value.end(); ++digit) {
+            *digit = *digit * 2 + carry;
+            carry = *digit / BASE;
+            *digit %= BASE;
+         }
    if (carry != 0) {
       ubig_value.push_back(carry);
    }
@@ -95,15 +101,16 @@ void ubigint::multiply_by_2() {
  */
 void ubigint::divide_by_2() {
    udigit_t carry = 0;
-   for (auto digit = ubig_value.begin(); digit != ubig_value.end(); ++digit) {
-      //*digit.next % 2 is 1 (true) when the next digit is odd.
-      auto nextDigit = next(digit);
-      if (nextDigit < ubig_value.end() and *nextDigit % 2) {
-         carry = 5;
-      }
-      *digit = *digit / 2 + carry;
-      carry = 0;
-   }
+   for (auto digit = ubig_value.begin();
+        digit != ubig_value.end(); ++digit) {
+        //*digit.next % 2 is 1 (true) when the next digit is odd.
+        auto nextDigit = next(digit);
+        if (nextDigit < ubig_value.end() and *nextDigit % 2) {
+           carry = 5;
+        }
+        *digit = *digit / 2 + carry;
+        carry = 0;
+    }
    clearZeroes();
 }
 
@@ -159,7 +166,8 @@ void ubigint::operator+= (const ubigint& that) {
    int carry = 0;
    //iterate from LSB to MSB of this and add corresponding digits of that.
    for (; index < ubig_value.size(); index++) {
-      ubig_value[index] += that.ubig_value.size() < index ? carry + that.ubig_value[index] : carry;
+      ubig_value[index] += that.ubig_value.size() < index ?
+                           carry + that.ubig_value[index] : carry;
       carry = 0;
       if (ubig_value[index] > MAX_DIGIT) {
          carry = 1;
@@ -188,7 +196,7 @@ void ubigint::operator-= (const ubigint& that) {
    int temp;
    //iterate from LSB to MSB of this and subtract corresponding digits of that.
    for (; index < ubig_value.size(); index++) {
-      temp = that.ubig_value.size() < index ? 
+      temp = that.ubig_value.size() < index ?
          ubig_value[index] - that.ubig_value[index] - carry : -carry;
       carry = 0;
       if (temp < 0) {
@@ -200,7 +208,7 @@ void ubigint::operator-= (const ubigint& that) {
    //dangling carry is not be possible since this is unsigned arithmetic
    //and the caller is responsible for not calling this function A -= B
    // where A > B
-   
+
    //deal with case of leading zeroes
    this->clearZeroes();
 }
@@ -233,7 +241,8 @@ ubigint ubigint::operator+ (const ubigint& that) const {
 }
 
 ubigint ubigint::operator- (const ubigint& that) const {
-//TODO define operator< and uncomment   if (*this < that) throw domain_error ("ubigint::operator-(a<b)");
+//TODO define operator< and uncomment
+//if (*this < that) throw domain_error ("ubigint::operator-(a<b)");
    ubigint diff;
    unsigned int index = 0;
    udigit_t carry {};
@@ -247,7 +256,7 @@ ubigint ubigint::operator- (const ubigint& that) const {
          diff.ubig_value[index] -= BASE;
       }
    }
-   
+
    //dangling carry is not be possible since this is unsigned arithmetic
    //and the caller is responsible for not calling this function C = A - B
    // where A > B
@@ -266,7 +275,8 @@ bool ubigint::operator< (const ubigint& that) const {
    if (isLess) {
       if (ubig_value.size() == that.ubig_value.size()) {
          using charIter = vector<udigit_t>::const_reverse_iterator;
-         for (pair<charIter, charIter> i(ubig_value.crbegin(), that.ubig_value.crbegin()); 
+         for (pair<charIter, charIter> i(ubig_value.crbegin(),
+                                         that.ubig_value.crbegin());
               i.first != ubig_value.crend(); ++i.first, ++i.second) {
             if (*(i.second) < *(i.first)) {
                isLess = false;
@@ -279,7 +289,8 @@ bool ubigint::operator< (const ubigint& that) const {
 }
 
 ostream& operator<< (ostream& out, const ubigint& that) {
-   for (auto it = that.ubig_value.crbegin(); it != that.ubig_value.crend(); ++it) {
+   for (auto it = that.ubig_value.crbegin();
+        it != that.ubig_value.crend(); ++it) {
       out << static_cast<unsigned>(*it);
    }
    return out;
