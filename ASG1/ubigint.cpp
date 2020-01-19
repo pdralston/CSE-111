@@ -210,7 +210,7 @@ ubigint ubigint::operator+ (const ubigint& that) const {
    unsigned int index = 0;
    udigit_t carry {};
    for (; index < ubig_value.size(); index++) {
-      sum.ubig_value.push_back(that.ubig_value.size() < index ?
+      sum.ubig_value.push_back(index < that.ubig_value.size() ?
                     carry + ubig_value[index] + that.ubig_value[index] :
                     carry + ubig_value[index]);
       carry = 0;
@@ -238,7 +238,7 @@ ubigint ubigint::operator- (const ubigint& that) const {
    unsigned int index = 0;
    udigit_t carry {};
    for (; index < ubig_value.size(); index++) {
-      diff.ubig_value.push_back(that.ubig_value.size() < index ?
+      diff.ubig_value.push_back(index < that.ubig_value.size() ?
                     carry + ubig_value[index] + that.ubig_value[index] :
                     carry + ubig_value[index]);
       carry = 0;
