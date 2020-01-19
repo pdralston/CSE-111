@@ -229,7 +229,6 @@ ubigint ubigint::operator+ (const ubigint& that) const {
    if (carry != 0) {
       sum.ubig_value.push_back(carry);
    }
-   cout << "Sum is: " << sum << endl;
    return sum;
 }
 
