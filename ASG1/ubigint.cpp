@@ -63,7 +63,6 @@ ubigint ubigint::operator* (const ubigint& that) const {
       for(unsigned i = 0; i < ubig_value.size(); ++i) {
          carry = 0;
          for(unsigned j = 0; j < that.ubig_value.size(); ++j) {
-            cout << "68\n j is " << j << "\n that.ubig_value.size() = " << that.ubig_value.size() << endl;
             interimProd = product.ubig_value[i+j] + ubig_value[i] * that.ubig_value[j] + carry;
             product.ubig_value[i+j] = interimProd % BASE;
             carry = interimProd / BASE;
