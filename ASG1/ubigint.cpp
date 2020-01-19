@@ -71,6 +71,7 @@ ubigint ubigint::operator* (const ubigint& that) const {
          product.ubig_value[i+that.ubig_value.size()] = carry;
       }
    }
+   product.clearZeroes();
    return product;
 }
 
