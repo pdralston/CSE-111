@@ -18,7 +18,7 @@ const int MIN_DIGIT = 0;
 
 /** Constructor
  *  Constructor takes an unsigned long and stores it as a vector
- *  of unsigned char values.
+ *  of udigit_t values.
  *  @param that an unsigned long representing the numeric value of the
  *   ubigint
  */
@@ -33,7 +33,7 @@ ubigint::ubigint (unsigned long that){
 
 /** Constructor
  *  Constructor takes a string representation and stores it as a vector
- *  of unsigned char values equal to the digit values of the number. i.e.
+ *  of udigit_t values equal to the digit values of the number. i.e.
  *  a '6' would be stored as 6 in the vector.
  *  @param that a string representation of the numeric value of the
  *   ubigint
@@ -57,7 +57,7 @@ ubigint ubigint::operator* (const ubigint& that) const {
    ubigint product;
    //An empty vector signifies a value of 0.
    if (ubig_value.size() > 0 and that.ubig_value.size() > 0) {
-      unsigned char carry, interimProd;
+      udigit_t carry, interimProd;
       //fill product vector with 0's equal in number to sum of num digits in args
       fill_n(back_inserter(product.ubig_value), ubig_value.size() + that.ubig_value.size(), 0);
       for(unsigned i = 0; i < ubig_value.size(); ++i) {
@@ -75,15 +75,38 @@ ubigint ubigint::operator* (const ubigint& that) const {
    return product;
 }
 
-/*
+/** multiply_by_2
+ *  multiply this in place by 2
+ */
 void ubigint::multiply_by_2() {
-   ubig_value *= 2;
+   udigit_t carry = 0;
+   for (auto digit = ubig_value.begin(); digit != ubig_value.end(); ++digit) {
+      *digit = *digit * 2 + carry;
+      carry = *digit / MAX_DIGIT;
+      *digit %= MAX_DIGIT;
+   }
+   if (carry != 0) {
+      ubig_value.push_back(carry);
+   }
 }
 
+/** divide_by_2
+ *  divide this in place by 2
+ */
 void ubigint::divide_by_2() {
-   ubig_value /= 2;
+   udigit_t carry = 0;
+   for (auto digit = ubig_value.begin(); digit != ubig_value.end(); ++digit) {
+      //*digit.next % 2 is 1 (true) when the next digit is odd.
+      auto nextDigit = next(digit);
+      if (nextDigit < ubig_value.end() and *nextDigit % 2) {
+         carry = 5;
+      }
+      *digit = *digit / 2 + carry;
+      carry = 0;
+   }
+   clearZeroes();
 }
-*/
+
 
 struct quo_rem { ubigint quotient; ubigint remainder; };
 quo_rem udivide (const ubigint& dividend, const ubigint& divisor_) {
@@ -185,7 +208,7 @@ void ubigint::operator-= (const ubigint& that) {
 ubigint ubigint::operator+ (const ubigint& that) const {
    ubigint sum;
    unsigned int index = 0;
-   unsigned char carry {};
+   udigit_t carry {};
    for (; index < ubig_value.size(); index++) {
       sum.ubig_value.push_back(that.ubig_value.size() < index ?
                     carry + ubig_value[index] + that.ubig_value[index] :
@@ -213,7 +236,7 @@ ubigint ubigint::operator- (const ubigint& that) const {
 //TODO define operator< and uncomment   if (*this < that) throw domain_error ("ubigint::operator-(a<b)");
    ubigint diff;
    unsigned int index = 0;
-   unsigned char carry {};
+   udigit_t carry {};
    for (; index < ubig_value.size(); index++) {
       diff.ubig_value.push_back(that.ubig_value.size() < index ?
                     carry + ubig_value[index] + that.ubig_value[index] :
@@ -231,39 +254,7 @@ ubigint ubigint::operator- (const ubigint& that) const {
    diff.clearZeroes();
    return diff;
 }
-/*
-void ubigint::multiply_by_2() {
-   ubig_value *= 2;
-}
 
-void ubigint::divide_by_2() {
-   ubig_value /= 2;
-}
-
-struct quo_rem { ubigint quotient; ubigint remainder; };
-quo_rem udivide (const ubigint& dividend, const ubigint& divisor_) {
-   // NOTE: udivide is a non-member function.
-   ubigint divisor {divisor_};
-   ubigint zero {0};
-   if (divisor == zero) throw domain_error ("udivide by zero");
-   ubigint power_of_2 {1};
-   ubigint quotient {0};
-   ubigint remainder {dividend}; // left operand, dividend
-   while (divisor < remainder) {
-      divisor.multiply_by_2();
-      power_of_2.multiply_by_2();
-   }
-   while (power_of_2 > zero) {
-      if (divisor <= remainder) {
-         remainder = remainder - divisor;
-         quotient = quotient + power_of_2;
-      }
-      divisor.divide_by_2();
-      power_of_2.divide_by_2();
-   }
-   return {.quotient = quotient, .remainder = remainder};
-}
-*/
 bool ubigint::operator== (const ubigint& that) const {
    //this is defined for vectors and works as expected
    return ubig_value == that.ubig_value;
@@ -274,7 +265,7 @@ bool ubigint::operator< (const ubigint& that) const {
                  and not(*this == that);
    if (isLess) {
       if (ubig_value.size() == that.ubig_value.size()) {
-         using charIter = vector<unsigned char>::const_reverse_iterator;
+         using charIter = vector<udigit_t>::const_reverse_iterator;
          for (pair<charIter, charIter> i(ubig_value.crbegin(), that.ubig_value.crbegin()); 
               i.first != ubig_value.crend(); ++i.first, ++i.second) {
             if (*(i.second) < *(i.first)) {
