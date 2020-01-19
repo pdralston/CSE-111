@@ -279,8 +279,14 @@ bool ubigint::operator< (const ubigint& that) const {
 }
 
 ostream& operator<< (ostream& out, const ubigint& that) {
+   int count = 1;
    for (auto it = that.ubig_value.crbegin(); it != that.ubig_value.crend(); ++it) {
+      if (count == 70) {
+         out << "/\n";
+         count = 1;
+      }
       out << static_cast<unsigned>(*it);
+      count++;
    }
    return out;
 }
