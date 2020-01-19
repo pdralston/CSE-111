@@ -21,6 +21,7 @@ class ubigint {
       using udigit_t = unsigned char;
       using ubigvalue_t = vector<udigit_t>;
       ubigvalue_t ubig_value;
+      void clearZeroes();
 
    public:
       //function used to multiply by 2 (bitshift left)
