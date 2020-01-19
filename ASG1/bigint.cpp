@@ -85,7 +85,7 @@ bigint bigint::operator- (const bigint& that) const {
   bigint bigint::operator* (const bigint& that) const {
      bigint result;
      //sign(C) = sign(A) xor sign(B)
-     result.is_negative = is_negative == that.is_negative;
+     result.is_negative = !(is_negative == that.is_negative);
      result.uvalue = uvalue * that.uvalue;
      return result;
   }
