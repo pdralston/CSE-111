@@ -67,12 +67,14 @@ ubigint ubigint::operator* (const ubigint& that) const {
              ubig_value.size() + that.ubig_value.size(), 0);
       for(unsigned iter = 0; iter < ubig_value.size(); ++iter) {
          carry = 0;
-         for(unsigned jiter = 0; jiter < that.ubig_value.size(); ++jiter) {
-            interimProd = product.ubig_value[iter+jiter] + ubig_value[iter]
-                        * that.ubig_value[jiter] + carry;
-            product.ubig_value[iter+jiter] = interimProd % BASE;
-            carry = interimProd / BASE;
-         }
+         for(unsigned jiter = 0; jiter < that.ubig_value.size();
+             ++jiter) {
+                interimProd = product.ubig_value[iter+jiter]
+                            + ubig_value[iter]
+                            * that.ubig_value[jiter] + carry;
+                product.ubig_value[iter+jiter] = interimProd % BASE;
+                carry = interimProd / BASE;
+             }
          //carry will always be less than MAX_DIGIT
          //since 9*9 = 81 and 81 / 10 = 8
          product.ubig_value[iter+that.ubig_value.size()] = carry;
@@ -166,7 +168,7 @@ ubigint ubigint::operator% (const ubigint& that) const {
 void ubigint::operator+= (const ubigint& that) {
    unsigned int index = 0;
    int carry = 0;
-   //iterate from LSB to MSB of this and 
+   //iterate from LSB to MSB of this and
    //add corresponding digits of that.
    for (; index < ubig_value.size(); index++) {
       ubig_value[index] += that.ubig_value.size() < index ?
@@ -197,7 +199,7 @@ void ubigint::operator-= (const ubigint& that) {
    unsigned int index = 0;
    int carry = 0;
    int temp;
-   //iterate from LSB to MSB of this and 
+   //iterate from LSB to MSB of this and
    //subtract corresponding digits of that.
    for (; index < ubig_value.size(); index++) {
       temp = that.ubig_value.size() < index ?
@@ -245,7 +247,7 @@ ubigint ubigint::operator+ (const ubigint& that) const {
 }
 
 ubigint ubigint::operator- (const ubigint& that) const {
-   //if (*this < that) throw 
+   //if (*this < that) throw
    //domain_error ("ubigint::operator-(a<b)");
    ubigint diff;
    unsigned int index = 0;
@@ -262,7 +264,7 @@ ubigint ubigint::operator- (const ubigint& that) const {
    }
 
    //dangling carry is not be possible since this is unsigned arithmetic
-   //and the caller is responsible for not calling this function 
+   //and the caller is responsible for not calling this function
    //C = A - B where A > B
    diff.clearZeroes();
    return diff;
