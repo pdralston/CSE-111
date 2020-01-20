@@ -291,8 +291,8 @@ bool ubigint::operator< (const ubigint& that) const {
 ostream& operator<< (ostream& out, const ubigint& that) {
    for (auto it = that.ubig_value.crbegin();
         it != that.ubig_value.crend(); ++it) {
-      out << static_cast<unsigned>(*it);
-   }
+          out << static_cast<unsigned>(*it);
+        }
    return out;
 }
 
