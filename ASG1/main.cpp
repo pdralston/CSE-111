@@ -130,7 +130,7 @@ void scan_options (int argc, char** argv) {
 int main (int argc, char** argv) {
    exec::execname (argv[0]);
    scan_options (argc, argv);
-   bigint_stack operand_stack; //stack used to hold bigints before operations are passed
+   bigint_stack operand_stack;
    scanner input;
    try {
       for (;;) {
