@@ -1,5 +1,6 @@
 // $Id: bigint.cpp,v 1.2 2020-01-06 13:39:55-08 - - $
-
+// Sasank Madineni (smadinen)
+// Perry Ralston (pdralsto)
 #include <cstdlib>
 #include <exception>
 #include <stack>

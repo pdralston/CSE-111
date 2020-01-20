@@ -1,5 +1,6 @@
 // $Id: bigint.h,v 1.2 2020-01-06 13:39:55-08 - - $
-
+// Sasank Madineni (smadinen)
+// Perry Ralston (pdralsto)
 #ifndef __BIGINT_H__
 #define __BIGINT_H__
 

@@ -1,5 +1,6 @@
 // $Id: scanner.cpp,v 1.1 2019-12-12 18:19:23-08 - - $
-
+// Sasank Madineni (smadinen)
+// Perry Ralston (pdralsto)
 #include <cassert>
 #include <iostream>
 #include <locale>
@@ -12,7 +13,7 @@ using namespace std;
 #include "debug.h"
 
 char scanner::get() {
-   if (not good()) throw runtime_error ("scanner::get() past EOF"); 
+   if (not good()) throw runtime_error ("scanner::get() past EOF");
    char currchar = nextchar;
    nextchar = instream.get();
    return currchar;
@@ -47,4 +48,3 @@ ostream& operator<< (ostream& out, const token& token) {
    out << "{" << token.symbol << ", \"" << token.lexinfo << "\"}";
    return out;
 }
-

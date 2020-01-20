@@ -1,5 +1,6 @@
 // $Id: relops.h,v 1.1 2019-12-12 18:19:23-08 - - $
-
+// Sasank Madineni (smadinen)
+// Perry Ralston (pdralsto)
 //
 // Assuming that for any given type T, there are operators
 // bool operator< (const T&, const T&);
@@ -13,12 +14,12 @@
 
 template <typename value>
 inline bool operator!= (const value& left, const value& right) {
-   return not (left == right); 
+   return not (left == right);
 }
 
 template <typename value>
 inline bool operator>  (const value& left, const value& right) {
-   return right < left; 
+   return right < left;
 }
 
 template <typename value>
@@ -28,8 +29,7 @@ inline bool operator<= (const value& left, const value& right) {
 
 template <typename value>
 inline bool operator>= (const value& left, const value& right) {
-   return not (left < right); 
+   return not (left < right);
 }
 
 #endif
-

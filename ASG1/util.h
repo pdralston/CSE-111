@@ -1,5 +1,6 @@
 // $Id: util.h,v 1.2 2019-12-12 19:22:40-08 - - $
-
+// Sasank Madineni (smadinen)
+// Perry Ralston (pdralsto)
 //
 // util -
 //    A utility class to provide various services
@@ -75,4 +76,3 @@ ostream& note();
 ostream& error();
 
 #endif
-
