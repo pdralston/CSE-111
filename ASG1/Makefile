@@ -59,7 +59,10 @@ again :
 memcheck : ${EXECBIN}
 	${MEMCHECK} ./$^
 
-submit : ${ALLSOURCES} README
+submit : ${ALLSOURCES} README PARTNER
+	submit  cse111-wm.w20 asg1 $^
+
+submitPartner : README PARTNER
 	submit  cse111-wm.w20 asg1 $^
 
 ifeq (${NEEDINCL}, )
