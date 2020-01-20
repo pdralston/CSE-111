@@ -27,8 +27,8 @@ ubigint::ubigint (unsigned long that){
    //DEBUGF ('~', this << " -> " << ubig_value)
    if (that == 0) return;
    ubig_value.push_back(that % BASE);
-   for(uint i = BASE; i <= that; i*=BASE) {
-      ubig_value.push_back(that / i % BASE);
+   for(uint iter = BASE; iter <= that; iter*=BASE) {
+      ubig_value.push_back(that / iter % BASE);
    }
 }
 
@@ -65,17 +65,17 @@ ubigint ubigint::operator* (const ubigint& that) const {
       //to sum of num digits in args
       fill_n(back_inserter(product.ubig_value),
              ubig_value.size() + that.ubig_value.size(), 0);
-      for(unsigned i = 0; i < ubig_value.size(); ++i) {
+      for(unsigned iter = 0; iter < ubig_value.size(); ++iter) {
          carry = 0;
-         for(unsigned j = 0; j < that.ubig_value.size(); ++j) {
-            interimProd = product.ubig_value[i+j] + ubig_value[i]
-                        * that.ubig_value[j] + carry;
-            product.ubig_value[i+j] = interimProd % BASE;
+         for(unsigned jiter = 0; jiter < that.ubig_value.size(); ++jiter) {
+            interimProd = product.ubig_value[iter+jiter] + ubig_value[iter]
+                        * that.ubig_value[jiter] + carry;
+            product.ubig_value[iter+jiter] = interimProd % BASE;
             carry = interimProd / BASE;
          }
          //carry will always be less than MAX_DIGIT
          //since 9*9 = 81 and 81 / 10 = 8
-         product.ubig_value[i+that.ubig_value.size()] = carry;
+         product.ubig_value[iter+that.ubig_value.size()] = carry;
       }
    }
    product.clearZeroes();
