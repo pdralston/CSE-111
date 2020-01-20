@@ -14,17 +14,3 @@ the README and PARTNER files.
 
 --Perry Ralston (pdralston@ucsc.edu)
 --Sasank Madineni (smadinen@ucsc.edu)
-
-Files:
-- bigint.cpp, bigint.h: Class for big integers
-- ubigint.cpp, ubigint.h: Class for unsigned big integers
-- main.cpp: Pops the right operand, then left operand. Computes result,
-and pushes it onto the stack.
-- debug.cpp, debug.h:
-- iterstack.h: an STL stack class with an iterator.
-- libfns.cpp, libfns.h: library functions class containing non-standard
-numerical operations.
-- relops.h:
-- scanner.cpp, scanner.h: Parses input and labels as a number, operator, or scaneof,
-and returns a token_t, which indicates what kind of token it is.
-- util.cpp, util.h:

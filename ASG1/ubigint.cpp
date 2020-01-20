@@ -1,5 +1,6 @@
 // $Id: ubigint.cpp,v 1.8 2020-01-06 13:39:55-08 - - $
-
+// Sasank Madineni (smadinen)
+// Perry Ralston (pdralsto)
 #include <cctype>
 #include <cstdlib>
 #include <exception>
@@ -290,7 +291,7 @@ bool ubigint::operator< (const ubigint& that) const {
 
 ostream& operator<< (ostream& out, const ubigint& that) {
    int count = 1;
-   for (auto it = that.ubig_value.crbegin(); 
+   for (auto it = that.ubig_value.crbegin();
         it != that.ubig_value.crend(); ++it) {
           if (count == 70) {
             out << "/\n";

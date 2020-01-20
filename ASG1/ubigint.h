@@ -1,5 +1,6 @@
 // $Id: ubigint.h,v 1.4 2020-01-06 13:39:55-08 - - $
-
+// Sasank Madineni (smadinen)
+// Perry Ralston (pdralsto)
 #ifndef __UBIGINT_H__
 #define __UBIGINT_H__
 
@@ -38,7 +39,7 @@ class ubigint {
       ubigint operator* (const ubigint&) const;
       ubigint operator/ (const ubigint&) const;
       ubigint operator% (const ubigint&) const;
-      
+
       void operator+= (const ubigint&);
       void operator-= (const ubigint&);
 

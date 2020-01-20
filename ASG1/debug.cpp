@@ -1,5 +1,6 @@
 // $Id: debug.cpp,v 1.1 2019-12-12 18:19:23-08 - - $
-
+// Sasank Madineni (smadinen)
+// Perry Ralston (pdralsto)
 #include <climits>
 #include <iostream>
 #include <vector>
@@ -32,4 +33,3 @@ void debugflags::where (char flag, const char* file, int line,
         << file << "[" << line << "] " << endl
         << "   " << pretty_function << endl;
 }
-
