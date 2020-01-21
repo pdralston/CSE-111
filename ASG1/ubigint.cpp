@@ -279,7 +279,8 @@ bool ubigint::operator== (const ubigint& that) const {
 }
 
 bool ubigint::operator< (const ubigint& that) const {
-   bool isLess = ubig_value.size() <= that.ubig_value.size() && *this != that;
+   bool isLess = ubig_value.size() <= that.ubig_value.size() && 
+                 *this != that;
    if (isLess) {
       if (ubig_value.size() == that.ubig_value.size()) {
          using charIter = vector<udigit_t>::const_reverse_iterator;
