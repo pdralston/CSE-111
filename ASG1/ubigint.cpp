@@ -224,14 +224,18 @@ ubigint ubigint::operator+ (const ubigint& that) const {
    unsigned int index = 0;
    udigit_t carry {};
    for (; index < ubig_value.size(); index++) {
-      sum.ubig_value.push_back(index < that.ubig_value.size() ?
+      // sum.ubig_value.push_back(index < that.ubig_value.size() ?
+      //               carry + ubig_value[index] + that.ubig_value[index] :
+      //               carry + ubig_value[index]);
+      int unit_value = index < that.ubig_value.size() ?
                     carry + ubig_value[index] + that.ubig_value[index] :
-                    carry + ubig_value[index]);
+                    carry + ubig_value[index];
       carry = 0;
-      if (ubig_value[index] > MAX_DIGIT) {
+      if (unit_value > MAX_DIGIT) {
          carry = 1;
-         sum.ubig_value[index] -= BASE;
+         unit_value -= BASE;
       }
+      sum.ubig_value.push_back(unit_value);
    }
    //deal with the case where that has more digits than this
    while (index < that.ubig_value.size()) {
@@ -253,14 +257,19 @@ ubigint ubigint::operator- (const ubigint& that) const {
    unsigned int index = 0;
    udigit_t carry {};
    for (; index < ubig_value.size(); index++) {
-      diff.ubig_value.push_back(index < that.ubig_value.size() ?
-                    ubig_value[index] - that.ubig_value[index] - carry :
-                    ubig_value[index] - carry);
+      // diff.ubig_value.push_back(index < that.ubig_value.size() ?
+      //               ubig_value[index] - that.ubig_value[index] - carry :
+      //               ubig_value[index] - carry);
+      int unit_value = 0;
+      unit_value = index < that.ubig_value.size() ?
+                   ubig_value[index] - that.ubig_value[index] - carry:
+                   ubig_value[index] - carry;
       carry = 0;
-      if (ubig_value[index] > MAX_DIGIT) {
+      if (unit_value < 0) {
          carry = 1;
-         diff.ubig_value[index] -= BASE;
+         unit_value += BASE;
       }
+      diff.ubig_value.push_back(unit_value);
    }
 
    //dangling carry is not be possible since this is unsigned arithmetic
@@ -282,7 +291,7 @@ bool ubigint::operator< (const ubigint& that) const {
          using charIter = vector<udigit_t>::const_reverse_iterator;
          for (pair<charIter, charIter> iterPair(ubig_value.crbegin(),
                                          that.ubig_value.crbegin());
-              iterPair.first != ubig_value.crend(); 
+              iterPair.first != ubig_value.crend();
               ++iterPair.first, ++iterPair.second) {
             if (*iterPair.second > *iterPair.first) {
                isLess = true;
@@ -295,7 +304,7 @@ bool ubigint::operator< (const ubigint& that) const {
          }
       }
    }
-   cout << *this << " < " << that << " = " << boolalpha << isLess << endl;
+   // cout << *this << " < " << that << " = " << boolalpha << isLess << endl;
    return isLess;
 }
 
