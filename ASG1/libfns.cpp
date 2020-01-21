@@ -2,7 +2,7 @@
 // Sasank Madineni (smadinen)
 // Perry Ralston (pdralsto)
 #include "libfns.h"
-
+#include <iostream>
 //
 // This algorithm would be more efficient with operators
 // *=, /=2, and is_odd.  But we leave it here.
@@ -22,10 +22,15 @@ bigint pow (const bigint& base_arg, const bigint& exponent_arg) {
       exponent = - exponent;
    }
    while (exponent > ZERO) {
+      cout << "base = " << base << endl;
+      cout << "exponent = " << exponent << endl;
+      cout << "result = " << result << endl;
       if (exponent % TWO == ONE) {
+         cout << "exponent % TWO == ONE" << endl;
          result = result * base;
          exponent = exponent - 1;
       }else {
+         cout << "exponent % TWO != ONE" << endl;
          base = base * base;
          exponent = exponent / 2;
       }

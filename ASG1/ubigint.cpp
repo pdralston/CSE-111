@@ -276,34 +276,39 @@ bool ubigint::operator== (const ubigint& that) const {
 }
 
 bool ubigint::operator< (const ubigint& that) const {
-   bool isLess = ubig_value.size() <= that.ubig_value.size()
-                 and not(*this == that);
+   bool isLess = ubig_value.size() <= that.ubig_value.size() && *this != that;
    if (isLess) {
       if (ubig_value.size() == that.ubig_value.size()) {
          using charIter = vector<udigit_t>::const_reverse_iterator;
-         for (pair<charIter, charIter> i(ubig_value.crbegin(),
+         for (pair<charIter, charIter> iterPair(ubig_value.crbegin(),
                                          that.ubig_value.crbegin());
-              i.first != ubig_value.crend(); ++i.first, ++i.second) {
-            if (*(i.second) < *(i.first)) {
+              iterPair.first != ubig_value.crend(); 
+              ++iterPair.first, ++iterPair.second) {
+            if (*iterPair.second > *iterPair.first) {
+               isLess = true;
+               break;
+            }
+            if (*iterPair.first > *iterPair.second) {
                isLess = false;
                break;
             }
          }
       }
    }
+   cout << *this << " < " << that << " = " << boolalpha << isLess << endl;
    return isLess;
 }
 
 ostream& operator<< (ostream& out, const ubigint& that) {
    int count = 1;
+   if (that.ubig_value.size() == 0) {
+      out << 0;
+   }
    for (auto it = that.ubig_value.crbegin();
-        it != that.ubig_value.crend(); ++it) {
-          if (count == 70) {
-            out << "/\n";
-            count = 1;
-          }
-        out << static_cast<unsigned>(*it);
-        count++;
+      it != that.ubig_value.crend(); ++it) {
+      if (count == 70) { out << "/\n"; count = 1;}
+         out << static_cast<unsigned>(*it);
+         count++;
    }
    return out;
 }
