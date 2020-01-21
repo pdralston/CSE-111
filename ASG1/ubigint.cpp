@@ -224,9 +224,6 @@ ubigint ubigint::operator+ (const ubigint& that) const {
    unsigned int index = 0;
    udigit_t carry {};
    for (; index < ubig_value.size(); index++) {
-      // sum.ubig_value.push_back(index < that.ubig_value.size() ?
-      //               carry + ubig_value[index] + that.ubig_value[index] :
-      //               carry + ubig_value[index]);
       int unit_value = index < that.ubig_value.size() ?
                     carry + ubig_value[index] + that.ubig_value[index] :
                     carry + ubig_value[index];
@@ -257,9 +254,6 @@ ubigint ubigint::operator- (const ubigint& that) const {
    unsigned int index = 0;
    udigit_t carry {};
    for (; index < ubig_value.size(); index++) {
-      // diff.ubig_value.push_back(index < that.ubig_value.size() ?
-      //               ubig_value[index] - that.ubig_value[index] - carry :
-      //               ubig_value[index] - carry);
       int unit_value = 0;
       unit_value = index < that.ubig_value.size() ?
                    ubig_value[index] - that.ubig_value[index] - carry:
@@ -304,7 +298,6 @@ bool ubigint::operator< (const ubigint& that) const {
          }
       }
    }
-   // cout << *this << " < " << that << " = " << boolalpha << isLess << endl;
    return isLess;
 }
 

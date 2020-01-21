@@ -2,7 +2,6 @@
 // Sasank Madineni (smadinen)
 // Perry Ralston (pdralsto)
 #include "libfns.h"
-#include <iostream>
 //
 // This algorithm would be more efficient with operators
 // *=, /=2, and is_odd.  But we leave it here.
