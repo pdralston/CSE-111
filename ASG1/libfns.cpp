@@ -22,15 +22,10 @@ bigint pow (const bigint& base_arg, const bigint& exponent_arg) {
       exponent = - exponent;
    }
    while (exponent > ZERO) {
-      cout << "base = " << base << endl;
-      cout << "exponent = " << exponent << endl;
-      cout << "result = " << result << endl;
       if (exponent % TWO == ONE) {
-         cout << "exponent % TWO == ONE" << endl;
          result = result * base;
          exponent = exponent - 1;
       }else {
-         cout << "exponent % TWO != ONE" << endl;
          base = base * base;
          exponent = exponent / 2;
       }
