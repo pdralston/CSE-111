@@ -66,12 +66,12 @@ bigint bigint::operator- (const bigint& that) const {
      if(this_greater) {
        //if mag(A) > mag(B), then abs(A - B) > 0
        result = uvalue - that.uvalue;
-       neg = result == 0 ? false : is_negative;
+       neg = is_negative;
      }
      else { //mag(B) > mag(A)
        //if mag_A < mag_B, then abs(A - B) < 0
        result = that.uvalue - uvalue;
-       neg = that.is_negative;
+       neg = result == 0 ? false : !that.is_negative;
      }
    }
    else {
