@@ -41,66 +41,112 @@ int exit_status_message() {
    return status;
 }
 
+//function: fn_cat
+//description:
+//parameters: state -
+//            words -
 void fn_cat (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
 }
 
+//function: fn_cd
+//description:
+//parameters: state -
+//            words -
 void fn_cd (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
 }
 
+//function: fn_echo
+//description:
+//parameters: state -
+//            words -
 void fn_echo (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
    cout << word_range (words.cbegin() + 1, words.cend()) << endl;
 }
 
-
+//function: fn_exit
+//description:
+//parameters: state -
+//            words -
 void fn_exit (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
    throw ysh_exit();
 }
 
+//function: fn_ls
+//description:
+//parameters: state -
+//            words -
 void fn_ls (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
 }
 
+//function: fn_lsr
+//description:
+//parameters: state -
+//            words -
 void fn_lsr (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
 }
 
+//function: fn_make
+//description:
+//parameters: state -
+//            words -
 void fn_make (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
 }
 
+//function: fn_mkdir
+//description:
+//parameters: state -
+//            words -
 void fn_mkdir (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
 }
 
+//function: fn_prompt
+//description:
+//parameters: state -
+//            words -
 void fn_prompt (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
 }
 
+//functions: fn_pwd
+//description:
+//parameters: state -
+//            words -
 void fn_pwd (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
 }
 
+//function: fn_rm
+//description:
+//parameters: state -
+//            words -
 void fn_rm (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
 }
 
+//function: fn_rmr
+//description:
+//parameters: state -
+//            words -
 void fn_rmr (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
 }
-
