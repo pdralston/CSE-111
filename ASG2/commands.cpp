@@ -35,6 +35,8 @@ command_error::command_error (const string& what):
             runtime_error (what) {
 }
 
+//function: exit_status_message (int)
+//description: prints out current [exec::status()] and exits
 int exit_status_message() {
    int status = exec::status();
    cout << exec::execname() << ": exit(" << status << ")" << endl;
@@ -51,7 +53,8 @@ void fn_cat (inode_state& state, const wordvec& words){
 }
 
 //function: fn_cd
-//description:
+//description: changes directory to subdirectory <>
+//             or goes to directory <> if / is the first character
 //parameters: state -
 //            words -
 void fn_cd (inode_state& state, const wordvec& words){
@@ -60,9 +63,9 @@ void fn_cd (inode_state& state, const wordvec& words){
 }
 
 //function: fn_echo
-//description:
+//description: outputs <words> to sysout
 //parameters: state -
-//            words -
+//            words - string to print
 void fn_echo (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
@@ -70,7 +73,7 @@ void fn_echo (inode_state& state, const wordvec& words){
 }
 
 //function: fn_exit
-//description:
+//description: exits the program
 //parameters: state -
 //            words -
 void fn_exit (inode_state& state, const wordvec& words){
@@ -80,7 +83,7 @@ void fn_exit (inode_state& state, const wordvec& words){
 }
 
 //function: fn_ls
-//description:
+//description: lists all files in the current dir in the file_sys
 //parameters: state -
 //            words -
 void fn_ls (inode_state& state, const wordvec& words){
@@ -89,7 +92,7 @@ void fn_ls (inode_state& state, const wordvec& words){
 }
 
 //function: fn_lsr
-//description:
+//description: recursively show directories and subdirectories
 //parameters: state -
 //            words -
 void fn_lsr (inode_state& state, const wordvec& words){
@@ -98,7 +101,7 @@ void fn_lsr (inode_state& state, const wordvec& words){
 }
 
 //function: fn_make
-//description:
+//description: makes a file with name <> containing <>
 //parameters: state -
 //            words -
 void fn_make (inode_state& state, const wordvec& words){
@@ -107,7 +110,8 @@ void fn_make (inode_state& state, const wordvec& words){
 }
 
 //function: fn_mkdir
-//description:
+//description: makes a new subdirectory from the current directory
+//             in the filesys
 //parameters: state -
 //            words -
 void fn_mkdir (inode_state& state, const wordvec& words){
@@ -116,7 +120,8 @@ void fn_mkdir (inode_state& state, const wordvec& words){
 }
 
 //function: fn_prompt
-//description:
+//description: changes the prompt to the following string
+//             default prompt is '%'
 //parameters: state -
 //            words -
 void fn_prompt (inode_state& state, const wordvec& words){
@@ -125,7 +130,7 @@ void fn_prompt (inode_state& state, const wordvec& words){
 }
 
 //functions: fn_pwd
-//description:
+//description: prints out current directory path
 //parameters: state -
 //            words -
 void fn_pwd (inode_state& state, const wordvec& words){
@@ -134,7 +139,7 @@ void fn_pwd (inode_state& state, const wordvec& words){
 }
 
 //function: fn_rm
-//description:
+//description: removes file based on given filename
 //parameters: state -
 //            words -
 void fn_rm (inode_state& state, const wordvec& words){
@@ -143,7 +148,7 @@ void fn_rm (inode_state& state, const wordvec& words){
 }
 
 //function: fn_rmr
-//description:
+//description: remove files recursively in given directory
 //parameters: state -
 //            words -
 void fn_rmr (inode_state& state, const wordvec& words){

@@ -19,6 +19,9 @@ struct file_type_hash {
    }
 };
 
+//operation: <<
+//description: overloaded << operator, allows printing
+//
 ostream& operator<< (ostream& out, file_type type) {
    static unordered_map<file_type,string,file_type_hash> hash {
       {file_type::PLAIN_TYPE, "PLAIN_TYPE"},
@@ -27,11 +30,13 @@ ostream& operator<< (ostream& out, file_type type) {
    return out << hash[type];
 }
 
+//
 inode_state::inode_state() {
    DEBUGF ('i', "root = " << root << ", cwd = " << cwd
           << ", prompt = \"" << prompt() << "\"");
 }
 
+//
 const string& inode_state::prompt() const { return prompt_; }
 
 ostream& operator<< (ostream& out, const inode_state& state) {
@@ -57,14 +62,19 @@ int inode::get_inode_nr() const {
    return inode_nr;
 }
 
+//function: file_error
+//description: calls a runtime_error with the description <what>
 file_error::file_error (const string& what):
             runtime_error (what) {
 }
 
+//function:
 const wordvec& base_file::readfile() const {
    throw file_error ("is a " + error_file_type());
 }
 
+//function: writefile
+//description: 
 void base_file::writefile (const wordvec&) {
    throw file_error ("is a " + error_file_type());
 }
@@ -116,4 +126,3 @@ inode_ptr directory::mkfile (const string& filename) {
    DEBUGF ('i', filename);
    return nullptr;
 }
-
