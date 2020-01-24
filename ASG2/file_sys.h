@@ -56,7 +56,7 @@ class inode_state {
 //    number of dirents.  For a text file, the number of characters
 //    when printed (the sum of the lengths of each word, plus the
 //    number of words.
-//    
+//
 
 class inode {
    friend class inode_state;
@@ -83,7 +83,7 @@ class file_error: public runtime_error {
 class base_file {
    protected:
       base_file() = default;
-      virtual const string error_file_type() const = 0;
+      virtual const string& error_file_type() const = 0;
    public:
       virtual ~base_file() = default;
       base_file (const base_file&) = delete;
@@ -127,7 +127,7 @@ class plain_file: public base_file {
 //    does not exist, or the subdirectory is not empty.
 //    Here empty means the only entries are dot (.) and dotdot (..).
 // mkdir -
-//    Creates a new directory under the current directory and 
+//    Creates a new directory under the current directory and
 //    immediately adds the directories dot (.) and dotdot (..) to it.
 //    Note that the parent (..) of / is / itself.  It is an error
 //    if the entry already exists.
@@ -150,4 +150,3 @@ class directory: public base_file {
 };
 
 #endif
-
