@@ -35,8 +35,8 @@ class inode_state {
    friend class inode;
    friend ostream& operator<< (ostream& out, const inode_state&);
    private:
-      inode_ptr root {nullptr};
-      inode_ptr cwd {nullptr};
+      inode_ptr root;
+      inode_ptr cwd;
       string prompt_ {"% "};
    public:
       inode_state (const inode_state&) = delete; // copy ctor
@@ -83,7 +83,7 @@ class file_error: public runtime_error {
 class base_file {
    protected:
       base_file() = default;
-      virtual const string& error_file_type() const = 0;
+      virtual const string error_file_type() const = 0;
    public:
       virtual ~base_file() = default;
       base_file (const base_file&) = delete;
