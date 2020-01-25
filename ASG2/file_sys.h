@@ -69,7 +69,7 @@ class inode {
       int get_inode_nr() const;
 };
 
-
+
 // class base_file -
 // Just a base class at which an inode can point.  No data or
 // functions.  Makes the synthesized members useable only from
@@ -95,7 +95,7 @@ class base_file {
       virtual inode_ptr mkdir (const string& dirname);
       virtual inode_ptr mkfile (const string& filename);
 };
-
+
 // class plain_file -
 // Used to hold data.
 // synthesized default ctor -
