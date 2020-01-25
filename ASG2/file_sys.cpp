@@ -91,7 +91,6 @@ inode_ptr base_file::mkfile (const string&) {
    throw file_error ("is a " + error_file_type());
 }
 
-
 size_t plain_file::size() const {
    size_t size {0};
    DEBUGF ('i', "size = " << size);
