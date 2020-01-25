@@ -13,6 +13,11 @@ using namespace std;
 
 debugflags::flagset_ debugflags::flags_ {};
 
+//function: debugflags
+//descriptions: allows printing debug statements given proper flags
+//parameters: initflags - the flags passed in via the cli
+//options: y shell -@@ - turns on debug w/ all options
+//         y shell -@ - turns on debug w/ no other options
 void debugflags::setflags (const string& initflags) {
    for (const unsigned char flag: initflags) {
       if (flag == '@') flags_.set();
@@ -33,4 +38,3 @@ void debugflags::where (char flag, const char* file, int line,
    cout << exec::execname() << ": DEBUG(" << flag << ") "
         << file << "[" << line << "] " << pretty_function << endl;
 }
-
