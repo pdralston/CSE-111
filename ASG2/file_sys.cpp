@@ -32,10 +32,10 @@ ostream& operator<< (ostream& out, file_type type) {
 
 //
 inode_state::inode_state() {
-   DEBUGF ('i', "root = " << root << ", cwd = " << cwd
-          << ", prompt = \"" << prompt() << "\"");
    root = make_shared<inode>(file_type::DIRECTORY_TYPE);
    cwd = root;
+   DEBUGF ('i', "root = " << root << ", cwd = " << cwd
+          << ", prompt = \"" << prompt() << "\"");
 }
 
 //
