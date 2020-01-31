@@ -8,6 +8,9 @@
 
 using namespace std;
 
+static const string PARENT = "..";
+static const string SELF = ".";
+
 #include "debug.h"
 #include "file_sys.h"
 
@@ -30,13 +33,16 @@ ostream& operator<< (ostream& out, file_type type) {
    return out << hash[type];
 }
 
-//
+
 inode_state::inode_state() {
+   root = make_shared<inode>(file_type::DIRECTORY_TYPE);
+   cwd = root;
+   root->contents->setDefs(root, root);
    DEBUGF ('i', "root = " << root << ", cwd = " << cwd
           << ", prompt = \"" << prompt() << "\"");
 }
 
-//
+
 const string& inode_state::prompt() const { return prompt_; }
 
 ostream& operator<< (ostream& out, const inode_state& state) {
@@ -91,9 +97,16 @@ inode_ptr base_file::mkfile (const string&) {
    throw file_error ("is a " + error_file_type());
 }
 
-
+void base_file::setDefs (const inode_ptr&, const inode_ptr&) {
+   throw file_error ("is a " + error_file_type());
+}
+
 size_t plain_file::size() const {
    size_t size {0};
+   //increment 
+   for (auto word : data) {
+     size += word.length();
+   }
    DEBUGF ('i', "size = " << size);
    return size;
 }
@@ -105,24 +118,47 @@ const wordvec& plain_file::readfile() const {
 
 void plain_file::writefile (const wordvec& words) {
    DEBUGF ('i', words);
+   for (auto word : words) {
+     data.push_back(word);
+   }
+}
+
+directory::~directory(){
+   dirents.clear();
 }
 
 size_t directory::size() const {
-   size_t size {0};
+   size_t size {dirents.size()};
    DEBUGF ('i', "size = " << size);
    return size;
 }
 
 void directory::remove (const string& filename) {
    DEBUGF ('i', filename);
+   if(filename == PARENT) {
+      file_error("Unable to delete root directory");
+      return;
+   }
+   if(filename == SELF) {
+      file_error("Unable to delete current working directory");
+      return;
+   }
+   dirents.erase(filename);
 }
 
 inode_ptr directory::mkdir (const string& dirname) {
    DEBUGF ('i', dirname);
-   return nullptr;
+   dirents.insert({dirname, make_shared<inode>(file_type::DIRECTORY_TYPE)});
+   return dirents.at(dirname);
+}
+
+void directory::setDefs (const inode_ptr& parent, const inode_ptr& self) {
+   dirents.insert({PARENT, parent});
+   dirents.insert({SELF, self});
 }
 
 inode_ptr directory::mkfile (const string& filename) {
    DEBUGF ('i', filename);
-   return nullptr;
+   dirents.insert({filename, make_shared<inode>(file_type::PLAIN_TYPE)});
+   return dirents.at(filename);
 }

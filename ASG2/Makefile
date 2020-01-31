@@ -22,6 +22,7 @@ ALLSOURCES  = ${MODULESRC} ${OTHERSRC} ${MKFILE}
 LISTING     = Listing.ps
 MEMCHECK    = valgrind --leak-check=full -v
 PARTNER     = ../../PARNTER
+ASG         = asg2
 
 all : ${EXECBIN}
 
@@ -61,10 +62,10 @@ memcheck : ${EXECBIN}
 	${MEMCHECK} ./$^
 
 submit : ${ALLSOURCES} README ${PARTNER}
-	submit  cse111-wm.w20 asg2 $^
+	submit  cse111-wm.w20 ${ASG} $^
 
 submitPartner : README ${PARTNER}
-	submit  cse111-wm.w20 asg2 $^
+	submit  cse111-wm.w20 ${ASG} $^
 
 ifeq (${NEEDINCL}, )
 include ${DEPFILE}

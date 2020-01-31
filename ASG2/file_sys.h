@@ -35,8 +35,8 @@ class inode_state {
    friend class inode;
    friend ostream& operator<< (ostream& out, const inode_state&);
    private:
-      inode_ptr root {nullptr};
-      inode_ptr cwd {nullptr};
+      inode_ptr root;
+      inode_ptr cwd;
       string prompt_ {"% "};
    public:
       inode_state (const inode_state&) = delete; // copy ctor
@@ -69,7 +69,7 @@ class inode {
       int get_inode_nr() const;
 };
 
-
+
 // class base_file -
 // Just a base class at which an inode can point.  No data or
 // functions.  Makes the synthesized members useable only from
@@ -83,7 +83,7 @@ class file_error: public runtime_error {
 class base_file {
    protected:
       base_file() = default;
-      virtual const string& error_file_type() const = 0;
+      virtual const string error_file_type() const = 0;
    public:
       virtual ~base_file() = default;
       base_file (const base_file&) = delete;
@@ -94,8 +94,9 @@ class base_file {
       virtual void remove (const string& filename);
       virtual inode_ptr mkdir (const string& dirname);
       virtual inode_ptr mkfile (const string& filename);
+      virtual void setDefs (const inode_ptr&, const inode_ptr&);
 };
-
+
 // class plain_file -
 // Used to hold data.
 // synthesized default ctor -
@@ -143,10 +144,12 @@ class directory: public base_file {
          return "directory";
       }
    public:
+      ~directory();
       virtual size_t size() const override;
       virtual void remove (const string& filename) override;
       virtual inode_ptr mkdir (const string& dirname) override;
       virtual inode_ptr mkfile (const string& filename) override;
+      virtual void setDefs (const inode_ptr&, const inode_ptr&) override;
 };
 
 #endif
