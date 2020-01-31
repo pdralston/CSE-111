@@ -94,6 +94,7 @@ class base_file {
       virtual void remove (const string& filename);
       virtual inode_ptr mkdir (const string& dirname);
       virtual inode_ptr mkfile (const string& filename);
+      virtual void setDefs (const inode_ptr&, const inode_ptr&);
 };
 
 // class plain_file -
@@ -143,10 +144,12 @@ class directory: public base_file {
          return "directory";
       }
    public:
+      ~directory();
       virtual size_t size() const override;
       virtual void remove (const string& filename) override;
       virtual inode_ptr mkdir (const string& dirname) override;
       virtual inode_ptr mkfile (const string& filename) override;
+      virtual void setDefs (const inode_ptr&, const inode_ptr&) override;
 };
 
 #endif
