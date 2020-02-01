@@ -43,6 +43,7 @@ class inode_state {
       inode_state& operator= (const inode_state&) = delete; // op=
       inode_state();
       const string& prompt() const;
+      void prompt(const string& prompt);
       void mkdir(string&);
       void pwd();
 };
