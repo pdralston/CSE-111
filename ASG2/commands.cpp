@@ -61,7 +61,7 @@ void fn_cat (inode_state& state, const wordvec& words){
 void fn_cd (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
-   //state.change_dir(word_range(words.cbegin() + 1, words.cend()));
+   //state.set_dir(wordvec(word_range(words.cbegin() + 1, words.cend())));
 }
 
 //function: fn_echo
@@ -91,7 +91,7 @@ void fn_exit (inode_state& state, const wordvec& words){
 void fn_ls (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
-   //state.get_dir()
+   //state.get_dir_contents()
 }
 
 //function: fn_lsr
@@ -104,7 +104,7 @@ void fn_lsr (inode_state& state, const wordvec& words){
    //inode_state current_dir = state.get_dir()
    //vector<string> dir;
    //<recursively loop through every directory>
-   //fn_ls(current_state, words)
+   //   fn_ls(current_state, words)
 }
 
 //function: fn_make
@@ -114,6 +114,7 @@ void fn_lsr (inode_state& state, const wordvec& words){
 void fn_make (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
+   //string filename = state.
 }
 
 //function: fn_mkdir
