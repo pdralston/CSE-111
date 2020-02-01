@@ -45,6 +45,18 @@ inode_state::inode_state() {
 
 const string& inode_state::prompt() const { return prompt_; }
 
+void inode_state::mkdir(string& dirname) {
+   cwd->contents->mkdir(dirname);
+}
+
+void inode_state::pwd() {
+   if (cwd == root) {
+      cout << "/\n";
+      return;
+   }
+   cwd->contents->printName();
+}
+
 ostream& operator<< (ostream& out, const inode_state& state) {
    out << "inode_state: root = " << state.root
        << ", cwd = " << state.cwd;
@@ -106,6 +118,10 @@ void base_file::setDefs (const inode_ptr&, const inode_ptr&) {
 }
 
 void base_file::setName (const string&) {
+   throw file_error ("is a " + error_file_type());
+}
+
+void base_file::printName() {
    throw file_error ("is a " + error_file_type());
 }
 
