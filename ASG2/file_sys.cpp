@@ -45,6 +45,18 @@ inode_state::inode_state() {
 
 const string& inode_state::prompt() const { return prompt_; }
 
+void inode_state::mkdir(string& dirname) {
+   cwd->contents->mkdir(dirname);
+}
+
+void inode_state::pwd() {
+   if (cwd == root) {
+      cout << "/\n";
+      return;
+   }
+   cwd->contents->printName();
+}
+
 ostream& operator<< (ostream& out, const inode_state& state) {
    out << "inode_state: root = " << state.root
        << ", cwd = " << state.cwd;
@@ -61,6 +73,10 @@ inode::inode(file_type type): inode_nr (next_inode_nr++) {
            break;
    }
    DEBUGF ('i', "inode " << inode_nr << ", type = " << type);
+}
+
+inode::inode (file_type type, const string& name) : inode(type) {
+   contents->setName(name);
 }
 
 int inode::get_inode_nr() const {
@@ -101,6 +117,14 @@ void base_file::setDefs (const inode_ptr&, const inode_ptr&) {
    throw file_error ("is a " + error_file_type());
 }
 
+void base_file::setName (const string&) {
+   throw file_error ("is a " + error_file_type());
+}
+
+void base_file::printName() {
+   throw file_error ("is a " + error_file_type());
+}
+
 size_t plain_file::size() const {
    size_t size {0};
    //increment 
@@ -123,8 +147,14 @@ void plain_file::writefile (const wordvec& words) {
    }
 }
 
-directory::~directory(){
-   dirents.clear();
+void plain_file::setName (const string& filename) {
+   filename_ = filename;
+}
+
+directory::~directory() {
+   dirents.erase(SELF);
+   dirents.erase(PARENT);
+   cout << dirents.size();
 }
 
 size_t directory::size() const {
@@ -148,13 +178,17 @@ void directory::remove (const string& filename) {
 
 inode_ptr directory::mkdir (const string& dirname) {
    DEBUGF ('i', dirname);
-   dirents.insert({dirname, make_shared<inode>(file_type::DIRECTORY_TYPE)});
+   dirents.insert({dirname, make_shared<inode>(file_type::DIRECTORY_TYPE, dirname)});
    return dirents.at(dirname);
 }
 
 void directory::setDefs (const inode_ptr& parent, const inode_ptr& self) {
    dirents.insert({PARENT, parent});
    dirents.insert({SELF, self});
+}
+
+void directory::setName (const string& dirname) {
+   dirname_ = dirname;
 }
 
 inode_ptr directory::mkfile (const string& filename) {

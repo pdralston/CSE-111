@@ -43,6 +43,8 @@ class inode_state {
       inode_state& operator= (const inode_state&) = delete; // op=
       inode_state();
       const string& prompt() const;
+      void mkdir(string&);
+      void pwd();
 };
 
 // class inode -
@@ -66,6 +68,7 @@ class inode {
       base_file_ptr contents;
    public:
       inode (file_type);
+      inode (file_type, const string&);
       int get_inode_nr() const;
 };
 
@@ -95,6 +98,8 @@ class base_file {
       virtual inode_ptr mkdir (const string& dirname);
       virtual inode_ptr mkfile (const string& filename);
       virtual void setDefs (const inode_ptr&, const inode_ptr&);
+      virtual void setName (const string&);
+      virtual void printName();
 };
 
 // class plain_file -
@@ -112,10 +117,13 @@ class plain_file: public base_file {
       virtual const string error_file_type() const override {
          return "plain file";
       }
+      string filename_;
    public:
       virtual size_t size() const override;
       virtual const wordvec& readfile() const override;
       virtual void writefile (const wordvec& newdata) override;
+      virtual void setName (const string&) override;
+      virtual void printName() override {cout << filename_ << endl;}
 };
 
 // class directory -
@@ -143,6 +151,7 @@ class directory: public base_file {
       virtual const string error_file_type() const override {
          return "directory";
       }
+      string dirname_;
    public:
       ~directory();
       virtual size_t size() const override;
@@ -150,6 +159,8 @@ class directory: public base_file {
       virtual inode_ptr mkdir (const string& dirname) override;
       virtual inode_ptr mkfile (const string& filename) override;
       virtual void setDefs (const inode_ptr&, const inode_ptr&) override;
+      virtual void setName (const string&) override;
+      virtual void printName() override {cout << dirname_ << endl;}
 };
 
 #endif
