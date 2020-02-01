@@ -44,12 +44,13 @@ int exit_status_message() {
 }
 
 //function: fn_cat
-//description:
+//description: prints out contents of passed in file
 //parameters: state -
 //            words -
 void fn_cat (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
+   //cout << state.read_file();
 }
 
 //function: fn_cd
@@ -60,6 +61,7 @@ void fn_cat (inode_state& state, const wordvec& words){
 void fn_cd (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
+   //state.change_dir(word_range(words.cbegin() + 1, words.cend()));
 }
 
 //function: fn_echo
@@ -89,6 +91,7 @@ void fn_exit (inode_state& state, const wordvec& words){
 void fn_ls (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
+   //state.get_dir()
 }
 
 //function: fn_lsr
@@ -98,6 +101,10 @@ void fn_ls (inode_state& state, const wordvec& words){
 void fn_lsr (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
+   //inode_state current_dir = state.get_dir()
+   //vector<string> dir;
+   //<recursively loop through every directory>
+   //fn_ls(current_state, words)
 }
 
 //function: fn_make
@@ -117,6 +124,8 @@ void fn_make (inode_state& state, const wordvec& words){
 void fn_mkdir (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
+   //string dir_name = wordvec(words.cbegin() + 1, words.cend());
+   //state.create_child(dir_name);
 }
 
 //function: fn_prompt
@@ -127,6 +136,7 @@ void fn_mkdir (inode_state& state, const wordvec& words){
 void fn_prompt (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
+   //state.set_prompt(words.cbegin() + 1, words.cend());
 }
 
 //functions: fn_pwd
@@ -136,6 +146,11 @@ void fn_prompt (inode_state& state, const wordvec& words){
 void fn_pwd (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
+   //string directory_path = ""
+   //current_node = state.get_node()
+   //while current_node.get_dir() != current_node.get_root():
+   //   directory_path = current_node.get_path "/" + directory_path
+   //cout << directory_path
 }
 
 //function: fn_rm
@@ -145,6 +160,8 @@ void fn_pwd (inode_state& state, const wordvec& words){
 void fn_rm (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
+   //filename = wordvec(words.cbegin() + 1, words.cend())
+   //state.remove_file()
 }
 
 //function: fn_rmr
@@ -154,4 +171,6 @@ void fn_rm (inode_state& state, const wordvec& words){
 void fn_rmr (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
+   //implemented similar to lsr, but rm instead.
+   //I guess I just call a recuirsive function that you implement
 }
