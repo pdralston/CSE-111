@@ -63,6 +63,10 @@ inode::inode(file_type type): inode_nr (next_inode_nr++) {
    DEBUGF ('i', "inode " << inode_nr << ", type = " << type);
 }
 
+inode::inode (file_type type, const string& name) : inode(type) {
+   contents->setName(name);
+}
+
 int inode::get_inode_nr() const {
    DEBUGF ('i', "inode = " << inode_nr);
    return inode_nr;
@@ -101,6 +105,10 @@ void base_file::setDefs (const inode_ptr&, const inode_ptr&) {
    throw file_error ("is a " + error_file_type());
 }
 
+void base_file::setName (const string&) {
+   throw file_error ("is a " + error_file_type());
+}
+
 size_t plain_file::size() const {
    size_t size {0};
    //increment 
@@ -123,8 +131,14 @@ void plain_file::writefile (const wordvec& words) {
    }
 }
 
-directory::~directory(){
-   dirents.clear();
+void plain_file::setName (const string& filename) {
+   filename_ = filename;
+}
+
+directory::~directory() {
+   dirents.erase(SELF);
+   dirents.erase(PARENT);
+   cout << dirents.size();
 }
 
 size_t directory::size() const {
@@ -148,13 +162,17 @@ void directory::remove (const string& filename) {
 
 inode_ptr directory::mkdir (const string& dirname) {
    DEBUGF ('i', dirname);
-   dirents.insert({dirname, make_shared<inode>(file_type::DIRECTORY_TYPE)});
+   dirents.insert({dirname, make_shared<inode>(file_type::DIRECTORY_TYPE, dirname)});
    return dirents.at(dirname);
 }
 
 void directory::setDefs (const inode_ptr& parent, const inode_ptr& self) {
    dirents.insert({PARENT, parent});
    dirents.insert({SELF, self});
+}
+
+void directory::setName (const string& dirname) {
+   dirname_ = dirname;
 }
 
 inode_ptr directory::mkfile (const string& filename) {
