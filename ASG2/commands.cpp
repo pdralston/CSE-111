@@ -50,7 +50,7 @@ int exit_status_message() {
 void fn_cat (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
-   if(words.size() != 1) {
+   if(words.size() != 2) {
       cerr << "Incorrect Number of Parameters." << endl;
       return;
    }
@@ -116,13 +116,15 @@ void fn_make (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
    if(words.size() < 2) {
+     //CASE: incorrect number of parameters.
       cerr << "ERROR: File Contents Not Specified." << endl;
       return;
    }
+   wordvec contents {};
    string pathname = words[1];
    wordvec pathname_vector = split(pathname, "/");
-   wordvec contents = vector(words.begin() + 2, words.end());
-   // copy(words.cbegin() + 2, words.cend(), contents.begin());
+   if (words.size() > 2)
+      contents = vector(words.begin() + 2, words.end());
    state.make(pathname_vector, contents, pathname[0] == '/');
 }
 
