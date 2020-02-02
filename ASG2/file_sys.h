@@ -45,8 +45,7 @@ class inode_state {
       inode_state();
       const string& prompt() const;
       void prompt(const string& prompt);
-      void make(wordvec&, wordvec&, bool);
-      void mkdir(string&);
+      void make(wordvec&, wordvec&, bool, bool);
       void cd(wordvec&, bool);
       const string& pwd() const;
       const wordvec& cat(wordvec&, bool);

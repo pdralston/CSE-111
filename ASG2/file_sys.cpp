@@ -56,21 +56,17 @@ const string& inode_state::prompt() const { return prompt_; }
 void inode_state::prompt(const string& prompt) { prompt_ = prompt; }
 
 
-void inode_state::make(wordvec& pathname, wordvec& data, bool relToRoot = false){
-   string filename = pathname.back();
+void inode_state::make(wordvec& pathname, wordvec& data, bool relToRoot = false, bool makeDir = false){
+   string toMake = pathname.back();
    inode_ptr temp = cwd;
    pathname.pop_back();
-   try {
-      cd(pathname, relToRoot);
-   } catch (file_error& error) {
-      throw error;
+   cd(pathname, relToRoot);
+   if (makeDir) {
+      cwd->contents->mkdir(toMake);
+   } else {
+   (cwd->contents->mkfile(toMake))->contents->writefile(data);
    }
-   (cwd->contents->mkfile(filename))->contents->writefile(data);
    cwd = temp;
-}
-
-void inode_state::mkdir(string& dirname) {
-   cwd->contents->mkdir(dirname);
 }
 
 void inode_state::cd(wordvec& pathname, bool relToRoot = false) {
