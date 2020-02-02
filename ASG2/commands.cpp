@@ -54,9 +54,9 @@ void fn_cat (inode_state& state, const wordvec& words){
       cerr << "Incorrect Number of Parameters." << endl;
       return;
    }
-   string pathname = word_range(words.cbegin() + 1, words.cbegin() + 2);
+   string pathname = words[1];
    wordvec pathname_vector = split(pathname, "/");
-   state.cat(pathname_vector, pathname[0] =="/")
+   state.cat(pathname_vector, pathname[0] == '/');
 }
 
 //function: fn_cd
@@ -96,6 +96,7 @@ void fn_exit (inode_state& state, const wordvec& words){
 void fn_ls (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
+
 }
 
 //function: fn_lsr
@@ -115,13 +116,13 @@ void fn_make (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
    if(words.size() < 2) {
-      cerr << "Incorrect Number of Parameters." << endl;
+      cerr << "ERROR: File Contents Not Specified." << endl;
       return;
    }
-   string pathname = word_range(words.cbegin() + 1, words.cbegin() + 2);
+   string pathname = words[1];
    wordvec pathname_vector = split(pathname, "/");
-   wordvec contents = copy(words.cbegin() + 2, words.cend());
-   state.make(contents, pathname_vector, pathname[0] =="/")
+   wordvec contents = copy(words.cbegin() + 2, words.cend(), words);
+   state.make(contents, pathname_vector, pathname[0] == '/');
 }
 
 //function: fn_mkdir
@@ -142,7 +143,9 @@ void fn_mkdir (inode_state& state, const wordvec& words){
 void fn_prompt (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
-   string new_prompt = word_range(words.cbegin() + 1, words.cend());
+   string new_prompt = "";
+   for(string prompt_segment : words) new_prompt += prompt_segment;
+   // string new_prompt = words[1];
    state.prompt(new_prompt);
 }
 
