@@ -77,7 +77,7 @@ void inode_state::cd(wordvec& pathname, bool relToRoot = false) {
    }
    try {
       for (auto direc :  pathname) {
-         cwd = cwd->contents->getdir(direc);
+         cwd = cwd->contents->getEntry(direc);
       }
    } catch (int){
       //restore the cwd when cd fails.
@@ -87,6 +87,25 @@ void inode_state::cd(wordvec& pathname, bool relToRoot = false) {
       throw file_error (pathname[0] + " is not a valid directory");
    }
    
+}
+
+const wordvec& inode_state::cat(wordvec& pathname, bool relToRoot) {
+   string filename = pathname.back();
+   inode_ptr fileNode, temp = cwd;
+   pathname.pop_back();
+   try {
+      cd(pathname, relToRoot);
+   } catch (file_error& error) {
+      throw error;
+   }
+   try {
+      fileNode = cwd->contents->getEntry(filename);
+      cwd = temp;
+      return fileNode->contents->readfile();
+   } catch(int) {
+      cwd = temp;
+      throw file_error (filename + " does not exist.");
+   }
 }
 
 const string& inode_state::pwd() const {
@@ -164,7 +183,7 @@ const string& base_file::getName() const{
    throw file_error ("is a " + error_file_type());
 }
 
-const inode_ptr base_file::getdir(const string&) {
+const inode_ptr& base_file::getEntry(const string&) const {
    throw file_error ("is a " + error_file_type());
 }
 
@@ -230,7 +249,7 @@ void directory::setName (const string& dirname) {
    dirname_ = dirname;
 }
 
-const inode_ptr directory::getdir(const string& dirname) {
+const inode_ptr& directory::getEntry(const string& dirname) const{
       return dirents.at(dirname);
 }
 
