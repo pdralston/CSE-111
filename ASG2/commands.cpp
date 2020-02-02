@@ -50,6 +50,13 @@ int exit_status_message() {
 void fn_cat (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
+   if(words.size() != 1) {
+      cerr << "Incorrect Number of Parameters." << endl;
+      return;
+   }
+   string pathname = word_range(words.cbegin() + 1, words.cbegin() + 2);
+   wordvec pathname_vector = split(pathname, "/");
+   state.cat(pathname_vector, pathname[0] =="/")
 }
 
 //function: fn_cd
@@ -107,6 +114,14 @@ void fn_lsr (inode_state& state, const wordvec& words){
 void fn_make (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
+   if(words.size() < 2) {
+      cerr << "Incorrect Number of Parameters." << endl;
+      return;
+   }
+   string pathname = word_range(words.cbegin() + 1, words.cbegin() + 2);
+   wordvec pathname_vector = split(pathname, "/");
+   wordvec contents = copy(words.cbegin() + 2, words.cend());
+   state.make(contents, pathname_vector, pathname[0] =="/")
 }
 
 //function: fn_mkdir
