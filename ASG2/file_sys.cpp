@@ -45,11 +45,15 @@ inode_state::inode_state() {
           << ", prompt = \"" << prompt() << "\"");
 }
 
+inode_state::~inode_state() {
+   root->invalidate();
+}
+
 
 const string& inode_state::prompt() const { return prompt_; }
 
 
-void inode_state::prompt(const string& prompt) { prompt_ = prompt + " "; }
+void inode_state::prompt(const string& prompt) { prompt_ = prompt; }
 
 
 void inode_state::make(wordvec& pathname, wordvec& data, bool relToRoot = false, bool makeDir = false){
@@ -210,7 +214,9 @@ void plain_file::setName (const string& filename) {
 }
 
 directory::~directory() {
-   dirents.clear();
+   for (auto dirEntry : dirents) {
+      dirEntry.second->invalidate();
+   }
 }
 
 size_t directory::size() const {
