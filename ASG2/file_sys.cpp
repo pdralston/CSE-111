@@ -45,6 +45,9 @@ inode_state::inode_state() {
 
 const string& inode_state::prompt() const { return prompt_; }
 
+
+void inode_state::prompt(const string& prompt) { prompt_ = prompt + " "; }
+
 void inode_state::mkdir(string& dirname) {
    cwd->contents->mkdir(dirname);
 }
