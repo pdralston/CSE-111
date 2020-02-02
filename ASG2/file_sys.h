@@ -40,6 +40,7 @@ class inode_state {
       string prompt_ {"% "};
    public:
       inode_state (const inode_state&) = delete; // copy ctor
+      ~inode_state();
       inode_state& operator= (const inode_state&) = delete; // op=
       inode_state();
       const string& prompt() const;
@@ -74,6 +75,7 @@ class inode {
       inode (file_type);
       inode (file_type, const string&);
       int get_inode_nr() const;
+      void invalidate(){contents = NULL;}
 };
 
 
