@@ -121,7 +121,8 @@ void fn_make (inode_state& state, const wordvec& words){
    }
    string pathname = words[1];
    wordvec pathname_vector = split(pathname, "/");
-   wordvec contents = copy(words.cbegin() + 2, words.cend(), words);
+   wordvec contents;
+   copy(words.cbegin() + 2, words.cend(), contents.begin());
    state.make(contents, pathname_vector, pathname[0] == '/');
 }
 
