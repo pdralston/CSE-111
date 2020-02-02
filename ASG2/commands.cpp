@@ -145,7 +145,8 @@ void fn_prompt (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
    string new_prompt = "";
-   for(string prompt_segment : words) new_prompt += prompt_segment;
+   for(string prompt_segment : vector(words.begin() + 1, words.end()))
+      new_prompt += prompt_segment;
    // string new_prompt = words[1];
    state.prompt(new_prompt);
 }
