@@ -56,7 +56,11 @@ void inode_state::make(wordvec& pathname, wordvec& data, bool relToRoot = false)
    string filename = pathname.back();
    inode_ptr temp = cwd;
    pathname.pop_back();
-   cd(pathname, relToRoot);
+   try {
+      cd(pathname, relToRoot);
+   } catch (file_error& error) {
+      throw error;
+   }
    (cwd->contents->mkfile(filename))->contents->writefile(data);
    cwd = temp;
 }
@@ -66,6 +70,7 @@ void inode_state::mkdir(string& dirname) {
 }
 
 void inode_state::cd(wordvec& pathname, bool relToRoot = false) {
+   inode_ptr temp = cwd; 
    if (relToRoot) {
       cwd = root;
       relToRoot = false;
@@ -75,6 +80,8 @@ void inode_state::cd(wordvec& pathname, bool relToRoot = false) {
          cwd = cwd->contents->getdir(direc);
       }
    } catch (int){
+      //restore the cwd when cd fails.
+      cwd = temp;
       stringstream pathString;
       copy(pathname.begin(), pathname.end(), ostream_iterator<string>(pathString, "/"));
       throw file_error (pathname[0] + " is not a valid directory");
