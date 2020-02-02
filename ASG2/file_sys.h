@@ -44,8 +44,10 @@ class inode_state {
       inode_state();
       const string& prompt() const;
       void prompt(const string& prompt);
+      void make(wordvec&, wordvec&, bool);
       void mkdir(string&);
-      void pwd();
+      void cd(wordvec&, bool);
+      const string& pwd() const;
 };
 
 // class inode -
@@ -100,7 +102,8 @@ class base_file {
       virtual inode_ptr mkfile (const string& filename);
       virtual void setDefs (const inode_ptr&, const inode_ptr&);
       virtual void setName (const string&);
-      virtual void printName();
+      virtual const string& getName() const;
+      virtual const inode_ptr getdir(const string&);
 };
 
 // class plain_file -
@@ -124,7 +127,7 @@ class plain_file: public base_file {
       virtual const wordvec& readfile() const override;
       virtual void writefile (const wordvec& newdata) override;
       virtual void setName (const string&) override;
-      virtual void printName() override {cout << filename_ << endl;}
+      virtual const string& getName() const override {return filename_;}
 };
 
 // class directory -
@@ -161,7 +164,8 @@ class directory: public base_file {
       virtual inode_ptr mkfile (const string& filename) override;
       virtual void setDefs (const inode_ptr&, const inode_ptr&) override;
       virtual void setName (const string&) override;
-      virtual void printName() override {cout << dirname_ << endl;}
+      virtual const string& getName() const override {return dirname_;}
+      virtual const inode_ptr getdir(const string&) override;
 };
 
 #endif
