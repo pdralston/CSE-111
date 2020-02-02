@@ -121,9 +121,9 @@ void fn_make (inode_state& state, const wordvec& words){
    }
    string pathname = words[1];
    wordvec pathname_vector = split(pathname, "/");
-   wordvec contents;
-   copy(words.cbegin() + 2, words.cend(), contents.begin());
-   state.make(contents, pathname_vector, pathname[0] == '/');
+   wordvec contents = vector(words.begin() + 2, words.end());
+   // copy(words.cbegin() + 2, words.cend(), contents.begin());
+   state.make(pathname_vector, contents, pathname[0] == '/');
 }
 
 //function: fn_mkdir
@@ -144,7 +144,7 @@ void fn_mkdir (inode_state& state, const wordvec& words){
 void fn_prompt (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
-   if(words.size < 2) {
+   if(words.size() < 2) {
      state.prompt();
      return;
    }
