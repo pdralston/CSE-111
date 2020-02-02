@@ -101,7 +101,7 @@ void fn_lsr (inode_state& state, const wordvec& words){
 }
 
 //function: fn_make
-//description: makes a file with name <> containing <>
+//description: makes a file with name <words[0]> containing <words[1:]>
 //parameters: state -
 //            words -
 void fn_make (inode_state& state, const wordvec& words){
@@ -127,6 +127,8 @@ void fn_mkdir (inode_state& state, const wordvec& words){
 void fn_prompt (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
+   string new_prompt = word_range(words.cbegin() + 1, words.cend());
+   state.prompt(new_prompt);
 }
 
 //functions: fn_pwd
@@ -136,6 +138,7 @@ void fn_prompt (inode_state& state, const wordvec& words){
 void fn_pwd (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
+   state.pwd();
 }
 
 //function: fn_rm
