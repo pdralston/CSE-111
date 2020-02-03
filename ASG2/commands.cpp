@@ -158,7 +158,7 @@ void fn_prompt (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
    if(words.size() < 2) {
-     state.prompt();
+     cout << state.prompt();
      return;
    }
    string new_prompt = "";
