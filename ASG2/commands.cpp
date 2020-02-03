@@ -59,10 +59,7 @@ void fn_cat (inode_state& state, const wordvec& words){
       cout << state.cat(pathname_vector, pathname[0] == '/') << endl;
    }
    catch (file_error& error) {
-     complain() << error.what() << endl;
-   }
-   catch (std::out_of_range& error) {
-     complain() << "File Not Found." << endl;
+     throw command_error(error.what());
    }
 }
 
@@ -85,7 +82,7 @@ void fn_cd (inode_state& state, const wordvec& words){
       state.cd(pathname, words[1][0] == '/');
    }
    catch (file_error& error) {
-      complain() << error.what() <<endl;
+      throw command_error(error.what());
    }
 }
 
@@ -127,7 +124,7 @@ void fn_ls (inode_state& state, const wordvec& words){
      cout << state.ls(pathname, root_dir).str() << endl;
    }
    catch (file_error& error) {
-      complain() << error.what() <<endl;
+      throw command_error(error.what());
    }
 }
 
