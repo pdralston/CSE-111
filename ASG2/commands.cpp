@@ -108,7 +108,7 @@ void fn_ls (inode_state& state, const wordvec& words){
    wordvec pathname {};
    if(words.size() == 2) pathname = split(words[1], "/");
    bool root_dir = pathname.size() > 0 ? pathname[1] == "/" : false;
-   cout << state.ls(pathname, root_dir).str();
+   cout << state.ls(pathname, root_dir).str() << endl;
    cout << "Finished ls" << endl;
 }
 
@@ -147,9 +147,9 @@ void fn_make (inode_state& state, const wordvec& words){
 void fn_mkdir (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
-   if(words.size() < 2) {
+   if(words.size() != 2) {
      //CASE: incorrect number of parameters.
-      throw command_error("ERROR: Too Few Number of Parameters.");
+      throw command_error("ERROR: Too Few/Many Number of Parameters.");
    }
    wordvec pathname = split(words[1], "/");
    wordvec empty_vec {};
