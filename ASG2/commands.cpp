@@ -77,9 +77,9 @@ void fn_cd (inode_state& state, const wordvec& words){
 
    wordvec pathname {};
    if(words.size() == 2) pathname = split(words[1], "/");
-
+   bool root_dir = words.size() > 1 ? words[1][0] == '/' : true;
    try {
-      state.cd(pathname, words[1][0] == '/');
+      state.cd(pathname, root_dir);
    }
    catch (file_error& error) {
       throw command_error(error.what());
