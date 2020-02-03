@@ -119,7 +119,7 @@ void fn_ls (inode_state& state, const wordvec& words){
    }
    wordvec pathname {};
    if(words.size() == 2) pathname = split(words[1], "/");
-   bool root_dir = pathname.size() > 0 ? pathname[1] == "/" : false;
+   bool root_dir = words.size() > 1 ? words[1][0] == '/' : false;
    try {
      cout << state.ls(pathname, root_dir).str() << endl;
    }
