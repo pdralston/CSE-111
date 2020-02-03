@@ -142,7 +142,7 @@ void fn_mkdir (inode_state& state, const wordvec& words){
    wordvec pathname_vector = split(pathname, "/");
    wordvec contents = vector(pathname_vector.end() - 1, pathname_vector.end());
    pathname_vector =
-      vector(pathname_vector.begin() + 1, pathname_vector.end() - 1);
+      vector(pathname_vector.begin(), pathname_vector.end() - 1);
    state.make(pathname_vector, contents, pathname[0] == '/', true);
 }
 
