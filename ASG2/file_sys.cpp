@@ -57,7 +57,7 @@ const string& inode_state::prompt() const { return prompt_; }
 void inode_state::prompt(const string& prompt) { prompt_ = prompt; }
 
 
-void inode_state::make(wordvec& pathname, wordvec& data, bool relToRoot = false, bool makeDir = false){
+void inode_state::make(wordvec& pathname, wordvec& data, bool relToRoot, bool makeDir){
    string toMake = pathname.back();
    inode_ptr temp = cwd;
    pathname.pop_back();
@@ -74,7 +74,7 @@ void inode_state::make(wordvec& pathname, wordvec& data, bool relToRoot = false,
    cwd = temp;
 }
 
-void inode_state::cd(wordvec& pathname, bool relToRoot = false) {
+void inode_state::cd(wordvec& pathname, bool relToRoot, bool fileOk) {
    inode_ptr temp = cwd;
    if (relToRoot) {
       cwd = root;
@@ -83,15 +83,15 @@ void inode_state::cd(wordvec& pathname, bool relToRoot = false) {
    try {
       for (auto direc :  pathname) {
          cwd = cwd->contents->getEntry(direc);
+         if (!fileOk && !cwd->contents->isDirectory()) {
+            throw file_error (pathname[0] + " is not a valid directory");
+         }
       }
-   } catch (int){
+   } catch (...){//TODO fix this error catching design, its bad
       //restore the cwd when cd fails.
       cwd = temp;
-      stringstream pathString;
-      copy(pathname.begin(), pathname.end(), ostream_iterator<string>(pathString, "/"));
       throw file_error (pathname[0] + " is not a valid directory");
    }
-
 }
 
 const wordvec& inode_state::cat(wordvec& pathname, bool relToRoot) {
@@ -116,20 +116,8 @@ const wordvec& inode_state::cat(wordvec& pathname, bool relToRoot) {
 const stringstream inode_state::ls(wordvec& pathname, bool relToRoot) {
    stringstream lsStream;
    inode_ptr temp = cwd;
-   wordvec endPath{pathname.back()};
-   pathname.pop_back();
-   cd(pathname, relToRoot);
-   try {
-      //last step is a directory
-      cd(endPath);
-      lsStream << cwd->contents->ls();
-   //TODO this catch is bad design and needs to be changed
-   } catch (...) {
-      //last step is a file
-      lsStream << setw(6) << right
-               << cwd->get_inode_nr()
-               << (cwd->contents->getEntry(endPath[0]))->contents->ls();
-   }
+   cd(pathname, relToRoot, true);
+   lsStream << cwd->contents->ls();
    cwd = temp;
    return lsStream;
 }
@@ -174,6 +162,10 @@ int inode::getSize() {
 
 const string& inode::getName() {
    return contents->getName();
+}
+
+bool inode::isDirectory() {
+   return contents->isDirectory();
 }
 
 //function: file_error
@@ -310,7 +302,11 @@ const string directory::ls() const {
    for (auto entry: dirents) {
       entries << setw(6) << right << entry.second->get_inode_nr()
               << "  " << setw(6) << right << entry.second->getSize()
-              << "  " << entry.second->getName() << endl;
+              << "  " << entry.first;
+      if (entry.second->isDirectory()){
+         entries << "/";
+      }
+      entries << endl;
    }
    return entries.str();
 }

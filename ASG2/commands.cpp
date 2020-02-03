@@ -87,7 +87,7 @@ void fn_echo (inode_state& state, const wordvec& words){
 //function: fn_exit
 //description: exits the program
 //parameters: state -
-//            words -
+//            words -
 void fn_exit (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
