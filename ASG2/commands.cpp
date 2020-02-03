@@ -61,6 +61,9 @@ void fn_cat (inode_state& state, const wordvec& words){
    catch (file_error& error) {
      complain() << error.what() << endl;
    }
+   catch (std::out_of_range& error) {
+     complain() << "File Not Found." << endl;
+   }
 }
 
 //function: fn_cd
