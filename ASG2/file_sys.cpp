@@ -75,6 +75,10 @@ void inode_state::make(wordvec& pathname, wordvec& data, bool relToRoot, bool ma
 }
 
 void inode_state::cd(wordvec& pathname, bool relToRoot, bool fileOk) {
+   if (pathname.size() == 0) {
+      cwd = root;
+      return;
+   }
    inode_ptr temp = cwd;
    if (relToRoot) {
       cwd = root;
