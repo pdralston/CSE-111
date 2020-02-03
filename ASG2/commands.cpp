@@ -51,8 +51,7 @@ void fn_cat (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
    if(words.size() != 2) {
-      cerr << "Incorrect Number of Parameters." << endl;
-      return;
+      throw command_error("Incorrect Number of Parameters.");
    }
    string pathname = words[1];
    wordvec pathname_vector = split(pathname, "/");
@@ -117,8 +116,7 @@ void fn_make (inode_state& state, const wordvec& words){
    DEBUGF ('c', words);
    if(words.size() < 2) {
      //CASE: incorrect number of parameters.
-      cerr << "ERROR: File Contents Not Specified." << endl;
-      return;
+      throw command_error("ERROR: File Contents Not Specified.");
    }
    wordvec contents {};
    string pathname = words[1];
@@ -136,17 +134,16 @@ void fn_make (inode_state& state, const wordvec& words){
 void fn_mkdir (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
-   if(words.size() != 2) {
+   if(words.size() < 2) {
      //CASE: incorrect number of parameters.
-      cerr << "ERROR: Path not specified, or too many parameters passed."
-          << endl;
-      return;
+      throw command_error("ERROR: File Contents Not Specified.");
    }
    string pathname = words[1];
    wordvec pathname_vector = split(pathname, "/");
-   wordvec dir_name = vector(pathname_vector.end() - 1, pathname_vector.end());
-   pathname_vector = vector(pathname_vector.begin(), pathname_vector.end() - 1);
-   state.make(pathname_vector, dir_name, pathname[0] == '/', true);
+   wordvec contents = vector(pathname_vector.end() - 1, pathname_vector.end());
+   pathname_vector =
+      vector(pathname_vector.begin() + 1, pathname_vector.end() - 1);
+   state.make(pathname_vector, contents, pathname[0] == '/', true);
 }
 
 //function: fn_prompt
@@ -158,7 +155,7 @@ void fn_prompt (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
    if(words.size() < 2) {
-     state.prompt();
+     cout << state.prompt();
      return;
    }
    string new_prompt = "";
