@@ -62,9 +62,13 @@ void inode_state::make(wordvec& pathname, wordvec& data, bool relToRoot = false,
    pathname.pop_back();
    cd(pathname, relToRoot);
    if (makeDir) {
-      cwd->contents->mkdir(toMake);
+      inode_ptr newDir = cwd->contents->mkdir(toMake);
+      newDir->contents->setDefs(cwd, newDir);
+      newDir->contents->setName(toMake);
    } else {
-   (cwd->contents->mkfile(toMake))->contents->writefile(data);
+      inode_ptr newFile = cwd->contents->mkfile(toMake);
+      newFile->contents->writefile(data);
+      newFile->contents->setName(toMake);
    }
    cwd = temp;
 }
