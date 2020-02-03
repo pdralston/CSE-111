@@ -5,10 +5,13 @@
 #include <iostream>
 #include <stdexcept>
 #include <unordered_map>
+#include <sstream>
+#include <iterator>
 
 using namespace std;
 
 static const string PARENT = "..";
+static const string ROOT = "/\n";
 static const string SELF = ".";
 
 #include "debug.h"
@@ -42,22 +45,74 @@ inode_state::inode_state() {
           << ", prompt = \"" << prompt() << "\"");
 }
 
+inode_state::~inode_state() {
+   root->invalidate();
+}
+
 
 const string& inode_state::prompt() const { return prompt_; }
 
 
-void inode_state::prompt(const string& prompt) { prompt_ = prompt + " "; }
+void inode_state::prompt(const string& prompt) { prompt_ = prompt; }
 
-void inode_state::mkdir(string& dirname) {
-   cwd->contents->mkdir(dirname);
+
+void inode_state::make(wordvec& pathname, wordvec& data, bool relToRoot = false, bool makeDir = false){
+   string toMake = pathname.back();
+   inode_ptr temp = cwd;
+   pathname.pop_back();
+   cd(pathname, relToRoot);
+   if (makeDir) {
+      cwd->contents->mkdir(toMake);
+   } else {
+   (cwd->contents->mkfile(toMake))->contents->writefile(data);
+   }
+   cwd = temp;
 }
 
-void inode_state::pwd() {
-   if (cwd == root) {
-      cout << "/\n";
-      return;
+void inode_state::cd(wordvec& pathname, bool relToRoot = false) {
+   inode_ptr temp = cwd; 
+   if (relToRoot) {
+      cwd = root;
+      relToRoot = false;
    }
-   cwd->contents->printName();
+   try {
+      for (auto direc :  pathname) {
+         cwd = cwd->contents->getEntry(direc);
+      }
+   } catch (int){
+      //restore the cwd when cd fails.
+      cwd = temp;
+      stringstream pathString;
+      copy(pathname.begin(), pathname.end(), ostream_iterator<string>(pathString, "/"));
+      throw file_error (pathname[0] + " is not a valid directory");
+   }
+   
+}
+
+const wordvec& inode_state::cat(wordvec& pathname, bool relToRoot) {
+   string filename = pathname.back();
+   inode_ptr fileNode, temp = cwd;
+   pathname.pop_back();
+   try {
+      cd(pathname, relToRoot);
+   } catch (file_error& error) {
+      throw error;
+   }
+   try {
+      fileNode = cwd->contents->getEntry(filename);
+      cwd = temp;
+      return fileNode->contents->readfile();
+   } catch(int) {
+      cwd = temp;
+      throw file_error (filename + " does not exist.");
+   }
+}
+
+const string& inode_state::pwd() const {
+   if (cwd == root) {
+      return ROOT;
+   }
+   return cwd->contents->getName();
 }
 
 ostream& operator<< (ostream& out, const inode_state& state) {
@@ -124,7 +179,11 @@ void base_file::setName (const string&) {
    throw file_error ("is a " + error_file_type());
 }
 
-void base_file::printName() {
+const string& base_file::getName() const{
+   throw file_error ("is a " + error_file_type());
+}
+
+const inode_ptr& base_file::getEntry(const string&) const {
    throw file_error ("is a " + error_file_type());
 }
 
@@ -155,9 +214,9 @@ void plain_file::setName (const string& filename) {
 }
 
 directory::~directory() {
-   dirents.erase(SELF);
-   dirents.erase(PARENT);
-   cout << dirents.size();
+   for (auto dirEntry : dirents) {
+      dirEntry.second->invalidate();
+   }
 }
 
 size_t directory::size() const {
@@ -169,12 +228,10 @@ size_t directory::size() const {
 void directory::remove (const string& filename) {
    DEBUGF ('i', filename);
    if(filename == PARENT) {
-      file_error("Unable to delete root directory");
-      return;
+      throw file_error("Unable to delete root directory");
    }
    if(filename == SELF) {
-      file_error("Unable to delete current working directory");
-      return;
+      throw file_error("Unable to delete current working directory");
    }
    dirents.erase(filename);
 }
@@ -192,6 +249,10 @@ void directory::setDefs (const inode_ptr& parent, const inode_ptr& self) {
 
 void directory::setName (const string& dirname) {
    dirname_ = dirname;
+}
+
+const inode_ptr& directory::getEntry(const string& dirname) const{
+      return dirents.at(dirname);
 }
 
 inode_ptr directory::mkfile (const string& filename) {
