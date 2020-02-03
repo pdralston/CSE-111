@@ -75,7 +75,7 @@ void inode_state::make(wordvec& pathname, wordvec& data, bool relToRoot = false,
 }
 
 void inode_state::cd(wordvec& pathname, bool relToRoot = false) {
-   inode_ptr temp = cwd; 
+   inode_ptr temp = cwd;
    if (relToRoot) {
       cwd = root;
       relToRoot = false;
@@ -91,7 +91,7 @@ void inode_state::cd(wordvec& pathname, bool relToRoot = false) {
       copy(pathname.begin(), pathname.end(), ostream_iterator<string>(pathString, "/"));
       throw file_error (pathname[0] + " is not a valid directory");
    }
-   
+
 }
 
 const wordvec& inode_state::cat(wordvec& pathname, bool relToRoot) {
@@ -126,8 +126,8 @@ const stringstream inode_state::ls(wordvec& pathname, bool relToRoot) {
    //TODO this catch is bad design and needs to be changed
    } catch (...) {
       //last step is a file
-      lsStream << setw(6) << right 
-               << cwd->get_inode_nr() 
+      lsStream << setw(6) << right
+               << cwd->get_inode_nr()
                << (cwd->contents->getEntry(endPath[0]))->contents->ls();
    }
    cwd = temp;
@@ -188,7 +188,7 @@ const wordvec& base_file::readfile() const {
 }
 
 //function: writefile
-//description: 
+//description:
 void base_file::writefile (const wordvec&) {
    throw file_error ("is a " + error_file_type());
 }
@@ -227,7 +227,7 @@ const string base_file::ls() const {
 
 size_t plain_file::size() const {
    size_t size {0};
-   //increment 
+   //increment
    for (auto word : data) {
      size += word.length();
    }
@@ -308,7 +308,7 @@ inode_ptr directory::mkfile (const string& filename) {
 const string directory::ls() const {
    stringstream entries;
    for (auto entry: dirents) {
-      entries << setw(6) << right << entry.second->get_inode_nr() 
+      entries << setw(6) << right << entry.second->get_inode_nr()
               << "  " << setw(6) << right << entry.second->getSize()
               << "  " << entry.second->getName() << endl;
    }

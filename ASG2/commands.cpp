@@ -50,6 +50,12 @@ int exit_status_message() {
 void fn_cat (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
+   if(words.size() != 2) {
+      throw command_error("Incorrect Number of Parameters.");
+   }
+   string pathname = words[1];
+   wordvec pathname_vector = split(pathname, "/");
+   state.cat(pathname_vector, pathname[0] == '/');
 }
 
 //function: fn_cd
@@ -60,6 +66,12 @@ void fn_cat (inode_state& state, const wordvec& words){
 void fn_cd (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
+   if(words.size() > 2) {
+     throw command_error("Excessive Number of Parameters.");
+   }
+   wordvec pathname {};
+   if(words.size() == 2) pathname = split(words[1], "/");
+   state.cd(pathname, words[1][0] == '/');
 }
 
 //function: fn_echo
@@ -89,6 +101,15 @@ void fn_exit (inode_state& state, const wordvec& words){
 void fn_ls (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
+   if(words.size() > 2) {
+     //CASE: incorrect number of parameters
+     throw command_error("ERROR: Excessive Parameters Provided.");
+   }
+   wordvec pathname {};
+   if(words.size() == 2) pathname = split(words[1], "/");
+   bool root_dir = pathname.size() > 0 ? pathname[1] == "/" : false;
+   cout << state.ls(pathname, root_dir).str() << endl;
+   cout << "Finished ls" << endl;
 }
 
 //function: fn_lsr
@@ -101,12 +122,21 @@ void fn_lsr (inode_state& state, const wordvec& words){
 }
 
 //function: fn_make
-//description: makes a file with name <> containing <>
+//description: makes a file with name <words[0]> containing <words[1:]>
 //parameters: state -
 //            words -
 void fn_make (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
+   if(words.size() < 2) {
+     //CASE: incorrect number of parameters.
+      throw command_error("ERROR: Too Few Number of Parameters.");
+   }
+   wordvec contents {};
+   wordvec pathname = split(words[1], "/");
+   if (words.size() >= 2) //CASE: file not empty
+      contents = vector(words.begin() + 2, words.end());
+   state.make(pathname, contents, words[0][1] == '/', false);
 }
 
 //function: fn_mkdir
@@ -117,6 +147,13 @@ void fn_make (inode_state& state, const wordvec& words){
 void fn_mkdir (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
+   if(words.size() != 2) {
+     //CASE: incorrect number of parameters.
+      throw command_error("ERROR: Too Few/Many Number of Parameters.");
+   }
+   wordvec pathname = split(words[1], "/");
+   wordvec empty_vec {};
+   state.make(pathname, empty_vec, words[0][1] == '/', true);
 }
 
 //function: fn_prompt
@@ -127,6 +164,15 @@ void fn_mkdir (inode_state& state, const wordvec& words){
 void fn_prompt (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
+   if(words.size() < 2) {
+     cout << state.prompt();
+     return;
+   }
+   string new_prompt = "";
+   for(string prompt_segment : vector(words.begin() + 1, words.end()))
+      new_prompt += prompt_segment + " ";
+   // string new_prompt = words[1];
+   state.prompt(new_prompt);
 }
 
 //functions: fn_pwd
@@ -136,6 +182,7 @@ void fn_prompt (inode_state& state, const wordvec& words){
 void fn_pwd (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
+   state.pwd();
 }
 
 //function: fn_rm
