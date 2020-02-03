@@ -55,7 +55,12 @@ void fn_cat (inode_state& state, const wordvec& words){
    }
    string pathname = words[1];
    wordvec pathname_vector = split(pathname, "/");
-   state.cat(pathname_vector, pathname[0] == '/');
+   try {
+      cout << state.cat(pathname_vector, pathname[0] == '/') << endl;
+   }
+   catch (file_error& error) {
+     complain() << error.what() << endl;
+   }
 }
 
 //function: fn_cd
@@ -69,9 +74,16 @@ void fn_cd (inode_state& state, const wordvec& words){
    if(words.size() > 2) {
      throw command_error("Excessive Number of Parameters.");
    }
+
    wordvec pathname {};
    if(words.size() == 2) pathname = split(words[1], "/");
-   state.cd(pathname, words[1][0] == '/');
+
+   try {
+      state.cd(pathname, words[1][0] == '/');
+   }
+   catch (file_error& error) {
+      complain() << error.what() <<endl;
+   }
 }
 
 //function: fn_echo
@@ -108,8 +120,12 @@ void fn_ls (inode_state& state, const wordvec& words){
    wordvec pathname {};
    if(words.size() == 2) pathname = split(words[1], "/");
    bool root_dir = pathname.size() > 0 ? pathname[1] == "/" : false;
-   cout << state.ls(pathname, root_dir).str() << endl;
-   cout << "Finished ls" << endl;
+   try {
+     cout << state.ls(pathname, root_dir).str() << endl;
+   }
+   catch (file_error& error) {
+      complain() << error.what() <<endl;
+   }
 }
 
 //function: fn_lsr
