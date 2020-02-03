@@ -51,7 +51,7 @@ void fn_cat (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
    if(words.size() != 2) {
-      cerr << "Incorrect Number of Parameters." << endl;
+      throw command_error("Incorrect Number of Parameters.");
       return;
    }
    string pathname = words[1];
@@ -117,7 +117,7 @@ void fn_make (inode_state& state, const wordvec& words){
    DEBUGF ('c', words);
    if(words.size() < 2) {
      //CASE: incorrect number of parameters.
-      cerr << "ERROR: File Contents Not Specified." << endl;
+      throw command_error("ERROR: File Contents Not Specified.");
       return;
    }
    wordvec contents {};
@@ -125,7 +125,7 @@ void fn_make (inode_state& state, const wordvec& words){
    wordvec pathname_vector = split(pathname, "/");
    if (words.size() > 2)
       contents = vector(words.begin() + 2, words.end());
-   state.make(pathname_vector, contents, pathname[0] == '/');
+   state.make(pathname_vector, contents, pathname[0] == '/', false);
 }
 
 //function: fn_mkdir
@@ -136,6 +136,17 @@ void fn_make (inode_state& state, const wordvec& words){
 void fn_mkdir (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
+   if(words.size() < 2) {
+     //CASE: incorrect number of parameters.
+      throw command_error("ERROR: File Contents Not Specified.");
+      return;
+   }
+   string pathname = words[1];
+   wordvec pathname_vector = split(pathname, "/");
+   wordvec contents = vector(pathname_vector.end() - 1, pathname_vector.end());
+   pathname_vector =
+      vector(pathname_vector.begin() + 1, pathname_vector.end() - 1);
+   state.make(pathname_vector, contents, pathname[0] == '/', true);
 }
 
 //function: fn_prompt
