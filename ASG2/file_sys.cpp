@@ -299,10 +299,6 @@ const inode_ptr& directory::getEntry(const string& dirname) const{
       return dirents.at(dirname);
 }
 
-const inode_ptr& directory::getEntry(const string& dirname) const{
-      return dirents.at(dirname);
-}
-
 inode_ptr directory::mkfile (const string& filename) {
    DEBUGF ('i', filename);
    dirents.insert({filename, make_shared<inode>(file_type::PLAIN_TYPE)});
