@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <sstream>
 #include <iterator>
+#include <iomanip>
 
 using namespace std;
 
@@ -112,6 +113,27 @@ const wordvec& inode_state::cat(wordvec& pathname, bool relToRoot) {
    }
 }
 
+const stringstream inode_state::ls(wordvec& pathname, bool relToRoot) {
+   stringstream lsStream;
+   inode_ptr temp = cwd;
+   wordvec endPath{pathname.back()};
+   pathname.pop_back();
+   cd(pathname, relToRoot);
+   try {
+      //last step is a directory
+      cd(endPath);
+      lsStream << cwd->contents->ls();
+   //TODO this catch is bad design and needs to be changed
+   } catch (...) {
+      //last step is a file
+      lsStream << setw(6) << right 
+               << cwd->get_inode_nr() 
+               << (cwd->contents->getEntry(endPath[0]))->contents->ls();
+   }
+   cwd = temp;
+   return lsStream;
+}
+
 const string& inode_state::pwd() const {
    if (cwd == root) {
       return ROOT;
@@ -144,6 +166,14 @@ inode::inode (file_type type, const string& name) : inode(type) {
 int inode::get_inode_nr() const {
    DEBUGF ('i', "inode = " << inode_nr);
    return inode_nr;
+}
+
+int inode::getSize() {
+   return contents->size();
+}
+
+const string& inode::getName() {
+   return contents->getName();
 }
 
 //function: file_error
@@ -191,6 +221,10 @@ const inode_ptr& base_file::getEntry(const string&) const {
    throw file_error ("is a " + error_file_type());
 }
 
+const string base_file::ls() const {
+   throw file_error ("is a " + error_file_type());
+}
+
 size_t plain_file::size() const {
    size_t size {0};
    //increment 
@@ -215,6 +249,12 @@ void plain_file::writefile (const wordvec& words) {
 
 void plain_file::setName (const string& filename) {
    filename_ = filename;
+}
+
+const string plain_file::ls() const {
+   stringstream fileListing;
+   fileListing << "  " << setw(6) << right << size() << "  " << getName() << endl;
+   return fileListing.str();
 }
 
 directory::~directory() {
@@ -252,7 +292,7 @@ void directory::setDefs (const inode_ptr& parent, const inode_ptr& self) {
 }
 
 void directory::setName (const string& dirname) {
-   dirname_ = dirname;
+   dirname_ = dirname + "/";
 }
 
 const inode_ptr& directory::getEntry(const string& dirname) const{
@@ -263,4 +303,14 @@ inode_ptr directory::mkfile (const string& filename) {
    DEBUGF ('i', filename);
    dirents.insert({filename, make_shared<inode>(file_type::PLAIN_TYPE)});
    return dirents.at(filename);
+}
+
+const string directory::ls() const {
+   stringstream entries;
+   for (auto entry: dirents) {
+      entries << setw(6) << right << entry.second->get_inode_nr() 
+              << "  " << setw(6) << right << entry.second->getSize()
+              << "  " << entry.second->getName() << endl;
+   }
+   return entries.str();
 }
