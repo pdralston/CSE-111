@@ -69,7 +69,7 @@ void fn_cd (inode_state& state, const wordvec& words){
    if(words.size() > 2) {
      throw command_error("Excessive Number of Parameters.");
    }
-   wordvec pathname {}
+   wordvec pathname {};
    if(words.size() == 2) pathname = split(words[1], "/");
    state.cd(pathname, words[1][0] == '/');
 }
