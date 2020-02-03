@@ -10,6 +10,7 @@
 #include <memory>
 #include <map>
 #include <vector>
+#include <sstream>
 using namespace std;
 
 #include "util.h"
@@ -40,12 +41,16 @@ class inode_state {
       string prompt_ {"% "};
    public:
       inode_state (const inode_state&) = delete; // copy ctor
+      ~inode_state();
       inode_state& operator= (const inode_state&) = delete; // op=
       inode_state();
       const string& prompt() const;
       void prompt(const string& prompt);
-      void mkdir(string&);
-      void pwd();
+      void make(wordvec&, wordvec&, bool, bool);
+      void cd(wordvec&, bool);
+      const string& pwd() const;
+      const wordvec& cat(wordvec&, bool);
+      const stringstream ls(wordvec&, bool);
 };
 
 // class inode -
@@ -71,6 +76,9 @@ class inode {
       inode (file_type);
       inode (file_type, const string&);
       int get_inode_nr() const;
+      void invalidate(){contents = NULL;}
+      int getSize();
+      const string& getName();
 };
 
 
@@ -100,7 +108,9 @@ class base_file {
       virtual inode_ptr mkfile (const string& filename);
       virtual void setDefs (const inode_ptr&, const inode_ptr&);
       virtual void setName (const string&);
-      virtual void printName();
+      virtual const string& getName() const;
+      virtual const inode_ptr& getEntry(const string&) const;
+      virtual const string ls() const;
 };
 
 // class plain_file -
@@ -124,7 +134,8 @@ class plain_file: public base_file {
       virtual const wordvec& readfile() const override;
       virtual void writefile (const wordvec& newdata) override;
       virtual void setName (const string&) override;
-      virtual void printName() override {cout << filename_ << endl;}
+      virtual const string& getName() const override {return filename_;}
+      virtual const string ls() const override;
 };
 
 // class directory -
@@ -161,7 +172,9 @@ class directory: public base_file {
       virtual inode_ptr mkfile (const string& filename) override;
       virtual void setDefs (const inode_ptr&, const inode_ptr&) override;
       virtual void setName (const string&) override;
-      virtual void printName() override {cout << dirname_ << endl;}
+      virtual const string& getName() const override {return dirname_;}
+      virtual const inode_ptr& getEntry(const string&) const override;
+      virtual const string ls() const override;
 };
 
 #endif

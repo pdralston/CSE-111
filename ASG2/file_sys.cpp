@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <sstream>
 #include <iterator>
+#include <iomanip>
 
 using namespace std;
 
@@ -62,15 +63,19 @@ void inode_state::make(wordvec& pathname, wordvec& data, bool relToRoot = false,
    pathname.pop_back();
    cd(pathname, relToRoot);
    if (makeDir) {
-      cwd->contents->mkdir(toMake);
+      inode_ptr newDir = cwd->contents->mkdir(toMake);
+      newDir->contents->setDefs(cwd, newDir);
+      newDir->contents->setName(toMake);
    } else {
-   (cwd->contents->mkfile(toMake))->contents->writefile(data);
+      inode_ptr newFile = cwd->contents->mkfile(toMake);
+      newFile->contents->writefile(data);
+      newFile->contents->setName(toMake);
    }
    cwd = temp;
 }
 
 void inode_state::cd(wordvec& pathname, bool relToRoot = false) {
-   inode_ptr temp = cwd; 
+   inode_ptr temp = cwd;
    if (relToRoot) {
       cwd = root;
       relToRoot = false;
@@ -86,7 +91,7 @@ void inode_state::cd(wordvec& pathname, bool relToRoot = false) {
       copy(pathname.begin(), pathname.end(), ostream_iterator<string>(pathString, "/"));
       throw file_error (pathname[0] + " is not a valid directory");
    }
-   
+
 }
 
 const wordvec& inode_state::cat(wordvec& pathname, bool relToRoot) {
@@ -106,6 +111,27 @@ const wordvec& inode_state::cat(wordvec& pathname, bool relToRoot) {
       cwd = temp;
       throw file_error (filename + " does not exist.");
    }
+}
+
+const stringstream inode_state::ls(wordvec& pathname, bool relToRoot) {
+   stringstream lsStream;
+   inode_ptr temp = cwd;
+   wordvec endPath{pathname.back()};
+   pathname.pop_back();
+   cd(pathname, relToRoot);
+   try {
+      //last step is a directory
+      cd(endPath);
+      lsStream << cwd->contents->ls();
+   //TODO this catch is bad design and needs to be changed
+   } catch (...) {
+      //last step is a file
+      lsStream << setw(6) << right
+               << cwd->get_inode_nr()
+               << (cwd->contents->getEntry(endPath[0]))->contents->ls();
+   }
+   cwd = temp;
+   return lsStream;
 }
 
 const string& inode_state::pwd() const {
@@ -142,6 +168,14 @@ int inode::get_inode_nr() const {
    return inode_nr;
 }
 
+int inode::getSize() {
+   return contents->size();
+}
+
+const string& inode::getName() {
+   return contents->getName();
+}
+
 //function: file_error
 //description: calls a runtime_error with the description <what>
 file_error::file_error (const string& what):
@@ -154,7 +188,7 @@ const wordvec& base_file::readfile() const {
 }
 
 //function: writefile
-//description: 
+//description:
 void base_file::writefile (const wordvec&) {
    throw file_error ("is a " + error_file_type());
 }
@@ -187,9 +221,13 @@ const inode_ptr& base_file::getEntry(const string&) const {
    throw file_error ("is a " + error_file_type());
 }
 
+const string base_file::ls() const {
+   throw file_error ("is a " + error_file_type());
+}
+
 size_t plain_file::size() const {
    size_t size {0};
-   //increment 
+   //increment
    for (auto word : data) {
      size += word.length();
    }
@@ -211,6 +249,12 @@ void plain_file::writefile (const wordvec& words) {
 
 void plain_file::setName (const string& filename) {
    filename_ = filename;
+}
+
+const string plain_file::ls() const {
+   stringstream fileListing;
+   fileListing << "  " << setw(6) << right << size() << "  " << getName() << endl;
+   return fileListing.str();
 }
 
 directory::~directory() {
@@ -248,7 +292,11 @@ void directory::setDefs (const inode_ptr& parent, const inode_ptr& self) {
 }
 
 void directory::setName (const string& dirname) {
-   dirname_ = dirname;
+   dirname_ = dirname + "/";
+}
+
+const inode_ptr& directory::getEntry(const string& dirname) const{
+      return dirents.at(dirname);
 }
 
 const inode_ptr& directory::getEntry(const string& dirname) const{
@@ -259,4 +307,14 @@ inode_ptr directory::mkfile (const string& filename) {
    DEBUGF ('i', filename);
    dirents.insert({filename, make_shared<inode>(file_type::PLAIN_TYPE)});
    return dirents.at(filename);
+}
+
+const string directory::ls() const {
+   stringstream entries;
+   for (auto entry: dirents) {
+      entries << setw(6) << right << entry.second->get_inode_nr()
+              << "  " << setw(6) << right << entry.second->getSize()
+              << "  " << entry.second->getName() << endl;
+   }
+   return entries.str();
 }
