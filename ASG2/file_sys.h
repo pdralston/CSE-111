@@ -10,6 +10,7 @@
 #include <memory>
 #include <map>
 #include <vector>
+#include <sstream>
 using namespace std;
 
 #include "util.h"
@@ -49,6 +50,7 @@ class inode_state {
       void cd(wordvec&, bool);
       const string& pwd() const;
       const wordvec& cat(wordvec&, bool);
+      const stringstream ls(wordvec&, bool);
 };
 
 // class inode -
@@ -75,6 +77,8 @@ class inode {
       inode (file_type, const string&);
       int get_inode_nr() const;
       void invalidate(){contents = NULL;}
+      int getSize();
+      const string& getName();
 };
 
 
@@ -106,6 +110,7 @@ class base_file {
       virtual void setName (const string&);
       virtual const string& getName() const;
       virtual const inode_ptr& getEntry(const string&) const;
+      virtual const string ls() const;
 };
 
 // class plain_file -
@@ -130,6 +135,7 @@ class plain_file: public base_file {
       virtual void writefile (const wordvec& newdata) override;
       virtual void setName (const string&) override;
       virtual const string& getName() const override {return filename_;}
+      virtual const string ls() const override;
 };
 
 // class directory -
@@ -168,6 +174,7 @@ class directory: public base_file {
       virtual void setName (const string&) override;
       virtual const string& getName() const override {return dirname_;}
       virtual const inode_ptr& getEntry(const string&) const override;
+      virtual const string ls() const override;
 };
 
 #endif
