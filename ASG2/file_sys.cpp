@@ -57,21 +57,22 @@ const string& inode_state::prompt() const { return prompt_; }
 void inode_state::prompt(const string& prompt) { prompt_ = prompt; }
 
 
-void inode_state::make(wordvec& pathname, wordvec& data, bool relToRoot, bool makeDir){
-   string toMake = pathname.back();
-   inode_ptr temp = cwd;
-   pathname.pop_back();
-   cd(pathname, relToRoot);
-   if (makeDir) {
-      inode_ptr newDir = cwd->contents->mkdir(toMake);
-      newDir->contents->setDefs(cwd, newDir);
-      newDir->contents->setName(toMake);
-   } else {
-      inode_ptr newFile = cwd->contents->mkfile(toMake);
-      newFile->contents->writefile(data);
-      newFile->contents->setName(toMake);
-   }
-   cwd = temp;
+void inode_state::make(wordvec& pathname, wordvec& data,
+   bool relToRoot, bool makeDir){
+      string toMake = pathname.back();
+      inode_ptr temp = cwd;
+      pathname.pop_back();
+      cd(pathname, relToRoot);
+      if (makeDir) {
+         inode_ptr newDir = cwd->contents->mkdir(toMake);
+         newDir->contents->setDefs(cwd, newDir);
+         newDir->contents->setName(toMake);
+      } else {
+         inode_ptr newFile = cwd->contents->mkfile(toMake);
+         newFile->contents->writefile(data);
+         newFile->contents->setName(toMake);
+      }
+      cwd = temp;
 }
 
 void inode_state::cd(wordvec& pathname, bool relToRoot, bool fileOk) {
