@@ -48,7 +48,7 @@ class inode_state {
       void prompt(const string& prompt);
       void make(wordvec&, wordvec&, bool = false, bool = false);
       void cd(wordvec&, bool = false, bool = false);
-      const string& pwd() const;
+      const string pwd() const;
       const wordvec& cat(wordvec&, bool);
       const stringstream ls(wordvec&, bool);
       void rm(wordvec&, bool = false, bool = false);
