@@ -61,15 +61,28 @@ void inode_state::make(wordvec& pathname, wordvec& data, bool relToRoot, bool ma
    string toMake = pathname.back();
    inode_ptr temp = cwd;
    pathname.pop_back();
+   if (pathname.size() == 0) {
+      pathname.push_back(SELF); 
+   }
    cd(pathname, relToRoot);
    if (makeDir) {
-      inode_ptr newDir = cwd->contents->mkdir(toMake);
-      newDir->contents->setDefs(cwd, newDir);
-      newDir->contents->setName(toMake);
+      try {
+         inode_ptr newDir = cwd->contents->mkdir(toMake);
+         newDir->contents->setDefs(cwd, newDir);
+         newDir->contents->setName(toMake);
+      } catch (file_error& error) {
+         cwd = temp;
+         throw file_error(error.what());
+      }
    } else {
-      inode_ptr newFile = cwd->contents->mkfile(toMake);
-      newFile->contents->writefile(data);
-      newFile->contents->setName(toMake);
+      try {
+         inode_ptr newFile = cwd->contents->mkfile(toMake);
+         newFile->contents->writefile(data);
+         newFile->contents->setName(toMake);
+      } catch (file_error& error) {
+         cwd = temp;
+         throw file_error(error.what());
+      }
    }
    cwd = temp;
 }
@@ -315,11 +328,18 @@ void directory::remove (const string& filename) {
    if(filename == SELF) {
       throw file_error("Unable to delete current working directory");
    }
-   dirents.erase(filename);
+   try {
+      dirents.erase(filename);
+   } catch (out_of_range&) {
+      throw file_error(filename + " does not exist.");
+   }
 }
 
 inode_ptr directory::mkdir (const string& dirname) {
    DEBUGF ('i', dirname);
+   if (dirents.find(dirname) == dirents.end()) {
+      throw file_error(dirname + " already exists.");
+   }
    dirents.insert({dirname, make_shared<inode>(file_type::DIRECTORY_TYPE, dirname)});
    return dirents.at(dirname);
 }
@@ -338,7 +358,9 @@ const inode_ptr& directory::getEntry(const string& dirname) const{
 }
 
 inode_ptr directory::mkfile (const string& filename) {
-   DEBUGF ('i', filename);
+   if (dirents.find(filename) == dirents.end()) {
+      throw file_error(filename + " already exists.");
+   }
    dirents.insert({filename, make_shared<inode>(file_type::PLAIN_TYPE)});
    return dirents.at(filename);
 }
