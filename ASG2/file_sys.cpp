@@ -57,31 +57,32 @@ const string& inode_state::prompt() const { return prompt_; }
 void inode_state::prompt(const string& prompt) { prompt_ = prompt; }
 
 
-void inode_state::make(wordvec& pathname, wordvec& data, bool relToRoot, bool makeDir){
-   string toMake = pathname.back();
-   inode_ptr temp = cwd;
-   pathname.pop_back();
-   cd(pathname, relToRoot);
-   if (makeDir) {
-     try {
-        inode_ptr newDir = cwd->contents->mkdir(toMake);
-        newDir->contents->setDefs(cwd, newDir);
-        newDir->contents->setName(toMake);
-     } catch (file_error& error) {
-        cwd = temp;
-        throw file_error(error.what());
-     }
-  } else {
-     try {
-        inode_ptr newFile = cwd->contents->mkfile(toMake);
-        newFile->contents->writefile(data);
-        newFile->contents->setName(toMake);
-     } catch (file_error& error) {
-        cwd = temp;
-        throw file_error(error.what());
-     }
-  }
-  cwd = temp;
+void inode_state::make(wordvec& pathname,
+   wordvec& data, bool relToRoot, bool makeDir){
+       string toMake = pathname.back();
+       inode_ptr temp = cwd;
+       pathname.pop_back();
+       cd(pathname, relToRoot);
+       if (makeDir) {
+         try {
+            inode_ptr newDir = cwd->contents->mkdir(toMake);
+            newDir->contents->setDefs(cwd, newDir);
+            newDir->contents->setName(toMake);
+         } catch (file_error& error) {
+            cwd = temp;
+            throw file_error(error.what());
+         }
+      } else {
+         try {
+            inode_ptr newFile = cwd->contents->mkfile(toMake);
+            newFile->contents->writefile(data);
+            newFile->contents->setName(toMake);
+         } catch (file_error& error) {
+            cwd = temp;
+            throw file_error(error.what());
+         }
+      }
+      cwd = temp;
 }
 
 void inode_state::cd(wordvec& pathname, bool relToRoot, bool fileOk) {
@@ -99,7 +100,8 @@ void inode_state::cd(wordvec& pathname, bool relToRoot, bool fileOk) {
       for (auto direc :  pathname) {
          cwd = cwd->contents->getEntry(direc);
          if (!fileOk && !cwd->contents->isDirectory()) {
-            throw file_error (pathname[0] + " is not a valid directory");
+            throw file_error (pathname[0] +
+                " is not a valid directory");
          }
       }
    } catch (out_of_range&){
@@ -136,6 +138,29 @@ const stringstream inode_state::ls(wordvec& pathname, bool relToRoot) {
    cwd = temp;
    return lsStream;
 }
+
+const stringstream inode_state::lsr(wordvec& pathname,
+   bool relToRoot) {
+     stringstream lsStream;
+     inode_ptr temp = cwd;
+     cd(pathname, relToRoot, true);
+
+     string target = pathname.back();
+     pathname.pop_back();
+     cd(pathname, relToRoot);
+     //remove listing in parent dirents
+     try {
+        lsStream << this->pwd().substr(0, this->pwd().length() - 1)
+            << ":" << endl;
+        lsStream << cwd->contents->ls();
+     } catch (out_of_range& error) {
+        cwd = temp;
+        throw file_error(error.what());
+     }
+     cwd = temp;
+     return lsStream;
+}
+
 
 const string inode_state::pwd() const {
    if (cwd == root) {
@@ -301,7 +326,8 @@ void plain_file::setName (const string& filename) {
 
 const string plain_file::ls() const {
    stringstream fileListing;
-   fileListing << "  " << setw(6) << right << size() << "  " << getName() << endl;
+   fileListing << "  " << setw(6) << right << size()
+     << "  " << getName() << endl;
    return fileListing.str();
 }
 
@@ -330,13 +356,15 @@ void directory::remove (const string& filename) {
 
 inode_ptr directory::mkdir (const string& dirname) {
    DEBUGF ('i', dirname);
-   dirents.insert({dirname, make_shared<inode>(file_type::DIRECTORY_TYPE, dirname)});
+   dirents.insert({dirname,
+      make_shared<inode>(file_type::DIRECTORY_TYPE, dirname)});
    return dirents.at(dirname);
 }
 
-void directory::setDefs (const inode_ptr& parent, const inode_ptr& self) {
-   dirents.insert({PARENT, parent});
-   dirents.insert({SELF, self});
+void directory::setDefs (const inode_ptr& parent,
+   const inode_ptr& self) {
+       dirents.insert({PARENT, parent});
+       dirents.insert({SELF, self});
 }
 
 void directory::setName (const string& dirname) {
@@ -349,7 +377,8 @@ const inode_ptr& directory::getEntry(const string& dirname) const{
 
 inode_ptr directory::mkfile (const string& filename) {
    DEBUGF ('i', filename);
-   dirents.insert({filename, make_shared<inode>(file_type::PLAIN_TYPE)});
+   dirents.insert({filename, make_shared<inode>
+      (file_type::PLAIN_TYPE)});
    return dirents.at(filename);
 }
 

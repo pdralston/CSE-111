@@ -51,6 +51,7 @@ class inode_state {
       const string pwd() const;
       const wordvec& cat(wordvec&, bool);
       const stringstream ls(wordvec&, bool);
+      const stringstream lsr(wordvec&, bool);
       void rm(wordvec&, bool = false, bool = false);
 };
 
