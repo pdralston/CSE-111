@@ -54,10 +54,11 @@ void fn_cat (inode_state& state, const wordvec& words){
    if(words.size() != 2) {
       throw command_error("Incorrect Number of Parameters.");
    }
-   string pathname = words[1];
-   wordvec pathname_vector = split(pathname, "/");
+   wordvec pathname = split(words[1], "/");
+   if(pathname.size() == 1) pathname.insert(pathname.begin(), ".");
+   bool root_dir = words.size() > 1 ? words[1][0] == '/' : true;
    try {
-      cout << state.cat(pathname_vector, pathname[0] == '/') << endl;
+      cout << state.cat(pathname, root_dir) << endl;
    }
    catch (file_error& error) {
      throw command_error(error.what());
