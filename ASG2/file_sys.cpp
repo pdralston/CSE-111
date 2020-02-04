@@ -91,7 +91,7 @@ void inode_state::cd(wordvec& pathname, bool relToRoot, bool fileOk) {
             throw file_error (pathname[0] + " is not a valid directory");
          }
       }
-   } catch (...){//TODO fix this error catching design, its bad
+   } catch (out_of_range&){
       //restore the cwd when cd fails.
       cwd = temp;
       throw file_error (pathname[0] + " is not a valid directory");
@@ -111,7 +111,7 @@ const wordvec& inode_state::cat(wordvec& pathname, bool relToRoot) {
       fileNode = cwd->contents->getEntry(filename);
       cwd = temp;
       return fileNode->contents->readfile();
-   } catch(int) {
+   } catch(out_of_range&) {
       cwd = temp;
       throw file_error (filename + " does not exist.");
    }
@@ -131,6 +131,34 @@ const string& inode_state::pwd() const {
       return ROOT;
    }
    return cwd->contents->getName();
+}
+
+void inode_state::rm(wordvec& pathname, bool relToRoot, bool rmr) {
+   if (pathname.size() == 0) {
+      throw file_error("Unable to remove root");
+   }
+   inode_ptr temp = cwd;
+   try {
+      cd(pathname, relToRoot);
+      if (cwd->isDirectory() == rmr) {
+         //either rmr is called on a directory
+         //or rm was called on a file;
+         
+         //deals with directory recursively
+         //deals with plain_file singularly
+         cwd->invalidate();
+         string target = pathname.back();
+         pathname.pop_back();
+         cwd = temp;
+         cd(pathname, relToRoot);
+         cwd->contents->rm(target);
+         cwd = temp;
+         return;
+      }
+   } catch (file_error& error) {
+      cwd = temp;
+      throw(file_error(error.what()));
+   }
 }
 
 ostream& operator<< (ostream& out, const inode_state& state) {
@@ -218,6 +246,10 @@ const inode_ptr& base_file::getEntry(const string&) const {
 }
 
 const string base_file::ls() const {
+   throw file_error ("is a " + error_file_type());
+}
+
+void base_file::rm(const string&) {
    throw file_error ("is a " + error_file_type());
 }
 
@@ -313,4 +345,8 @@ const string directory::ls() const {
       entries << endl;
    }
    return entries.str();
+}
+
+void directory::rm(const string& target) {
+   dirents.erase(target);
 }

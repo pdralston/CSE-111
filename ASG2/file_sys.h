@@ -51,6 +51,7 @@ class inode_state {
       const string& pwd() const;
       const wordvec& cat(wordvec&, bool);
       const stringstream ls(wordvec&, bool);
+      void rm(wordvec&, bool = false, bool = false);
 };
 
 // class inode -
@@ -113,6 +114,7 @@ class base_file {
       virtual const inode_ptr& getEntry(const string&) const;
       virtual const string ls() const;
       virtual bool isDirectory() {return false;}
+      virtual void rm(const string&);
 };
 
 // class plain_file -
@@ -178,6 +180,7 @@ class directory: public base_file {
       virtual const inode_ptr& getEntry(const string&) const override;
       virtual const string ls() const override;
       virtual bool isDirectory() override {return true;}
+      virtual void rm(const string&) override;
 };
 
 #endif
