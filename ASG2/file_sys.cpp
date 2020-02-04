@@ -76,6 +76,7 @@ void inode_state::make(wordvec& pathname, wordvec& data, bool relToRoot, bool ma
 
 void inode_state::cd(wordvec& pathname, bool relToRoot, bool fileOk) {
    if (pathname.size() == 0) {
+      DEBUGF('r', "cwd = root");
       cwd = root;
       return;
    }
@@ -119,14 +120,10 @@ const wordvec& inode_state::cat(wordvec& pathname, bool relToRoot) {
 
 const stringstream inode_state::ls(wordvec& pathname, bool relToRoot) {
    stringstream lsStream;
-   if (pathname.size() == 0) {
-      lsStream << cwd->contents->ls();
-   } else {
-      inode_ptr temp = cwd;
-      cd(pathname, relToRoot, true);
-      lsStream << cwd->contents->ls();
-      cwd = temp;
-   }
+   inode_ptr temp = cwd;
+   cd(pathname, relToRoot, true);
+   lsStream << cwd->contents->ls();
+   cwd = temp;
    return lsStream;
 }
 
@@ -138,31 +135,33 @@ const string inode_state::pwd() const {
 }
 
 void inode_state::rm(wordvec& pathname, bool relToRoot, bool rmr) {
-   if (pathname.size() == 0) {
-      throw file_error("Unable to remove root");
-   }
    inode_ptr temp = cwd;
-   try {
-      cd(pathname, relToRoot);
-      if (cwd->isDirectory() == rmr) {
-         //either rmr is called on a directory
-         //or rm was called on a file;
-         
-         //deals with directory recursively
-         //deals with plain_file singularly
-         cwd->invalidate();
-         string target = pathname.back();
-         pathname.pop_back();
-         cwd = temp;
-         cd(pathname, relToRoot);
-         cwd->contents->rm(target);
-         cwd = temp;
-         return;
-      }
-   } catch (file_error& error) {
-      cwd = temp;
-      throw(file_error(error.what()));
+   cd(pathname, relToRoot, true);
+   if (cwd == root) {
+      throw file_error("unable to delete root");
    }
+   if (cwd == temp) {
+      throw file_error("unable to delete pwd");
+   }
+   if (cwd->isDirectory()) {
+      if(!rmr) {
+         throw file_error("unable to rm directory. use rmr.");
+      }
+      cwd->contents->rm();
+   } else {
+      cwd->rm();
+   }
+   string target = pathname.back();
+   pathname.pop_back();
+   cd(pathname, relToRoot);
+   //remove listing in parent dirents
+   try {
+      cwd->contents->remove(target);
+   } catch (out_of_range& error) {
+      cwd = temp;
+      throw file_error(error.what());
+   }
+   cwd = temp;
 }
 
 ostream& operator<< (ostream& out, const inode_state& state) {
@@ -202,6 +201,13 @@ const string& inode::getName() {
 
 bool inode::isDirectory() {
    return contents->isDirectory();
+}
+
+void inode::rm() {
+   if (isDirectory()) {
+      contents->rm();
+   }
+   contents = NULL;
 }
 
 //function: file_error
@@ -253,7 +259,7 @@ const string base_file::ls() const {
    throw file_error ("is a " + error_file_type());
 }
 
-void base_file::rm(const string&) {
+void base_file::rm() {
    throw file_error ("is a " + error_file_type());
 }
 
@@ -351,6 +357,11 @@ const string directory::ls() const {
    return entries.str();
 }
 
-void directory::rm(const string& target) {
-   dirents.erase(target);
+void directory::rm() {
+   for (auto entry : dirents) {
+      if(entry.first != SELF and entry.first != PARENT) {
+         entry.second->rm();
+      }
+   }
+   dirents.clear();
 }

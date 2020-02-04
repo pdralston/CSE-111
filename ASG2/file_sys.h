@@ -81,6 +81,7 @@ class inode {
       int getSize();
       const string& getName();
       bool isDirectory();
+      void rm();
 };
 
 
@@ -114,7 +115,7 @@ class base_file {
       virtual const inode_ptr& getEntry(const string&) const;
       virtual const string ls() const;
       virtual bool isDirectory() {return false;}
-      virtual void rm(const string&);
+      virtual void rm();
 };
 
 // class plain_file -
@@ -180,7 +181,7 @@ class directory: public base_file {
       virtual const inode_ptr& getEntry(const string&) const override;
       virtual const string ls() const override;
       virtual bool isDirectory() override {return true;}
-      virtual void rm(const string&) override;
+      virtual void rm() override;
 };
 
 #endif
