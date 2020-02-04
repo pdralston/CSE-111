@@ -359,7 +359,9 @@ const string directory::ls() const {
 
 void directory::rm() {
    for (auto entry : dirents) {
-      entry.second->rm();
+      if(entry.first != SELF and entry.first != PARENT) {
+         entry.second->rm();
+      }
    }
    dirents.clear();
 }
