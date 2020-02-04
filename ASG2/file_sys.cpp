@@ -119,10 +119,14 @@ const wordvec& inode_state::cat(wordvec& pathname, bool relToRoot) {
 
 const stringstream inode_state::ls(wordvec& pathname, bool relToRoot) {
    stringstream lsStream;
-   inode_ptr temp = cwd;
-   cd(pathname, relToRoot, true);
-   lsStream << cwd->contents->ls();
-   cwd = temp;
+   if (pathname.size() == 0) {
+      lsStream << cwd->contents->ls();
+   } else {
+      inode_ptr temp = cwd;
+      cd(pathname, relToRoot, true);
+      lsStream << cwd->contents->ls();
+      cwd = temp;
+   }
    return lsStream;
 }
 
