@@ -142,15 +142,9 @@ void fn_lsr (inode_state& state, const wordvec& words){
 
    wordvec base_pathname{};
    if(words.size() == 2) base_pathname = split(words[1], "/");
-   else base_pathname = split(state.pwd(), "/");
    bool root_dir = words.size() > 1 ? words[1][0] == '/' : false;
    try {
-      if(base_pathname.size() == 0)
-        cout << state.ls(base_pathname, root_dir).str() << endl;
-      while(base_pathname.size() > 0) {
-        cout << state.ls(base_pathname, root_dir).str() << endl;
-        base_pathname = vector(base_pathname.begin(), base_pathname.end() - 1);
-      }
+      // cout << state.lsr(base_pathname, root_dir).str() << endl;
    }
    catch (file_error& error) {
       throw command_error(error.what());
