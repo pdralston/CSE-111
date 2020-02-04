@@ -171,6 +171,10 @@ void fn_make (inode_state& state, const wordvec& words){
    }
    wordvec contents {};
    wordvec pathname = split(words[1], "/");
+   if (pathname.size() == 1) {
+     //CASE: user wants to input file in curr directory
+     pathname.insert(pathname.begin(), ".");
+   }
    if (words.size() >= 2) //CASE: file not empty
       contents = vector(words.begin() + 2, words.end());
    try {
@@ -194,6 +198,9 @@ void fn_mkdir (inode_state& state, const wordvec& words){
       throw command_error("ERROR: Too Few/Many Number of Parameters.");
    }
    wordvec pathname = split(words[1], "/");
+   if (pathname.size() == 1) {
+     pathname.insert(pathname.begin(), ".");
+   }
    wordvec empty_vec {};
    try {
       state.make(pathname, empty_vec, words[1][0] == '/', true);

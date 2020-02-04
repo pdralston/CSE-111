@@ -57,22 +57,31 @@ const string& inode_state::prompt() const { return prompt_; }
 void inode_state::prompt(const string& prompt) { prompt_ = prompt; }
 
 
-void inode_state::make(wordvec& pathname, wordvec& data,
-   bool relToRoot, bool makeDir){
-      string toMake = pathname.back();
-      inode_ptr temp = cwd;
-      pathname.pop_back();
-      cd(pathname, relToRoot);
-      if (makeDir) {
-         inode_ptr newDir = cwd->contents->mkdir(toMake);
-         newDir->contents->setDefs(cwd, newDir);
-         newDir->contents->setName(toMake);
-      } else {
-         inode_ptr newFile = cwd->contents->mkfile(toMake);
-         newFile->contents->writefile(data);
-         newFile->contents->setName(toMake);
-      }
-      cwd = temp;
+void inode_state::make(wordvec& pathname, wordvec& data, bool relToRoot, bool makeDir){
+   string toMake = pathname.back();
+   inode_ptr temp = cwd;
+   pathname.pop_back();
+   cd(pathname, relToRoot);
+   if (makeDir) {
+     try {
+        inode_ptr newDir = cwd->contents->mkdir(toMake);
+        newDir->contents->setDefs(cwd, newDir);
+        newDir->contents->setName(toMake);
+     } catch (file_error& error) {
+        cwd = temp;
+        throw file_error(error.what());
+     }
+  } else {
+     try {
+        inode_ptr newFile = cwd->contents->mkfile(toMake);
+        newFile->contents->writefile(data);
+        newFile->contents->setName(toMake);
+     } catch (file_error& error) {
+        cwd = temp;
+        throw file_error(error.what());
+     }
+  }
+  cwd = temp;
 }
 
 void inode_state::cd(wordvec& pathname, bool relToRoot, bool fileOk) {
@@ -132,7 +141,7 @@ const string inode_state::pwd() const {
    if (cwd == root) {
       return ROOT;
    }
-   return "/" + cwd->contents->getName();
+   return "/" + cwd->contents->getName() + "\n";
 }
 
 void inode_state::rm(wordvec& pathname, bool relToRoot, bool rmr) {
