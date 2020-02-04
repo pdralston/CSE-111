@@ -121,7 +121,7 @@ void fn_ls (inode_state& state, const wordvec& words){
    if(words.size() == 2) pathname = split(words[1], "/");
    bool root_dir = words.size() > 1 ? words[1][0] == '/' : false;
    try {
-     cout << state.ls(pathname, root_dir).str() << endl;
+     cout << state.ls(pathname, root_dir, false).str() << endl;
    }
    catch (file_error& error) {
       throw command_error(error.what());
@@ -135,6 +135,20 @@ void fn_ls (inode_state& state, const wordvec& words){
 void fn_lsr (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
+   if(words.size() > 2) {
+      //CASE: incorrect number of Parameters
+      throw command_error("ERROR: Excessive Parameters Provided.");
+   }
+
+   wordvec base_pathname{};
+   if(words.size() == 2) base_pathname = split(words[1], "/");
+   bool root_dir = words.size() > 1 ? words[1][0] == '/' : false;
+   try {
+      cout << state.ls(base_pathname, root_dir, true).str() << endl;
+   }
+   catch (file_error& error) {
+      throw command_error(error.what());
+   }
 }
 
 //function: fn_make
@@ -145,14 +159,19 @@ void fn_make (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
    if(words.size() < 2) {
-     //CASE: incorrect number of parameters.
-      throw command_error("ERROR: Too Few Number of Parameters.");
+       //CASE: incorrect number of parameters.
+       throw command_error("ERROR: Too Few Number of Parameters.");
    }
    wordvec contents {};
    wordvec pathname = split(words[1], "/");
    if (words.size() >= 2) //CASE: file not empty
       contents = vector(words.begin() + 2, words.end());
-   state.make(pathname, contents, words[0][1] == '/', false);
+   try {
+      state.make(pathname, contents, words[0][1] == '/', false);
+   }
+   catch (file_error& error){
+      throw command_error(error.what());
+   }
 }
 
 //function: fn_mkdir
@@ -164,12 +183,17 @@ void fn_mkdir (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
    if(words.size() != 2) {
-     //CASE: incorrect number of parameters.
+      //CASE: incorrect number of parameters.
       throw command_error("ERROR: Too Few/Many Number of Parameters.");
    }
    wordvec pathname = split(words[1], "/");
    wordvec empty_vec {};
-   state.make(pathname, empty_vec, words[0][1] == '/', true);
+   try {
+      state.make(pathname, empty_vec, words[0][1] == '/', true);
+   }
+   catch (file_error& error){
+      throw command_error(error.what());
+   }
 }
 
 //function: fn_prompt
@@ -208,6 +232,26 @@ void fn_pwd (inode_state& state, const wordvec& words){
 void fn_rm (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
+   if(words.size() != 2) {
+     //CASE: incorrect number of parameters
+     throw command_error("ERROR: Incorrect Parameters Provided.");
+   }
+   wordvec pathname = split(words[1], "/");
+
+   if(pathname[0] == ".") {
+      pathname = split(state.pwd(), "/");
+   }
+   else if(pathname[0] == "..") {
+     pathname = split(state.pwd(), "/");
+     pathname = vector(pathname.begin(), pathname.end() - 1);
+   }
+
+   try {
+     state.rm(pathname, words[1][0] == '/', false).str();
+   }
+   catch (file_error& error) {
+      throw command_error(error.what());
+   }
 }
 
 //function: fn_rmr
@@ -217,4 +261,25 @@ void fn_rm (inode_state& state, const wordvec& words){
 void fn_rmr (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
+   if(words.size() != 2) {
+     //CASE: incorrect number of parameters
+     throw command_error("ERROR: Incorrect Parameters Provided.");
+   }
+
+   wordvec pathname = split(words[1], "/");
+
+   if(pathname[0] == ".") {
+      pathname = split(state.pwd(), "/");
+   }
+   else if(pathname[0] == "..") {
+     pathname = split(state.pwd(), "/");
+     pathname = vector(pathname.begin(), pathname.end() - 1);
+   }
+
+   try {
+     state.rm(pathname, words[1][0] == '/', true).str();
+   }
+   catch (file_error& error) {
+      throw command_error(error.what());
+   }
 }
