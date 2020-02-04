@@ -91,7 +91,7 @@ void inode_state::cd(wordvec& pathname, bool relToRoot, bool fileOk) {
             throw file_error (pathname[0] + " is not a valid directory");
          }
       }
-   } catch (...){//TODO fix this error catching design, its bad
+   } catch (out_of_range&){
       //restore the cwd when cd fails.
       cwd = temp;
       throw file_error (pathname[0] + " is not a valid directory");
@@ -111,7 +111,7 @@ const wordvec& inode_state::cat(wordvec& pathname, bool relToRoot) {
       fileNode = cwd->contents->getEntry(filename);
       cwd = temp;
       return fileNode->contents->readfile();
-   } catch(int) {
+   } catch(out_of_range&) {
       cwd = temp;
       throw file_error (filename + " does not exist.");
    }
