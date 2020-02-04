@@ -61,9 +61,6 @@ void inode_state::make(wordvec& pathname, wordvec& data, bool relToRoot, bool ma
    string toMake = pathname.back();
    inode_ptr temp = cwd;
    pathname.pop_back();
-   if (pathname.size() == 0) {
-      pathname.push_back(SELF); 
-   }
    cd(pathname, relToRoot);
    if (makeDir) {
      try {
@@ -85,7 +82,6 @@ void inode_state::make(wordvec& pathname, wordvec& data, bool relToRoot, bool ma
      }
   }
   cwd = temp;
-
 }
 
 void inode_state::cd(wordvec& pathname, bool relToRoot, bool fileOk) {
