@@ -247,7 +247,7 @@ void fn_rm (inode_state& state, const wordvec& words){
    }
 
    try {
-     state.rm(pathname, words[1][0] == '/', false).str();
+     state.rm(pathname, words[1][0] == '/', false);
    }
    catch (file_error& error) {
       throw command_error(error.what());
@@ -277,7 +277,7 @@ void fn_rmr (inode_state& state, const wordvec& words){
    }
 
    try {
-     state.rm(pathname, words[1][0] == '/', true).str();
+     state.rm(pathname, words[1][0] == '/', true);
    }
    catch (file_error& error) {
       throw command_error(error.what());
