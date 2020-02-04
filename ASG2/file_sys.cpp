@@ -61,6 +61,9 @@ void inode_state::make(wordvec& pathname, wordvec& data, bool relToRoot, bool ma
    string toMake = pathname.back();
    inode_ptr temp = cwd;
    pathname.pop_back();
+   if (pathname.size() == 0) {
+      pathname.push_back(SELF); 
+   }
    cd(pathname, relToRoot);
    if (makeDir) {
      try {
@@ -82,6 +85,7 @@ void inode_state::make(wordvec& pathname, wordvec& data, bool relToRoot, bool ma
      }
   }
   cwd = temp;
+
 }
 
 void inode_state::cd(wordvec& pathname, bool relToRoot, bool fileOk) {
@@ -325,11 +329,18 @@ void directory::remove (const string& filename) {
    if(filename == SELF) {
       throw file_error("Unable to delete current working directory");
    }
-   dirents.erase(filename);
+   try {
+      dirents.erase(filename);
+   } catch (out_of_range&) {
+      throw file_error(filename + " does not exist.");
+   }
 }
 
 inode_ptr directory::mkdir (const string& dirname) {
    DEBUGF ('i', dirname);
+   if (dirents.find(dirname) == dirents.end()) {
+      throw file_error(dirname + " already exists.");
+   }
    dirents.insert({dirname, make_shared<inode>(file_type::DIRECTORY_TYPE, dirname)});
    return dirents.at(dirname);
 }
@@ -348,7 +359,9 @@ const inode_ptr& directory::getEntry(const string& dirname) const{
 }
 
 inode_ptr directory::mkfile (const string& filename) {
-   DEBUGF ('i', filename);
+   if (dirents.find(filename) == dirents.end()) {
+      throw file_error(filename + " already exists.");
+   }
    dirents.insert({filename, make_shared<inode>(file_type::PLAIN_TYPE)});
    return dirents.at(filename);
 }
