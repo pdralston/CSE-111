@@ -126,11 +126,11 @@ const stringstream inode_state::ls(wordvec& pathname, bool relToRoot) {
    return lsStream;
 }
 
-const string& inode_state::pwd() const {
+const string inode_state::pwd() const {
    if (cwd == root) {
       return ROOT;
    }
-   return cwd->contents->getName();
+   return "/" + cwd->contents->getName();
 }
 
 void inode_state::rm(wordvec& pathname, bool relToRoot, bool rmr) {
@@ -320,7 +320,7 @@ void directory::setDefs (const inode_ptr& parent, const inode_ptr& self) {
 }
 
 void directory::setName (const string& dirname) {
-   dirname_ = dirname + "/";
+   dirname_ = dirname;
 }
 
 const inode_ptr& directory::getEntry(const string& dirname) const{

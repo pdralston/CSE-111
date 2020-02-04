@@ -21,7 +21,7 @@ OTHERSRC    = ${filter-out ${MODULESRC}, ${CPPHEADER} ${CPPSOURCE}}
 ALLSOURCES  = ${MODULESRC} ${OTHERSRC} ${MKFILE}
 LISTING     = Listing.ps
 MEMCHECK    = valgrind --leak-check=full -v
-PARTNER     = ../../PARNTER
+PARTNER     = ../../PARTNER
 ASG         = asg2
 
 all : ${EXECBIN}
@@ -70,4 +70,3 @@ submitPartner : README ${PARTNER}
 ifeq (${NEEDINCL}, )
 include ${DEPFILE}
 endif
-
