@@ -167,7 +167,7 @@ void fn_make (inode_state& state, const wordvec& words){
    if (words.size() >= 2) //CASE: file not empty
       contents = vector(words.begin() + 2, words.end());
    try {
-      state.make(pathname, contents, words[0][1] == '/', false);
+      state.make(pathname, contents, words[1][0] == '/', false);
    }
    catch (file_error& error){
       throw command_error(error.what());
@@ -189,7 +189,7 @@ void fn_mkdir (inode_state& state, const wordvec& words){
    wordvec pathname = split(words[1], "/");
    wordvec empty_vec {};
    try {
-      state.make(pathname, empty_vec, words[0][1] == '/', true);
+      state.make(pathname, empty_vec, words[1][0] == '/', true);
    }
    catch (file_error& error){
       throw command_error(error.what());
@@ -222,7 +222,7 @@ void fn_prompt (inode_state& state, const wordvec& words){
 void fn_pwd (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
-   state.pwd();
+   cout << state.pwd() << endl;
 }
 
 //function: fn_rm
