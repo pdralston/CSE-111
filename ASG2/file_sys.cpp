@@ -325,18 +325,11 @@ void directory::remove (const string& filename) {
    if(filename == SELF) {
       throw file_error("Unable to delete current working directory");
    }
-   try {
-      dirents.erase(filename);
-   } catch (out_of_range&) {
-      throw file_error(filename + " does not exist.");
-   }
+   dirents.erase(filename);
 }
 
 inode_ptr directory::mkdir (const string& dirname) {
    DEBUGF ('i', dirname);
-   if (dirents.find(dirname) == dirents.end()) {
-      throw file_error(dirname + " already exists.");
-   }
    dirents.insert({dirname, make_shared<inode>(file_type::DIRECTORY_TYPE, dirname)});
    return dirents.at(dirname);
 }
@@ -355,9 +348,7 @@ const inode_ptr& directory::getEntry(const string& dirname) const{
 }
 
 inode_ptr directory::mkfile (const string& filename) {
-   if (dirents.find(filename) == dirents.end()) {
-      throw file_error(filename + " already exists.");
-   }
+   DEBUGF ('i', filename);
    dirents.insert({filename, make_shared<inode>(file_type::PLAIN_TYPE)});
    return dirents.at(filename);
 }
