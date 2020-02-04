@@ -121,7 +121,7 @@ void fn_ls (inode_state& state, const wordvec& words){
    if(words.size() == 2) pathname = split(words[1], "/");
    bool root_dir = words.size() > 1 ? words[1][0] == '/' : false;
    try {
-     cout << state.ls(pathname, root_dir, false).str() << endl;
+     cout << state.ls(pathname, root_dir).str() << endl;
    }
    catch (file_error& error) {
       throw command_error(error.what());
@@ -144,7 +144,7 @@ void fn_lsr (inode_state& state, const wordvec& words){
    if(words.size() == 2) base_pathname = split(words[1], "/");
    bool root_dir = words.size() > 1 ? words[1][0] == '/' : false;
    try {
-      cout << state.ls(base_pathname, root_dir, true).str() << endl;
+      // cout << state.lsr(base_pathname, root_dir).str() << endl;
    }
    catch (file_error& error) {
       throw command_error(error.what());
