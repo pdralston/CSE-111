@@ -120,8 +120,14 @@ void fn_ls (inode_state& state, const wordvec& words){
    }
    wordvec pathname {};
    if(words.size() == 2) pathname = split(words[1], "/");
+   else pathname.push_back(".");
+
    bool root_dir = words.size() > 1 ? words[1][0] == '/' : false;
    try {
+     if(words.size() == 2) cout << words[1] << ":" << endl;
+     else if(state.pwd() == "/\n") cout << "/:" << endl;
+     else cout << state.pwd().substr(0, state.pwd().length())
+        << ":" << endl;
      cout << state.ls(pathname, root_dir).str() << endl;
    }
    catch (file_error& error) {
@@ -165,6 +171,10 @@ void fn_make (inode_state& state, const wordvec& words){
    }
    wordvec contents {};
    wordvec pathname = split(words[1], "/");
+   if (pathname.size() == 1) {
+     //CASE: user wants to input file in curr directory
+     pathname.insert(pathname.begin(), ".");
+   }
    if (words.size() >= 2) //CASE: file not empty
       contents = vector(words.begin() + 2, words.end());
    try {
@@ -188,6 +198,9 @@ void fn_mkdir (inode_state& state, const wordvec& words){
       throw command_error("ERROR: Too Few/Many Number of Parameters.");
    }
    wordvec pathname = split(words[1], "/");
+   if (pathname.size() == 1) {
+     pathname.insert(pathname.begin(), ".");
+   }
    wordvec empty_vec {};
    try {
       state.make(pathname, empty_vec, words[1][0] == '/', true);
