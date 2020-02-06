@@ -34,6 +34,7 @@ class listmap {
       listmap& operator= (const listmap&);
       ~listmap();
       iterator insert (const value_type&);
+      void replace (const value_type& value_) {anchor()->value = value_;}
       iterator find (const key_type&);
       iterator erase (iterator position);
       iterator begin() { return anchor()->next; }
@@ -41,7 +42,6 @@ class listmap {
       bool empty() const { return anchor_->next == anchor_; }
 };
 
-
 template <typename key_t, typename mapped_t, class less_t>
 class listmap<key_t,mapped_t,less_t>::iterator {
    private:
