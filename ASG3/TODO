@@ -1,0 +1,20 @@
+Files:
+- main
+- listmap
+
+Functionality:
+- # : comment, ignore
+- key : print(key, value) ; key: key not found
+- key= : del(key, value)
+- key=value : val @ key = value, if key not found,
+  inserted in INCREASING lexicographic
+- = : print_all(key, value)
+- =val : print_all(key, value) with value = val
+
+
+- input: files to be read. if no files passed, cin is read, if file w/ name '-'
+is passed then cin is read instead of that sequence
+- exit status: 0 = no errors, 1 = errors found
+
+- Misc.
+  - matchlist.cpp contains regex for assignment
