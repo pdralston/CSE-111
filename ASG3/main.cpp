@@ -15,10 +15,12 @@ using namespace std;
 using str_str_map = listmap<string,string>;
 using str_str_pair = str_str_map::value_type;
 
-//function: scan_options
-//description: gets arguments from cli and activated debug options
-//arguments: argc - the number of cli arguments
-//           argv - pointer to arguments being passed
+/*
+* function: scan_options
+* description: gets arguments from cli and activated debug options
+* arguments: argc - the number of cli arguments
+             argv - pointer to arguments being passed
+*/
 void scan_options (int argc, char** argv) {
    opterr = 0;
    for (;;) {
@@ -36,13 +38,16 @@ void scan_options (int argc, char** argv) {
    }
 }
 
-//function: main
-//description: takes in input filenames and parses it
-//             performing a specific action based on what value is passed
-//arguments: argc - the number of cli arguments
-//           argv = pointer to the arguments being passed
-//TODO: - regex search to determine line type
-//      - call correct function based on line type
+/*
+* function: main
+* description: takes in input filenames and parses it
+               performing a specific action based on what
+               value is passed
+* arguments: argc - the number of cli arguments
+             argv = pointer to the arguments being passed
+* TODO: - regex search to determine line type
+        - call correct function based on line type
+*/
 int main (int argc, char** argv) {
    sys_info::execname (argv[0]);
    scan_options (argc, argv);
