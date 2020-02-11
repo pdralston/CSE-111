@@ -3,8 +3,10 @@
 #include <cstdlib>
 #include <exception>
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <unistd.h>
+#include <regex>
 
 using namespace std;
 
@@ -48,6 +50,7 @@ void scan_options (int argc, char** argv) {
 * TODO: - regex search to determine line type
         - call correct function based on line type
 */
+
 int main (int argc, char** argv) {
    sys_info::execname (argv[0]);
    scan_options (argc, argv);
@@ -56,8 +59,34 @@ int main (int argc, char** argv) {
    for (char** argp = &argv[optind]; argp != &argv[argc]; ++argp) {
       str_str_pair pair (*argp, to_string<int> (argp - argv));
       cout << "Before insert: " << pair << endl;
-      test.insert (pair);
+      test.insert(pair);
    }
+
+  regex comment_regex {R"(^\s*(#.*)?$)"};
+  regex key_value_regex {R"(^\s*(.*?)\s*=\s*(.*?)\s*$)"};
+  regex trimmed_regex {R"(^\s*([^=]+?)\s*$)"};
+
+  for (str_str_map::iterator itor = test.begin();
+       itor != test.end(); ++itor) {
+     string line = (*itor).first;
+     if (line == "-") {
+       getline (cin, line);
+     }
+     cout << endl << "input: \"" << line << "\"" << endl;
+     smatch result;
+     if (regex_search (line, result, comment_regex)) {
+        cout << "Comment or empty line." << endl;
+        continue;
+     }
+     if (regex_search (line, result, key_value_regex)) {
+        cout << "key  : \"" << result[1] << "\"" << endl;
+        cout << "value: \"" << result[2] << "\"" << endl;
+     }else if (regex_search (line, result, trimmed_regex)) {
+        cout << "query: \"" << result[1] << "\"" << endl;
+     }else {
+        cout << "ERROR: invalid option" << endl; //TODO: change to error throw
+     }
+  }
 
    for (str_str_map::iterator itor = test.begin();
         itor != test.end(); ++itor) {
