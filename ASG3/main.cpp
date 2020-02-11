@@ -62,29 +62,51 @@ int main (int argc, char** argv) {
       test.insert(pair);
    }
 
+   cout << "test is empty?: " << test.empty() << endl;
+
   regex comment_regex {R"(^\s*(#.*)?$)"};
   regex key_value_regex {R"(^\s*(.*?)\s*=\s*(.*?)\s*$)"};
   regex trimmed_regex {R"(^\s*([^=]+?)\s*$)"};
 
+  //TEST
+  for (str_str_map::iterator itor = test.begin(); itor != test.end(); ++itor) {
+    cout << (*itor).first << endl;
+  }
+
+  std::ifstream testin ("Testfiles/test1.in");
+  while(!testin.eof()) {
+    string line;
+    std::getline(testin, line);
+    cout << line << endl;
+  }
+
   for (str_str_map::iterator itor = test.begin();
        itor != test.end(); ++itor) {
-     string line = (*itor).first;
-     if (line == "-") {
-       getline (cin, line);
-     }
-     cout << endl << "input: \"" << line << "\"" << endl;
-     smatch result;
-     if (regex_search (line, result, comment_regex)) {
-        cout << "Comment or empty line." << endl;
-        continue;
-     }
-     if (regex_search (line, result, key_value_regex)) {
-        cout << "key  : \"" << result[1] << "\"" << endl;
-        cout << "value: \"" << result[2] << "\"" << endl;
-     }else if (regex_search (line, result, trimmed_regex)) {
-        cout << "query: \"" << result[1] << "\"" << endl;
-     }else {
-        cout << "ERROR: invalid option" << endl; //TODO: change to error throw
+     string filename = (*itor).first;
+     std::ifstream contents (filename);
+
+     while (!contents.eof())  {
+       string line;
+       std::getline(contents, line);
+       if (line == "-") {
+         std::getline (cin, line);
+       }
+       cout << endl << "input: \"" << line << "\"" << endl;
+       smatch result;
+       if (regex_search (line, result, comment_regex)) {
+          cout << "Comment or empty line." << endl;
+          continue;
+       }
+       if (regex_search (line, result, key_value_regex)) {
+          cout << "key  : \"" << result[1] << "\"" << endl;
+          cout << "value: \"" << result[2] << "\"" << endl;
+       }
+       else if (regex_search (line, result, trimmed_regex)) {
+          cout << "query: \"" << result[1] << "\"" << endl;
+       }
+       else {
+          cout << "ERROR: invalid option" << endl; //TODO: change to error throw
+       }
      }
   }
 
