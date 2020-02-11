@@ -62,24 +62,24 @@ int main (int argc, char** argv) {
       test.insert(pair);
    }
 
-   cout << "test is empty?: " << test.empty() << endl;
-
   regex comment_regex {R"(^\s*(#.*)?$)"};
   regex key_value_regex {R"(^\s*(.*?)\s*=\s*(.*?)\s*$)"};
   regex trimmed_regex {R"(^\s*([^=]+?)\s*$)"};
 
-  //TEST
-  for (str_str_map::iterator itor = test.begin(); itor != test.end(); ++itor) {
-    cout << (*itor).first << endl;
-  }
+  // //TEST CLI ARGS
+  // for (str_str_map::iterator itor = test.begin(); itor != test.end(); ++itor) {
+  //   cout << (*itor).first << endl;
+  // }
+  //
+  // //TEST FILE READ
+  // std::ifstream testin ("Testfiles/test1.in");
+  // while(!testin.eof()) {
+  //   string line;
+  //   std::getline(testin, line);
+  //   cout << line << endl;
+  // }
 
-  std::ifstream testin ("Testfiles/test1.in");
-  while(!testin.eof()) {
-    string line;
-    std::getline(testin, line);
-    cout << line << endl;
-  }
-
+  str_str_map value_map;
   for (str_str_map::iterator itor = test.begin();
        itor != test.end(); ++itor) {
      string filename = (*itor).first;
@@ -91,7 +91,7 @@ int main (int argc, char** argv) {
        if (line == "-") {
          std::getline (cin, line);
        }
-       cout << endl << "input: \"" << line << "\"" << endl;
+       cout << endl << "input: " << line << endl;
        smatch result;
        if (regex_search (line, result, comment_regex)) {
           cout << "Comment or empty line." << endl;
@@ -100,9 +100,14 @@ int main (int argc, char** argv) {
        if (regex_search (line, result, key_value_regex)) {
           cout << "key  : \"" << result[1] << "\"" << endl;
           cout << "value: \"" << result[2] << "\"" << endl;
+          str_str_pair pair (result[1], result[2]);
+          cout << "adding "<< pair << " to value_map" << endl;
+          value_map.insert(pair);
        }
        else if (regex_search (line, result, trimmed_regex)) {
           cout << "query: \"" << result[1] << "\"" << endl;
+          str_str_map::iterator value_find = value_map.find(result[1]);
+          cout << "Found value: " << (*value_find) << endl;
        }
        else {
           cout << "ERROR: invalid option" << endl; //TODO: change to error throw
