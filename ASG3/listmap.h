@@ -39,7 +39,7 @@ class listmap {
       iterator erase (iterator position);
       iterator begin() { return anchor()->next; }
       iterator end() { return anchor(); }
-      bool empty() const { return anchor_ == anchor_.next(); }
+      bool empty() const { return anchor_.next == &anchor_; }
 };
 
 template <typename key_t, typename mapped_t, class less_t>
