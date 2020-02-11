@@ -27,7 +27,37 @@ template <typename key_t, typename mapped_t, class less_t>
 typename listmap<key_t,mapped_t,less_t>::iterator
 listmap<key_t,mapped_t,less_t>::insert (const value_type& pair) {
    DEBUGF ('l', &pair << "->" << pair);
-   return iterator();
+   if (empty()) {
+      node* newNode = new node(anchor(), anchor(), pair);
+      anchor_.next = newNode;
+      anchor_.prev = newNode;
+      return iterator(newNode);
+   }
+   iterator forward = anchor_.next;
+   iterator reverse = anchor_.prev;
+   //iterate the list from both ends. The point of intersect
+   //is the location to insert the new node.
+   while (forward != anchor()
+       && reverse != anchor()
+       && less(forward->first, reverse->first)) {
+      if (less(forward->first, pair.first)) {
+         ++forward;
+      }
+      if (less(pair.first, reverse->first)) {
+         --reverse;
+      }
+   }
+   if (forward == reverse) {
+      //key is found, change the value.
+      forward->second = pair.second;
+      return forward;
+   }
+   //key is not in the list and will be inserted in front
+   //of reverse iterator
+   node* newNode = new node(reverse.where->next, reverse.where, pair);
+   reverse.where->next = newNode;
+   newNode->next->prev = newNode;
+   return iterator(newNode);
 }
 
 //
