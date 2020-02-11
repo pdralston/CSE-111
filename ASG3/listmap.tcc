@@ -67,7 +67,28 @@ template <typename key_t, typename mapped_t, class less_t>
 typename listmap<key_t,mapped_t,less_t>::iterator
 listmap<key_t,mapped_t,less_t>::find (const key_type& that) {
    DEBUGF ('l', that);
-   return iterator();
+   if (empty()) {
+      return end();
+   }
+   iterator forward = anchor_.next;
+   iterator reverse = anchor_.prev;
+   //iterate the list from both ends. The point of intersect
+   //is the location of the desired node.
+   while (forward != anchor()
+       && reverse != anchor()
+       && less(forward->first, reverse->first)) {
+      if (less(forward->first, that)) {
+         ++forward;
+      }
+      if (less(that, reverse->first)) {
+         --reverse;
+      }
+   }
+   if (forward == reverse) {
+      //key is found.
+      return forward;
+   }
+   return end();
 }
 
 //
@@ -77,7 +98,15 @@ template <typename key_t, typename mapped_t, class less_t>
 typename listmap<key_t,mapped_t,less_t>::iterator
 listmap<key_t,mapped_t,less_t>::erase (iterator position) {
    DEBUGF ('l', &*position);
-   return iterator();
+   if (position == anchor()) {
+      //can't delete anchor_
+      return anchor();
+   }
+   position.where->next->prev = position.where->prev;
+   position.where->prev->next = position.where->next;
+   iterator temp{position.where->next};
+   delete(position.where);
+   return temp;
 }
 
 

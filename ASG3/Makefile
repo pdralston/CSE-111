@@ -21,6 +21,7 @@ EXECBIN     = keyvalue
 OTHERS      = ${MKFILE} ${DEPFILE}
 ALLSOURCES  = ${ALLSOURCE} ${OTHERS}
 LISTING     = Listing.ps
+MEMCHECK    = valgrind --leak-check=full -v
 PARTNER     = ../../PARTNER
 ASG         = asg3
 
