@@ -77,7 +77,15 @@ template <typename key_t, typename mapped_t, class less_t>
 typename listmap<key_t,mapped_t,less_t>::iterator
 listmap<key_t,mapped_t,less_t>::erase (iterator position) {
    DEBUGF ('l', &*position);
-   return iterator();
+   if (position == anchor()) {
+      //can't delete anchor_
+      return anchor();
+   }
+   position.where->next->prev = position.where->prev;
+   position.where->prev->next = position.where->next;
+   iterator temp{position.where->next};
+   delete(position.where);
+   return temp;
 }
 
 
