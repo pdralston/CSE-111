@@ -115,6 +115,13 @@ int main (int argc, char** argv) {
      }
   }
 
+  //TEST CHECKING INSERT
+  cout << endl << "Printing out listmap" << endl;
+  for (str_str_map::iterator itor = value_map.begin(); itor != value_map.end(); ++itor) {
+    cout << (*itor) << endl;
+  }
+  cout << endl;
+
    for (str_str_map::iterator itor = test.begin();
         itor != test.end(); ++itor) {
       cout << "During iteration: " << *itor << endl;
