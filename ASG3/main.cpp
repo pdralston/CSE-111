@@ -99,7 +99,8 @@ int main (int argc, char** argv) {
               << "\'" << endl;
            for (str_str_map::iterator vitor = value_map.begin();
              vitor != value_map.end(); ++vitor) {
-                if((*vitor).second == result[2] ) cout << (*vitor) << endl;
+                if((*vitor).second == result[2] )
+                   cout << (*vitor) << endl;
            }
            cout << endl;
            continue;
