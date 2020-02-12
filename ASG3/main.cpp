@@ -62,22 +62,9 @@ int main (int argc, char** argv) {
       test.insert(pair);
    }
 
-  regex comment_regex {R"(^\s*(#.*)?$)"};
+  regex comment_regex {R"(^\s*(#.*)?\s*$)"};
   regex key_value_regex {R"(^\s*(.*?)\s*=\s*(.*?)\s*$)"};
   regex trimmed_regex {R"(^\s*([^=]+?)\s*$)"};
-
-  // //TEST CLI ARGS
-  // for (str_str_map::iterator itor = test.begin(); itor != test.end(); ++itor) {
-  //   cout << (*itor).first << endl;
-  // }
-  //
-  // //TEST FILE READ
-  // std::ifstream testin ("Testfiles/test1.in");
-  // while(!testin.eof()) {
-  //   string line;
-  //   std::getline(testin, line);
-  //   cout << line << endl;
-  // }
 
   str_str_map value_map;
   for (str_str_map::iterator itor = test.begin();
@@ -98,6 +85,25 @@ int main (int argc, char** argv) {
           continue;
        }
        if (regex_search (line, result, key_value_regex)) {
+         if(result[1] == "" && result[2] == "") {
+           cout << "Printing out listmap" << endl;
+           for (str_str_map::iterator vitor = value_map.begin();
+             vitor != value_map.end(); ++vitor) {
+                cout << (*vitor) << endl;
+           }
+           cout << endl;
+           continue;
+         }
+         else if (result[1] == "") {
+           cout << "Printing out listmap with values \'" << result[2]
+              << "\'" << endl;
+           for (str_str_map::iterator vitor = value_map.begin();
+             vitor != value_map.end(); ++vitor) {
+                if((*vitor).second == result[2] ) cout << (*vitor) << endl;
+           }
+           cout << endl;
+           continue;
+         }
           cout << "key  : \"" << result[1] << "\"" << endl;
           cout << "value: \"" << result[2] << "\"" << endl;
           str_str_pair pair (result[1], result[2]);
@@ -107,20 +113,19 @@ int main (int argc, char** argv) {
        else if (regex_search (line, result, trimmed_regex)) {
           cout << "query: \"" << result[1] << "\"" << endl;
           str_str_map::iterator value_find = value_map.find(result[1]);
-          cout << "Found value: " << (*value_find) << endl;
+          if (value_find == value_map.end()) {
+            cerr << "ERROR: Could not find key \'" << result[1]
+              << "\' in listmap." << endl;
+          }
+          else {
+            cout << "Found value: " << (*value_find) << endl;
+          }
        }
        else {
-          cout << "ERROR: invalid option" << endl; //TODO: change to error throw
+          cerr << "ERROR: invalid option" << endl;
        }
      }
   }
-
-  //TEST CHECKING INSERT
-  cout << endl << "Printing out listmap" << endl;
-  for (str_str_map::iterator itor = value_map.begin(); itor != value_map.end(); ++itor) {
-    cout << (*itor) << endl;
-  }
-  cout << endl;
 
    for (str_str_map::iterator itor = test.begin();
         itor != test.end(); ++itor) {
