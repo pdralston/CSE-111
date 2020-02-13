@@ -62,7 +62,7 @@ again :
 memcheck : ${EXECBIN}
 	${MEMCHECK} ./$^
 
-submit : ${ALLSOURCES} README ${PARTNER}
+submit : ${filter-out ${DEPFILE},${ALLSOURCES}} README ${PARTNER}
 	submit  cse111-wm.w20 ${ASG} $^
 
 submitPartner : README ${PARTNER}
