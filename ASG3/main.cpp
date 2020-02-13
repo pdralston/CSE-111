@@ -71,7 +71,7 @@ int main (int argc, char** argv) {
        itor != test.end(); ++itor) {
      string filename = (*itor).first;
      std::ifstream contents (filename);
-
+     if(!contents.good()) continue;
      while (!contents.eof())  {
        string line;
        std::getline(contents, line);
@@ -99,11 +99,7 @@ int main (int argc, char** argv) {
               << "\'" << endl;
            for (str_str_map::iterator vitor = value_map.begin();
              vitor != value_map.end(); ++vitor) {
-<<<<<<< HEAD
                 if((*vitor).second == result[2] )
-=======
-                if((*vitor).second == result[2] ) 
->>>>>>> 4c847bd10979d0c3295459633d648d29d4e3dd58
                    cout << (*vitor) << endl;
            }
            cout << endl;
