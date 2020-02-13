@@ -28,6 +28,7 @@ typename listmap<key_t,mapped_t,less_t>::iterator
 listmap<key_t,mapped_t,less_t>::insert (const value_type& pair) {
    DEBUGF ('l', &pair << "->" << pair);
    if (empty()) {
+      DEBUGF('I', "List map was empty, inserting new head node");
       node* newNode = new node(anchor(), anchor(), pair);
       anchor_.next = newNode;
       anchor_.prev = newNode;
@@ -47,7 +48,7 @@ listmap<key_t,mapped_t,less_t>::insert (const value_type& pair) {
          --reverse;
       }
    }
-   if (forward == reverse) {
+   if (forward == reverse && forward->first == pair.first) {
       //key is found, change the value.
       forward->second = pair.second;
       return forward;
@@ -74,18 +75,24 @@ listmap<key_t,mapped_t,less_t>::find (const key_type& that) {
    iterator reverse = anchor_.prev;
    //iterate the list from both ends. The point of intersect
    //is the location of the desired node.
+   DEBUGF('I', (forward != anchor()) << " " << (reverse != anchor()) << " " << (less(forward->first, reverse->first)));
    while (forward != anchor()
        && reverse != anchor()
        && less(forward->first, reverse->first)) {
       if (less(forward->first, that)) {
+         DEBUGF('I', forward->first << " is the key at forward before increment");
          ++forward;
+         DEBUGF('I', forward->first << " is the key at forward after increment");
       }
       if (less(that, reverse->first)) {
+         DEBUGF('I', reverse->first << " is the key at reverse before decrement");
          --reverse;
+         DEBUGF('I', reverse->first << " is the key at reverse after decrement");
       }
    }
-   if (forward == reverse) {
+   if (forward == reverse && forward->first == that) {
       //key is found.
+      DEBUGF('I', forward->first << " is the key at forward being returned");
       return forward;
    }
    return end();
