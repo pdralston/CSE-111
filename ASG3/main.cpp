@@ -40,6 +40,62 @@ void scan_options (int argc, char** argv) {
    }
 }
 
+void analyze_string(string line, str_str_map *value_map) {
+
+  regex comment_regex {R"(^\s*(#.*)?\s*$)"};
+  regex key_value_regex {R"(^\s*(.*?)\s*=\s*(.*?)\s*$)"};
+  regex trimmed_regex {R"(^\s*([^=]+?)\s*$)"};
+
+  cout << endl << "input: " << line << endl;
+  smatch result;
+  if (regex_search (line, result, comment_regex)) {
+     cout << "Comment or empty line." << endl;
+     // continue;
+  }
+  if (regex_search (line, result, key_value_regex)) {
+    if(result[1] == "" && result[2] == "") {
+      cout << "Printing out listmap" << endl;
+      for (str_str_map::iterator vitor = value_map->begin();
+        vitor != value_map->end(); ++vitor) {
+           cout << (*vitor) << endl;
+      }
+      cout << endl;
+      // continue;
+    }
+    else if (result[1] == "") {
+      cout << "Printing out listmap with values \'" << result[2]
+         << "\'" << endl;
+      for (str_str_map::iterator vitor = value_map->begin();
+        vitor != value_map->end(); ++vitor) {
+           if((*vitor).second == result[2] )
+              cout << (*vitor) << endl;
+      }
+      cout << endl;
+      // continue;
+    }
+     cout << "key  : \"" << result[1] << "\"" << endl;
+     cout << "value: \"" << result[2] << "\"" << endl;
+     str_str_pair pair (result[1], result[2]);
+     cout << "adding "<< pair << " to value_map" << endl;
+     value_map->insert(pair);
+  }
+  else if (regex_search (line, result, trimmed_regex)) {
+     cout << "query: \"" << result[1] << "\"" << endl;
+     str_str_map::iterator value_find = value_map->find(result[1]);
+     if (value_find == value_map->end()) {
+       cerr << "ERROR: Could not find key \'" << result[1]
+         << "\' in listmap." << endl;
+     }
+     else {
+       cout << "Found value: " << (*value_find) << endl;
+     }
+  }
+  else {
+     cerr << "ERROR: invalid option" << endl;
+  }
+}
+
+
 /*
 * function: main
 * description: takes in input filenames and parses it
@@ -75,56 +131,9 @@ int main (int argc, char** argv) {
        string line;
        cout << "Enter input line: " << endl;
        std::getline(cin, line);
-
-       cout << endl << "input: " << line << endl;
-       smatch result;
-       if (regex_search (line, result, comment_regex)) {
-          cout << "Comment or empty line." << endl;
-          continue;
-       }
-       else if (regex_search (line, result, key_value_regex)) {
-         if(result[1] == "" && result[2] == "") {
-           cout << "Printing out listmap" << endl;
-           for (str_str_map::iterator vitor = value_map.begin();
-             vitor != value_map.end(); ++vitor) {
-                cout << (*vitor) << endl;
-           }
-           cout << endl;
-           continue;
-         }
-         else if (result[1] == "") {
-           cout << "Printing out listmap with values \'" << result[2]
-              << "\'" << endl;
-           for (str_str_map::iterator vitor = value_map.begin();
-             vitor != value_map.end(); ++vitor) {
-                if((*vitor).second == result[2] )
-                   cout << (*vitor) << endl;
-           }
-           cout << endl;
-           continue;
-         }
-          cout << "key  : \"" << result[1] << "\"" << endl;
-          cout << "value: \"" << result[2] << "\"" << endl;
-          str_str_pair pair (result[1], result[2]);
-          cout << "adding "<< pair << " to value_map" << endl;
-          value_map.insert(pair);
-       }
-       else if (regex_search (line, result, trimmed_regex)) {
-          cout << "query: \"" << result[1] << "\"" << endl;
-          str_str_map::iterator value_find = value_map.find(result[1]);
-          if (value_find == value_map.end()) {
-            cerr << "ERROR: Could not find key \'" << result[1]
-              << "\' in listmap." << endl;
-          }
-          else {
-            cout << "Found value: " << (*value_find) << endl;
-          }
-       }
-       else {
-          cerr << "ERROR: invalid option" << endl;
-       }
-       continue;
+       analyze_string(line, &value_map);
      }
+
 
      std::ifstream contents (filename);
      if(!contents.good()) {
@@ -134,56 +143,8 @@ int main (int argc, char** argv) {
 
      while (!contents.eof())  {
        string line;
-
        std::getline(contents, line);
-
-       cout << endl << "input: " << line << endl;
-       smatch result;
-       if (regex_search (line, result, comment_regex)) {
-          cout << "Comment or empty line." << endl;
-          continue;
-       }
-       if (regex_search (line, result, key_value_regex)) {
-         if(result[1] == "" && result[2] == "") {
-           cout << "Printing out listmap" << endl;
-           for (str_str_map::iterator vitor = value_map.begin();
-             vitor != value_map.end(); ++vitor) {
-                cout << (*vitor) << endl;
-           }
-           cout << endl;
-           continue;
-         }
-         else if (result[1] == "") {
-           cout << "Printing out listmap with values \'" << result[2]
-              << "\'" << endl;
-           for (str_str_map::iterator vitor = value_map.begin();
-             vitor != value_map.end(); ++vitor) {
-                if((*vitor).second == result[2] )
-                   cout << (*vitor) << endl;
-           }
-           cout << endl;
-           continue;
-         }
-          cout << "key  : \"" << result[1] << "\"" << endl;
-          cout << "value: \"" << result[2] << "\"" << endl;
-          str_str_pair pair (result[1], result[2]);
-          cout << "adding "<< pair << " to value_map" << endl;
-          value_map.insert(pair);
-       }
-       else if (regex_search (line, result, trimmed_regex)) {
-          cout << "query: \"" << result[1] << "\"" << endl;
-          str_str_map::iterator value_find = value_map.find(result[1]);
-          if (value_find == value_map.end()) {
-            cerr << "ERROR: Could not find key \'" << result[1]
-              << "\' in listmap." << endl;
-          }
-          else {
-            cout << "Found value: " << (*value_find) << endl;
-          }
-       }
-       else {
-          cerr << "ERROR: invalid option" << endl;
-       }
+       analyze_string(line, &value_map);
      }
   }
 
