@@ -70,33 +70,72 @@ int main (int argc, char** argv) {
   for (str_str_map::iterator itor = test.begin();
        itor != test.end(); ++itor) {
      string filename = (*itor).first;
-     bool from_cin;
-     bool exit_loop = false;
 
-     if (((*itor).first).compare("-") == 0) from_cin = true;
-     else from_cin = false;
+     if (((*itor).first).compare("-") == 0) {
+       string line;
+       cout << "Enter input line: " << endl;
+       std::getline(cin, line);
+
+       cout << endl << "input: " << line << endl;
+       smatch result;
+       if (regex_search (line, result, comment_regex)) {
+          cout << "Comment or empty line." << endl;
+          continue;
+       }
+       else if (regex_search (line, result, key_value_regex)) {
+         if(result[1] == "" && result[2] == "") {
+           cout << "Printing out listmap" << endl;
+           for (str_str_map::iterator vitor = value_map.begin();
+             vitor != value_map.end(); ++vitor) {
+                cout << (*vitor) << endl;
+           }
+           cout << endl;
+           continue;
+         }
+         else if (result[1] == "") {
+           cout << "Printing out listmap with values \'" << result[2]
+              << "\'" << endl;
+           for (str_str_map::iterator vitor = value_map.begin();
+             vitor != value_map.end(); ++vitor) {
+                if((*vitor).second == result[2] )
+                   cout << (*vitor) << endl;
+           }
+           cout << endl;
+           continue;
+         }
+          cout << "key  : \"" << result[1] << "\"" << endl;
+          cout << "value: \"" << result[2] << "\"" << endl;
+          str_str_pair pair (result[1], result[2]);
+          cout << "adding "<< pair << " to value_map" << endl;
+          value_map.insert(pair);
+       }
+       else if (regex_search (line, result, trimmed_regex)) {
+          cout << "query: \"" << result[1] << "\"" << endl;
+          str_str_map::iterator value_find = value_map.find(result[1]);
+          if (value_find == value_map.end()) {
+            cerr << "ERROR: Could not find key \'" << result[1]
+              << "\' in listmap." << endl;
+          }
+          else {
+            cout << "Found value: " << (*value_find) << endl;
+          }
+       }
+       else {
+          cerr << "ERROR: invalid option" << endl;
+       }
+       continue;
+     }
 
      std::ifstream contents (filename);
-     if(!contents.good() && !from_cin) {
+     if(!contents.good()) {
        cerr << "ERROR: File not found" << endl;
        continue;
      }
+
      while (!contents.eof())  {
        string line;
 
-       if(exit_loop) {
-         exit_loop = false;
-         break;
-       }
-
-       if (from_cin) {
-         cout << "Enter input line: " << endl;
-         std::getline(cin, line);
-         exit_loop = true;
-       }
-       else {
-         std::getline(contents, line);
-       }
+       std::getline(contents, line);
 
        cout << endl << "input: " << line << endl;
        smatch result;
