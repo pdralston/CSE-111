@@ -40,7 +40,7 @@ void scan_options (int argc, char** argv) {
    }
 }
 
-void analyze_string(string line, str_str_map *value_map) {
+void analyze_string(string line, str_str_map &value_map) {
 
   regex comment_regex {R"(^\s*(#.*)?\s*$)"};
   regex key_value_regex {R"(^\s*(.*?)\s*=\s*(.*?)\s*$)"};
@@ -49,40 +49,53 @@ void analyze_string(string line, str_str_map *value_map) {
   cout << endl << "input: " << line << endl;
   smatch result;
   if (regex_search (line, result, comment_regex)) {
+     //CASE: comment or empty line
      cout << "Comment or empty line." << endl;
-     // continue;
+     return;
   }
   if (regex_search (line, result, key_value_regex)) {
+    //CASE: add/delete/edit listmap
     if(result[1] == "" && result[2] == "") {
+      //CASE = : print out listmap
       cout << "Printing out listmap" << endl;
-      for (str_str_map::iterator vitor = value_map->begin();
-        vitor != value_map->end(); ++vitor) {
+      for (str_str_map::iterator vitor = value_map.begin();
+        vitor != value_map.end(); ++vitor) {
            cout << (*vitor) << endl;
       }
       cout << endl;
-      // continue;
     }
     else if (result[1] == "") {
+      //CASE =<value> : print out listmap elements with value <value>
       cout << "Printing out listmap with values \'" << result[2]
          << "\'" << endl;
-      for (str_str_map::iterator vitor = value_map->begin();
-        vitor != value_map->end(); ++vitor) {
+      for (str_str_map::iterator vitor = value_map.begin();
+        vitor != value_map.end(); ++vitor) {
            if((*vitor).second == result[2] )
               cout << (*vitor) << endl;
       }
       cout << endl;
-      // continue;
     }
-     cout << "key  : \"" << result[1] << "\"" << endl;
-     cout << "value: \"" << result[2] << "\"" << endl;
-     str_str_pair pair (result[1], result[2]);
-     cout << "adding "<< pair << " to value_map" << endl;
-     value_map->insert(pair);
+    else if (result[2] == "") {
+      //CASE <key>= : delete key <key> from listmap
+      cout << "Deleting key \"" << result[1] << "\" from map" << endl;
+      str_str_map::iterator vitor = value_map.find(result[1]);
+      value_map.erase(vitor);
+      cout << endl;
+    }
+    else {
+      //CASE default : add (<key>, <value>) to listmap
+      cout << "key  : \"" << result[1] << "\"" << endl;
+      cout << "value: \"" << result[2] << "\"" << endl;
+      str_str_pair pair (result[1], result[2]);
+      cout << "adding "<< pair << " to value_map" << endl;
+      value_map.insert(pair);
+    }
   }
   else if (regex_search (line, result, trimmed_regex)) {
+     //CASE: Search for key in map
      cout << "query: \"" << result[1] << "\"" << endl;
-     str_str_map::iterator value_find = value_map->find(result[1]);
-     if (value_find == value_map->end()) {
+     str_str_map::iterator value_find = value_map.find(result[1]);
+     if (value_find == value_map.end()) {
        cerr << "ERROR: Could not find key \'" << result[1]
          << "\' in listmap." << endl;
      }
@@ -113,39 +126,33 @@ int main (int argc, char** argv) {
 
    str_str_map test;
    for (char** argp = &argv[optind]; argp != &argv[argc]; ++argp) {
-      str_str_pair pair (*argp, to_string<int> (argp - argv));
+      str_str_pair pair (to_string<int> (argp - argv), *argp);
       cout << "Before insert: " << pair << endl;
       test.insert(pair);
    }
 
-  regex comment_regex {R"(^\s*(#.*)?\s*$)"};
-  regex key_value_regex {R"(^\s*(.*?)\s*=\s*(.*?)\s*$)"};
-  regex trimmed_regex {R"(^\s*([^=]+?)\s*$)"};
-
   str_str_map value_map;
   for (str_str_map::iterator itor = test.begin();
        itor != test.end(); ++itor) {
-     string filename = (*itor).first;
+     string filename = (*itor).second;
 
-     if (((*itor).first).compare("-") == 0) {
+     if (((*itor).second).compare("-") == 0) {
        string line;
        cout << "Enter input line: " << endl;
        std::getline(cin, line);
-       analyze_string(line, &value_map);
-     }
+       analyze_string(line, value_map);
+     } else {
+        std::ifstream contents (filename);
+        if(!contents.good()) {
+          cerr << "ERROR: " << filename << " not found" << endl;
+        }
 
-
-     std::ifstream contents (filename);
-     if(!contents.good()) {
-       cerr << "ERROR: File not found" << endl;
-       continue;
-     }
-
-     while (!contents.eof())  {
-       string line;
-       std::getline(contents, line);
-       analyze_string(line, &value_map);
-     }
+        while (contents.good() && !contents.eof())  {
+          string line;
+          getline(contents, line);
+          analyze_string(line, value_map);
+        }
+      }
   }
 
    for (str_str_map::iterator itor = test.begin();
