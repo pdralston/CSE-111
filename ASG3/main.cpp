@@ -70,14 +70,34 @@ int main (int argc, char** argv) {
   for (str_str_map::iterator itor = test.begin();
        itor != test.end(); ++itor) {
      string filename = (*itor).first;
+     bool from_cin;
+     bool exit_loop = false;
+
+     if (((*itor).first).compare("-") == 0) from_cin = true;
+     else from_cin = false;
+
      std::ifstream contents (filename);
-     if(!contents.good()) continue;
+     if(!contents.good() && !from_cin) {
+       cerr << "ERROR: File not found" << endl;
+       continue;
+     }
      while (!contents.eof())  {
        string line;
-       std::getline(contents, line);
-       if (line == "-") {
-         std::getline (cin, line);
+
+       if(exit_loop) {
+         exit_loop = false;
+         break;
        }
+
+       if (from_cin) {
+         cout << "Enter input line: " << endl;
+         std::getline(cin, line);
+         exit_loop = true;
+       }
+       else {
+         std::getline(contents, line);
+       }
+
        cout << endl << "input: " << line << endl;
        smatch result;
        if (regex_search (line, result, comment_regex)) {
