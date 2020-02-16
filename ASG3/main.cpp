@@ -40,7 +40,7 @@ void scan_options (int argc, char** argv) {
    }
 }
 
-void analyze_string(string line, str_str_map &value_map) {
+bool analyze_string(string line, str_str_map &value_map) {
 
   regex comment_regex {R"(^\s*(#.*)?\s*$)"};
   regex key_value_regex {R"(^\s*(.*?)\s*=\s*(.*?)\s*$)"};
@@ -51,7 +51,7 @@ void analyze_string(string line, str_str_map &value_map) {
   if (regex_search (line, result, comment_regex)) {
      //CASE: comment or empty line
      cout << "Comment or empty line." << endl;
-     return;
+     return false;
   }
   if (regex_search (line, result, key_value_regex)) {
     //CASE: add/delete/edit listmap
@@ -105,7 +105,9 @@ void analyze_string(string line, str_str_map &value_map) {
   }
   else {
      cerr << "ERROR: invalid option" << endl;
+     return false;
   }
+  return false;
 }
 
 
@@ -123,6 +125,7 @@ void analyze_string(string line, str_str_map &value_map) {
 int main (int argc, char** argv) {
    sys_info::execname (argv[0]);
    scan_options (argc, argv);
+   bool exit_status = false;
 
    str_str_map test;
    for (char** argp = &argv[optind]; argp != &argv[argc]; ++argp) {
@@ -140,17 +143,18 @@ int main (int argc, char** argv) {
        string line;
        cout << "Enter input line: " << endl;
        std::getline(cin, line);
-       analyze_string(line, value_map);
+       exit_status = exit_status || analyze_string(line, value_map);
      } else {
         std::ifstream contents (filename);
         if(!contents.good()) {
           cerr << "ERROR: " << filename << " not found" << endl;
+          exit_status = true;
         }
 
         while (contents.good() && !contents.eof())  {
           string line;
           getline(contents, line);
-          analyze_string(line, value_map);
+          exit_status = exit_status || analyze_string(line, value_map);
         }
       }
   }
@@ -163,6 +167,7 @@ int main (int argc, char** argv) {
    str_str_map::iterator itor = test.begin();
    test.erase (itor);
 
+   cout << "EXIT_STATUS(" << (exit_status ? 1 : 0) << ")" << endl;
    cout << "EXIT_SUCCESS" << endl;
    return EXIT_SUCCESS;
 }
