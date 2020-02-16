@@ -125,7 +125,7 @@ bool analyze_string(string line, str_str_map &value_map) {
 int main (int argc, char** argv) {
    sys_info::execname (argv[0]);
    scan_options (argc, argv);
-   bool exit_status;
+   bool exit_status = false;
 
    str_str_map test;
    for (char** argp = &argv[optind]; argp != &argv[argc]; ++argp) {
@@ -143,7 +143,7 @@ int main (int argc, char** argv) {
        string line;
        cout << "Enter input line: " << endl;
        std::getline(cin, line);
-       exit_status = exit_status && analyze_string(line, value_map);
+       exit_status = exit_status || analyze_string(line, value_map);
      } else {
         std::ifstream contents (filename);
         if(!contents.good()) {
@@ -154,7 +154,7 @@ int main (int argc, char** argv) {
         while (contents.good() && !contents.eof())  {
           string line;
           getline(contents, line);
-          exit_status = exit_status && analyze_string(line, value_map);
+          exit_status = exit_status || analyze_string(line, value_map);
         }
       }
   }
