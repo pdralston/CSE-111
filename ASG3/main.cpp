@@ -159,13 +159,17 @@ int main (int argc, char** argv) {
       }
   }
 
+
+   str_str_map::iterator vitor = value_map.begin();
+   value_map.erase(vitor);
+
    for (str_str_map::iterator itor = test.begin();
         itor != test.end(); ++itor) {
       cout << "During iteration: " << *itor << endl;
    }
 
    str_str_map::iterator itor = test.begin();
-   test.erase (itor);
+   test.erase(itor);
 
    cout << "EXIT_STATUS(" << (exit_status ? 1 : 0) << ")" << endl;
    cout << "EXIT_SUCCESS" << endl;
