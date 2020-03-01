@@ -1,4 +1,6 @@
 // $Id: cixd.cpp,v 1.8 2019-04-05 15:04:28-07 - - $
+// Sasank Madineni (smadinen)
+// Perry Ralston (pdralsto)
 
 #include <iostream>
 #include <string>

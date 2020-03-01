@@ -1,4 +1,6 @@
 // $Id: protocol.h,v 1.7 2019-05-15 15:26:36-07 - - $
+// Sasank Madineni (smadinen)
+// Perry Ralston (pdralsto)
 
 #ifndef __PROTOCOL__H__
 #define __PROTOCOL__H__

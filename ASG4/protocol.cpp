@@ -1,4 +1,6 @@
 // $Id: protocol.cpp,v 1.10 2019-05-15 15:26:36-07 - - $
+// Sasank Madineni (smadinen)
+// Perry Ralston (pdralsto)
 
 #include <string>
 #include <unordered_map>
