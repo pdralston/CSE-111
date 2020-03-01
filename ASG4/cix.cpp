@@ -62,6 +62,14 @@ void cix_ls (client_socket& server) {
 
 //GET command - gets a file from the server
 void cix_get (client_socket& server, string filename){
+   if(filename.find('/') != string::npos) {
+      outlog << "passed directory instead of file" << endl;
+      return;
+   }
+   else if(filename.size() > 58) {
+     outlog << "passed file with filename > 58 characters." << endl;
+     return;
+   }
    cix_header header;
    header.command = cix_command::GET;
    strcpy(header.filename, filename.c_str());
