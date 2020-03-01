@@ -6,6 +6,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <memory>
 using namespace std;
 
 #include <libgen.h>
@@ -61,11 +62,11 @@ void reply_get (accepted_socket& client_sock, cix_header& header) {
       return;
    }
    string get_output;
-   char buffer[0x1000];
-   while (infile.good()) {
-      infile.getline(buffer, 0x1000);
-      get_output.append (buffer);
-   }
+   infile.seekg(0, infile.end);
+   const int buff_size = infile.tellg();
+   infile.seekg(0, infile.beg);
+   unique_ptr<char[]> buffer(new char[buff_size]);
+   infile.read(buffer.get(), buff_size);
    infile.close();
    int status = infile.fail() - 1;
    if (status < 0) outlog << get_cmd << ": " << strerror (errno) << endl;
@@ -77,8 +78,15 @@ void reply_get (accepted_socket& client_sock, cix_header& header) {
    memset (header.filename, 0, FILENAME_SIZE);
    outlog << "sending header " << header << endl;
    send_packet (client_sock, &header, sizeof header);
-   send_packet (client_sock, get_output.c_str(), get_output.size());
-   outlog << "sent " << get_output.size() << " bytes" << endl;
+   send_packet (client_sock, buffer.get(), get_output.size());
+   outlog << "sent " << buff_size << " bytes" << endl;
+}
+void reply_put (accepted_socket& client_sock, cix_header& header) {
+   
+}
+
+void reply_rm (accepted_socket& client_sock, cix_header& header) {
+   
 }
 
 void run_server (accepted_socket& client_sock) {
@@ -97,10 +105,10 @@ void run_server (accepted_socket& client_sock) {
                reply_get (client_sock, header);
                break;
             case cix_command::PUT:
-               //reply_put (client_sock, header);
+               reply_put (client_sock, header);
                break;
             case cix_command::RM:
-               //reply_rm (client_sock, header);
+               reply_rm (client_sock, header);
                break;
             default:
                outlog << "invalid client header:" << header << endl;
