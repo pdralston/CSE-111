@@ -51,7 +51,6 @@ void recv_packet (base_socket& socket, void* buffer, size_t bufsize) {
    }while (ntorecv > 0);
 }
 
-
 ostream& operator<< (ostream& out, const cix_header& header) {
    string code = to_string (header.command);
    cout << "{" << header.nbytes << "," << unsigned (header.command)
@@ -76,4 +75,3 @@ in_port_t get_cix_server_port (const vector<string>& args,
    }
    return stoi (port);
 }
-     

@@ -3,6 +3,7 @@
 // Perry Ralston (pdralsto)
 
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
 using namespace std;
@@ -49,7 +50,37 @@ void reply_ls (accepted_socket& client_sock, cix_header& header) {
    outlog << "sent " << ls_output.size() << " bytes" << endl;
 }
 
-
+void reply_get (accepted_socket& client_sock, cix_header& header) {
+   const string get_cmd = "get " + string{header.filename};
+   ifstream infile(header.filename);
+   if (!infile.good()) { 
+      outlog << "get: file open failed: " << strerror (errno) << endl;
+      header.command = cix_command::NAK;
+      header.nbytes = errno;
+      send_packet (client_sock, &header, sizeof header);
+      return;
+   }
+   string get_output;
+   char buffer[0x1000];
+   while (infile.good()) {
+      infile.getline(buffer, 0x1000);
+      get_output.append (buffer);
+   }
+   infile.close();
+   int status = infile.fail() - 1;
+   if (status < 0) outlog << get_cmd << ": " << strerror (errno) << endl;
+              else outlog << get_cmd << ": exit " << (status >> 8)
+                          << " signal " << (status & 0x7F)
+                          << " core " << (status >> 7 & 1) << endl;
+   header.command = cix_command::FILEOUT;
+   header.nbytes = get_output.size();
+   memset (header.filename, 0, FILENAME_SIZE);
+   outlog << "sending header " << header << endl;
+   send_packet (client_sock, &header, sizeof header);
+   send_packet (client_sock, get_output.c_str(), get_output.size());
+   outlog << "sent " << get_output.size() << " bytes" << endl;
+}
+
 void run_server (accepted_socket& client_sock) {
    outlog.execname (outlog.execname() + "-server");
    outlog << "connected to " << to_string (client_sock) << endl;
@@ -61,6 +92,15 @@ void run_server (accepted_socket& client_sock) {
          switch (header.command) {
             case cix_command::LS: 
                reply_ls (client_sock, header);
+               break;
+            case cix_command::FILEOUT:
+               reply_get (client_sock, header);
+               break;
+            case cix_command::PUT:
+               //reply_put (client_sock, header);
+               break;
+            case cix_command::RM:
+               //reply_rm (client_sock, header);
                break;
             default:
                outlog << "invalid client header:" << header << endl;
@@ -92,7 +132,6 @@ void fork_cixserver (server_socket& server, accepted_socket& accept) {
    }
 }
 
-
 void reap_zombies() {
    for (;;) {
       int status;
@@ -120,7 +159,6 @@ void signal_action (int signal, void (*handler) (int)) {
                       << " failed: " << strerror (errno) << endl;
 }
 
-
 int main (int argc, char** argv) {
    outlog.execname (basename (argv[0]));
    outlog << "starting" << endl;

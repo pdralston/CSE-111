@@ -58,7 +58,6 @@ void cix_ls (client_socket& server) {
    }
 }
 
-
 void usage() {
    cerr << "Usage: " << outlog.execname() << " [host] [port]" << endl;
    throw cix_exit();

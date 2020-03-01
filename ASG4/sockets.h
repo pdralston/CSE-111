@@ -53,7 +53,6 @@ class base_socket {
       friend string to_string (const base_socket& sock);
 };
 
-
 //
 // class accepted_socket
 // used by server when a client connects
@@ -88,7 +87,6 @@ class server_socket: public base_socket {
       }
 };
 
-
 //
 // class socket_error
 // base class for throwing socket errors
@@ -125,7 +123,6 @@ class socket_h_error: public socket_error {
                host_errno(h_errno) {}
 };
 
-
 //
 // class hostinfo
 // information about a host given hostname or IPv4 address
