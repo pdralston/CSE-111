@@ -60,21 +60,44 @@ void cix_ls (client_socket& server) {
    }
 }
 
-//PUT command - creates a file in the server with contents
-//that are passed.
-void cix_put (client_socket& server) {
-
+//GET command - gets a file from the server
+void cix_get (client_socket& server, string filename){
+   cix_header header;
+   header.command = cix_command::GET;
+   header.filename = filename;
+   outlog << "sending header " << header << endl;
+   send_packet (server, &header, sizeof header);
+   recv_packet (server, &header, sizeof header);
+   outlog << "received header " << header << endl;
+   if (header.command != cix_command::FILEOUT) {
+     outlog << "sent GET, server did not return FILEOUT" << endl;
+     outlog << "server returned " << header << endl;
+   }
+   else {
+     auto buffer = make_unique<char[]? (header.nbytes + 1);
+     recv_packet (server, buffer.get(), header.nbytes);
+     outlog << "received" << header.nbytes << " bytes" << endl;
+     buffer[header.nbytes] = '\0';
+     cout << buffer.get();
+   }
 }
 
-//GET command - gets a file from the server
-void cix_get (client_socket& server){
-
+//PUT command - creates a file in the server with contents
+//that are passed.
+void cix_put (client_socket& server, string contents) {
+   cix_header header;
+   header.command = cix_command::PUT;
+   outlog << "sending header " << header << endl;
+   send_packet (server, &header, sizeof header);
 }
 
 //RM command - removes a file in the server with name
 //that is passed
-void cix_rm (client_socket& server) {
-
+void cix_rm (client_socket& server, string filename) {
+   cix_header header;
+   header.command = cix_command::RM;
+   outlog << "sending header " << header << endl;
+   send_packet (server, &header, sizeof header);
 }
 
 void usage() {
@@ -99,9 +122,10 @@ int main (int argc, char** argv) {
          getline (cin, line);
          if (cin.eof()) throw cix_exit();
          outlog << "command " << line << endl;
-         const auto& itor = command_map.find (line);
+         const auto& itor = command_map.find (line.substr(0, line.find(" ")));
          cix_command cmd = itor == command_map.end()
                          ? cix_command::ERROR : itor->second;
+         string arguments = "";
          switch (cmd) {
             case cix_command::EXIT:
                throw cix_exit();
@@ -113,13 +137,19 @@ int main (int argc, char** argv) {
                cix_ls (server);
                break;
             case cix_command::GET:
-              cix_get(server);
+              arguments = line.substr(4, line.size());
+              cout << "arguments: " << arguments << endl;
+              cix_get(server, arguments);
               break;
             case cix_command::RM:
-              cix_rm(server);
+              arguments = line.substr(3, line.size());
+              cout << "arguments: " << arguments << endl;
+              cix_rm(server, arguments);
               break;
             case cix_command::PUT:
-              cix_put(server);
+              arguments = line.substr(4, line.size());
+              cout << "arguments: " << arguments << endl;
+              cix_put(server, arguments);
               break;
             default:
                outlog << line << ": invalid command" << endl;
