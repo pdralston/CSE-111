@@ -18,10 +18,14 @@ using namespace std;
 logstream outlog (cout);
 struct cix_exit: public exception {};
 
+//The list of all client commands
 unordered_map<string,cix_command> command_map {
    {"exit", cix_command::EXIT},
    {"help", cix_command::HELP},
    {"ls"  , cix_command::LS  },
+   {"put" , cix_command::PUT },
+   {"get" , cix_command::GET },
+   {"rm"  , cix_command::RM  }
 };
 
 static const char help[] = R"||(
@@ -56,6 +60,22 @@ void cix_ls (client_socket& server) {
    }
 }
 
+//PUT command - creates a file in the server with contents
+//that are passed.
+void cix_put (client_socket& server) {
+
+}
+
+//GET command - gets a file from the server
+void cix_get (client_socket& server){
+
+}
+
+//RM command - removes a file in the server with name
+//that is passed
+void cix_rm (client_socket& server) {
+
+}
 
 void usage() {
    cerr << "Usage: " << outlog.execname() << " [host] [port]" << endl;
@@ -92,17 +112,25 @@ int main (int argc, char** argv) {
             case cix_command::LS:
                cix_ls (server);
                break;
+            case cix_command::GET:
+              cix_get(server);
+              break;
+            case cix_command::RM:
+              cix_rm(server);
+              break;
+            case cix_command::PUT:
+              cix_put(server);
+              break;
             default:
                outlog << line << ": invalid command" << endl;
                break;
          }
       }
-   }catch (socket_error& error) {
+   } catch (socket_error& error) {
       outlog << error.what() << endl;
-   }catch (cix_exit& error) {
+   } catch (cix_exit& error) {
       outlog << "caught cix_exit" << endl;
    }
    outlog << "finishing" << endl;
    return 0;
 }
-
