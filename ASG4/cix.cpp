@@ -71,9 +71,11 @@ void cix_get (client_socket& server, string filename){
      outlog << "passed file with filename > 58 characters." << endl;
      return;
    }
+
    cix_header header;
    header.command = cix_command::GET;
    strcpy(header.filename, filename.c_str());
+   outlog << "getting file " << header.filename << endl;
    outlog << "sending header " << header << endl;
    send_packet (server, &header, sizeof header);
    recv_packet (server, &header, sizeof header);
@@ -141,7 +143,7 @@ void cix_put (client_socket& server, string filename) {
 //RM command - removes a file in the server with name
 //that is passed
 void cix_rm (client_socket& server, string filename) {
-   if(filename.find('/') != string::npos) {
+   if(filename.find("/") != string::npos) {
       outlog << "passed directory instead of file" << endl;
       return;
    }
@@ -204,17 +206,17 @@ int main (int argc, char** argv) {
                cix_ls (server);
                break;
             case cix_command::GET:
-              arguments = line.substr(4, line.size());
+              arguments = line.substr(4, line.size() - 1);
               cout << "arguments: " << arguments << endl;
               cix_get(server, arguments);
               break;
             case cix_command::RM:
-              arguments = line.substr(3, line.size());
+              arguments = line.substr(3, line.size() - 1);
               cout << "arguments: " << arguments << endl;
               cix_rm(server, arguments);
               break;
             case cix_command::PUT:
-              arguments = line.substr(4, line.size());
+              arguments = line.substr(4, line.size() - 1);
               cout << "arguments: " << arguments << endl;
               cix_put(server, arguments);
               break;
