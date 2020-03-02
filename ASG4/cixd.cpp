@@ -88,15 +88,12 @@ void reply_put (accepted_socket& client_sock, cix_header& header) {
       send_packet (client_sock, &header, sizeof header);
       return;
    }
-   unsigned nbytes{header.nbytes};
-   unsigned file_size{nbytes + 1};
+   
+   unsigned file_size{header.nbytes};
    auto buffer = make_unique<char[]> (file_size);
-   recv_packet (client_sock, buffer.get(), nbytes);
-   outlog << "received" << nbytes << " bytes" << endl;
-   buffer[nbytes] = '\0';
-   if (nbytes > 0){
-      outfile.write(buffer.get(), file_size);
-   }
+   recv_packet (client_sock, buffer.get(), file_size);
+   outlog << "received" << file_size << " bytes" << endl;
+   outfile.write(buffer.get(), file_size);
    header.command = cix_command::ACK;
    memset (header.filename, 0, FILENAME_SIZE);
    outlog << "sending header " << header << endl;
