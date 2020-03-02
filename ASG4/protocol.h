@@ -38,4 +38,3 @@ in_port_t get_cix_server_port (const vector<string>& args,
                                size_t index);
 
 #endif
-
