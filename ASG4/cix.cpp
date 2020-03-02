@@ -1,12 +1,11 @@
 // $Id: cix.cpp,v 1.9 2019-04-05 15:04:28-07 - - $
-// Sasank Madineni (smadinen)
-// Perry Ralston (pdralsto)
 
 #include <iostream>
 #include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <fstream>
 using namespace std;
 
 #include <libgen.h>
@@ -64,7 +63,7 @@ void cix_ls (client_socket& server) {
 
 //GET command - gets a file from the server
 void cix_get (client_socket& server, string filename){
-   if(filename.find('/') != string::npos) {
+   if(filename.find("/") != string::npos) {
       outlog << "passed directory instead of file" << endl;
       return;
    }
@@ -72,9 +71,11 @@ void cix_get (client_socket& server, string filename){
      outlog << "passed file with filename > 58 characters." << endl;
      return;
    }
+
    cix_header header;
    header.command = cix_command::GET;
    strcpy(header.filename, filename.c_str());
+   outlog << "getting file " << header.filename << endl;
    outlog << "sending header " << header << endl;
    send_packet (server, &header, sizeof header);
    recv_packet (server, &header, sizeof header);
@@ -88,41 +89,87 @@ void cix_get (client_socket& server, string filename){
      recv_packet (server, buffer.get(), header.nbytes);
      outlog << "received" << header.nbytes << " bytes" << endl;
      buffer[header.nbytes] = '\0';
-     cout << buffer.get();
+     ofstream outfile(static_cast<string>(header.filename));
+     outfile << buffer.get();
+     outfile.close();
    }
 }
 
 //PUT command - creates a file in the server with contents
 //that are passed.
-void cix_put (client_socket& server, string contents) {
+void cix_put (client_socket& server, string filename) {
+   if(filename.find("/") != string::npos) {
+      outlog << "passed directory instead of file" << endl;
+      return;
+   }
+   else if(filename.size() > 58) {
+      outlog << "passed file with filename > 58 characters." << endl;
+      return;
+   }
+
+   ifstream infile (filename);
+   if(!infile.good()) {
+      outlog << "file doesn't exist locally." << endl;
+      return;
+   }
+
    cix_header header;
+
+   infile.seekg(0, infile.end);
+   const int content_size = infile.tellg();
+   infile.seekg(0, infile.beg);
+   unique_ptr<char[]> contents(new char[content_size]);
+   infile.read(contents.get(), content_size);
+   infile.close();
+
+
    header.command = cix_command::PUT;
-   header.nbytes = contents.size();
+   strcpy(header.filename, filename.c_str());
+   header.nbytes = filename.size();
    outlog << "sending header " << header << endl;
    send_packet (server, &header, sizeof header);
-   send_packet (server, contents.c_str(), contents.size());
+   send_packet (server, contents.get(), content_size);
    recv_packet (server, &header, sizeof header);
    outlog << "receiveed header " << header << endl;
    if (header.command != cix_command::ACK) {
-     outlog << "sent GET, server did not return ACK" << endl;
-     outlog << "server returned " << header << endl;
+      outlog << "sent GET, server did not return ACK" << endl;
+      outlog << "server returned " << header << endl;
    }
    else {
-     outlog << "sent GET, server returned ACK" << endl;
-     outlog << "file successfully added" << endl;
+      outlog << "sent GET, server returned ACK" << endl;
+      outlog << "file successfully added" << endl;
    }
 }
 
 //RM command - removes a file in the server with name
 //that is passed
 void cix_rm (client_socket& server, string filename) {
+   if(filename.find("/") != string::npos) {
+      outlog << "passed directory instead of file" << endl;
+      return;
+   }
+   else if(filename.size() > 58) {
+      outlog << "passed file with filename > 58 characters." << endl;
+      return;
+   }
+
    cix_header header;
    header.command = cix_command::RM;
    outlog << "sending header " << header << endl;
    strcpy(header.filename, filename.c_str());
    send_packet (server, &header, sizeof header);
+   recv_packet (server, &header, sizeof header);
+   outlog << "received header " << header << endl;
+   if (header.command != cix_command::ACK) {
+     outlog << "sent RM, server did not receive ACK" << endl;
+     outlog << "server returned " << header << endl;
+   }
+   else {
+     outlog << "sent RM, received ACK" << endl;
+     outlog << "file succesfully removed" << endl;
+   }
 }
-
+
 void usage() {
    cerr << "Usage: " << outlog.execname() << " [host] [port]" << endl;
    throw cix_exit();
@@ -160,17 +207,17 @@ int main (int argc, char** argv) {
                cix_ls (server);
                break;
             case cix_command::GET:
-              arguments = line.substr(4, line.size());
+              arguments = line.substr(4, line.size() - 1);
               cout << "arguments: " << arguments << endl;
               cix_get(server, arguments);
               break;
             case cix_command::RM:
-              arguments = line.substr(3, line.size());
+              arguments = line.substr(3, line.size() - 1);
               cout << "arguments: " << arguments << endl;
               cix_rm(server, arguments);
               break;
             case cix_command::PUT:
-              arguments = line.substr(4, line.size());
+              arguments = line.substr(4, line.size() - 1);
               cout << "arguments: " << arguments << endl;
               cix_put(server, arguments);
               break;
