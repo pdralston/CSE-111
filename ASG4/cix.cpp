@@ -94,7 +94,9 @@ void cix_get (client_socket& server, string filename){
        outlog << "Error creating file " <<
           filename << endl;
      }
-     outfile << buffer.get();
+     if (header.nbytes > 0) {
+        outfile << buffer.get();
+     }
      outfile.close();
    }
 }
@@ -129,12 +131,12 @@ void cix_put (client_socket& server, string filename) {
 
    header.command = cix_command::PUT;
    strcpy(header.filename, filename.c_str());
-   header.nbytes = content_size;
+   header.nbytes = content_size + 1;
    outlog << "sending header " << header << endl;
    send_packet (server, &header, sizeof header);
-   send_packet (server, contents.get(), content_size);
+   send_packet (server, contents.get(), content_size + 1);
    recv_packet (server, &header, sizeof header);
-   outlog << "receiveed header " << header << endl;
+   outlog << "receieved header " << header << endl;
    if (header.command != cix_command::ACK) {
       outlog << "sent GET, server did not return ACK" << endl;
       outlog << "server returned " << header << endl;
