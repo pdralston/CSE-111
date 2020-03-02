@@ -73,15 +73,16 @@ void reply_get (accepted_socket& client_sock, cix_header& header) {
                           << " signal " << (status & 0x7F)
                           << " core " << (status >> 7 & 1) << endl;
    header.command = cix_command::FILEOUT;
-   header.nbytes = buff_size;
+   header.nbytes = buff_size + 1;
    outlog << "sending header " << header << endl;
    send_packet (client_sock, &header, sizeof header);
-   send_packet (client_sock, buffer.get(), buff_size);
+   send_packet (client_sock, buffer.get(), buff_size + 1);
    outlog << "sent " << buff_size << " bytes" << endl;
 }
+
 void reply_put (accepted_socket& client_sock, cix_header& header) {
    ofstream outfile(header.filename);
-   if (!outfile.good()) { 
+   if (!outfile.good()) {
       outlog << "put: file open failed: " << strerror (errno) << endl;
       header.command = cix_command::NAK;
       header.nbytes = errno;
