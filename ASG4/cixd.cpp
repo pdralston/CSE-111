@@ -61,7 +61,6 @@ void reply_get (accepted_socket& client_sock, cix_header& header) {
       send_packet (client_sock, &header, sizeof header);
       return;
    }
-   string get_output;
    infile.seekg(0, infile.end);
    const int buff_size = infile.tellg();
    infile.seekg(0, infile.beg);
@@ -74,19 +73,45 @@ void reply_get (accepted_socket& client_sock, cix_header& header) {
                           << " signal " << (status & 0x7F)
                           << " core " << (status >> 7 & 1) << endl;
    header.command = cix_command::FILEOUT;
-   header.nbytes = get_output.size();
+   header.nbytes = buff_size;
    memset (header.filename, 0, FILENAME_SIZE);
    outlog << "sending header " << header << endl;
    send_packet (client_sock, &header, sizeof header);
-   send_packet (client_sock, buffer.get(), get_output.size());
+   send_packet (client_sock, buffer.get(), buff_size);
    outlog << "sent " << buff_size << " bytes" << endl;
 }
 void reply_put (accepted_socket& client_sock, cix_header& header) {
-   
+   ofstream outfile(header.filename);
+   if (!outfile.good()) { 
+      outlog << "put: file open failed: " << strerror (errno) << endl;
+      header.command = cix_command::NAK;
+      header.nbytes = errno;
+      send_packet (client_sock, &header, sizeof header);
+      return;
+   }
+   auto buffer = make_unique<char[]> (header.nbytes + 1);
+   recv_packet (client_sock, buffer.get(), header.nbytes);
+   outlog << "received" << header.nbytes << " bytes" << endl;
+   buffer[header.nbytes] = '\0';
+   outfile << buffer.get();
+   header.command = cix_command::ACK;
+   memset (header.filename, 0, FILENAME_SIZE);
+   outlog << "sending header " << header << endl;
+   send_packet (client_sock, &header, sizeof header);
 }
 
 void reply_rm (accepted_socket& client_sock, cix_header& header) {
-   
+   int rm_complete = unlink(header.filename);
+   if (rm_complete == 0) {
+      header.command = cix_command::ACK;
+      outlog << "sending header " << header << endl;
+      send_packet(client_sock, &header, sizeof header);
+      return;
+   }
+   outlog << "RM failed: " << strerror (rm_complete) << endl;
+   header.command = cix_command::NAK;
+   header.nbytes = errno;
+   send_packet (client_sock, &header, sizeof header);
 }
 
 void run_server (accepted_socket& client_sock) {
