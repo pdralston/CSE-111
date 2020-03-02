@@ -126,7 +126,7 @@ void run_server (accepted_socket& client_sock) {
             case cix_command::LS: 
                reply_ls (client_sock, header);
                break;
-            case cix_command::FILEOUT:
+            case cix_command::GET:
                reply_get (client_sock, header);
                break;
             case cix_command::PUT:
