@@ -63,7 +63,7 @@ void cix_ls (client_socket& server) {
 
 //GET command - gets a file from the server
 void cix_get (client_socket& server, string filename){
-   if(filename.find('/') == string::npos) {
+   if(filename.find("/") != string::npos) {
       outlog << "passed directory instead of file" << endl;
       return;
    }
@@ -102,7 +102,7 @@ void cix_get (client_socket& server, string filename){
 //PUT command - creates a file in the server with contents
 //that are passed.
 void cix_put (client_socket& server, string filename) {
-   if(filename.find('/') == string::npos) {
+   if(filename.find("/") != string::npos) {
       outlog << "passed directory instead of file" << endl;
       return;
    }
@@ -173,7 +173,7 @@ void cix_rm (client_socket& server, string filename) {
      outlog << "file succesfully removed" << endl;
    }
 }
-
+
 void usage() {
    cerr << "Usage: " << outlog.execname() << " [host] [port]" << endl;
    throw cix_exit();
