@@ -87,9 +87,13 @@ void cix_get (client_socket& server, string filename){
    else {
      auto buffer = make_unique<char[]> (header.nbytes + 1);
      recv_packet (server, buffer.get(), header.nbytes);
-     outlog << "received" << header.nbytes << " bytes" << endl;
+     outlog << "received " << header.nbytes << " bytes" << endl;
      buffer[header.nbytes] = '\0';
-     ofstream outfile(static_cast<string>(header.filename));
+     ofstream outfile {static_cast<string>(header.filename)};
+     if (!outfile.good()) {
+       outlog << "Error creating file " <<
+          filename << endl;
+     }
      outfile << buffer.get();
      outfile.close();
    }
