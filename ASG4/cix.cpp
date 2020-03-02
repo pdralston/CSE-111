@@ -129,7 +129,7 @@ void cix_put (client_socket& server, string filename) {
 
    header.command = cix_command::PUT;
    strcpy(header.filename, filename.c_str());
-   header.nbytes = filename.size();
+   header.nbytes = content_size;
    outlog << "sending header " << header << endl;
    send_packet (server, &header, sizeof header);
    send_packet (server, contents.get(), content_size);
