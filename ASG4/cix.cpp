@@ -131,12 +131,12 @@ void cix_put (client_socket& server, string filename) {
 
    header.command = cix_command::PUT;
    strcpy(header.filename, filename.c_str());
-   header.nbytes = content_size + 1;
+   header.nbytes = content_size;
    outlog << "sending header " << header << endl;
    send_packet (server, &header, sizeof header);
-   send_packet (server, contents.get(), content_size + 1);
+   send_packet (server, contents.get(), content_size);
    recv_packet (server, &header, sizeof header);
-   outlog << "receieved header " << header << endl;
+   outlog << "received header " << header << endl;
    if (header.command != cix_command::ACK) {
       outlog << "sent GET, server did not return ACK" << endl;
       outlog << "server returned " << header << endl;

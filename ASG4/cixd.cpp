@@ -23,7 +23,7 @@ struct cix_exit: public exception {};
 void reply_ls (accepted_socket& client_sock, cix_header& header) {
    const char* ls_cmd = "ls -l 2>&1";
    FILE* ls_pipe = popen (ls_cmd, "r");
-   if (ls_pipe == NULL) { 
+   if (ls_pipe == NULL) {
       outlog << "ls -l: popen failed: " << strerror (errno) << endl;
       header.command = cix_command::NAK;
       header.nbytes = errno;
@@ -54,7 +54,7 @@ void reply_ls (accepted_socket& client_sock, cix_header& header) {
 void reply_get (accepted_socket& client_sock, cix_header& header) {
    const string get_cmd = "get " + string{header.filename};
    ifstream infile(header.filename);
-   if (!infile.good()) { 
+   if (!infile.good()) {
       outlog << "get: file open failed: " << strerror (errno) << endl;
       header.command = cix_command::NAK;
       header.nbytes = errno;
@@ -73,10 +73,10 @@ void reply_get (accepted_socket& client_sock, cix_header& header) {
                           << " signal " << (status & 0x7F)
                           << " core " << (status >> 7 & 1) << endl;
    header.command = cix_command::FILEOUT;
-   header.nbytes = buff_size + 1;
+   header.nbytes = buff_size;
    outlog << "sending header " << header << endl;
    send_packet (client_sock, &header, sizeof header);
-   send_packet (client_sock, buffer.get(), buff_size + 1);
+   send_packet (client_sock, buffer.get(), buff_size);
    outlog << "sent " << buff_size << " bytes" << endl;
 }
 
@@ -121,13 +121,13 @@ void reply_rm (accepted_socket& client_sock, cix_header& header) {
 void run_server (accepted_socket& client_sock) {
    outlog.execname (outlog.execname() + "-server");
    outlog << "connected to " << to_string (client_sock) << endl;
-   try {   
+   try {
       for (;;) {
-         cix_header header; 
+         cix_header header;
          recv_packet (client_sock, &header, sizeof header);
          outlog << "received header " << header << endl;
          switch (header.command) {
-            case cix_command::LS: 
+            case cix_command::LS:
                reply_ls (client_sock, header);
                break;
             case cix_command::GET:
@@ -242,4 +242,3 @@ int main (int argc, char** argv) {
    outlog << "finishing" << endl;
    return 0;
 }
-
