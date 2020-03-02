@@ -74,7 +74,6 @@ void reply_get (accepted_socket& client_sock, cix_header& header) {
                           << " core " << (status >> 7 & 1) << endl;
    header.command = cix_command::FILEOUT;
    header.nbytes = buff_size;
-   memset (header.filename, 0, FILENAME_SIZE);
    outlog << "sending header " << header << endl;
    send_packet (client_sock, &header, sizeof header);
    send_packet (client_sock, buffer.get(), buff_size);
@@ -89,11 +88,13 @@ void reply_put (accepted_socket& client_sock, cix_header& header) {
       send_packet (client_sock, &header, sizeof header);
       return;
    }
-   auto buffer = make_unique<char[]> (header.nbytes + 1);
-   recv_packet (client_sock, buffer.get(), header.nbytes);
-   outlog << "received" << header.nbytes << " bytes" << endl;
-   buffer[header.nbytes] = '\0';
-   outfile << buffer.get();
+   unsigned nbytes{header.nbytes};
+   unsigned file_size{nbytes + 1};
+   auto buffer = make_unique<char[]> (file_size);
+   recv_packet (client_sock, buffer.get(), nbytes);
+   outlog << "received" << nbytes << " bytes" << endl;
+   buffer[nbytes] = '\0';
+   outfile.write(buffer.get(), file_size);
    header.command = cix_command::ACK;
    memset (header.filename, 0, FILENAME_SIZE);
    outlog << "sending header " << header << endl;
