@@ -95,7 +95,9 @@ void reply_put (accepted_socket& client_sock, cix_header& header) {
    recv_packet (client_sock, buffer.get(), nbytes);
    outlog << "received" << nbytes << " bytes" << endl;
    buffer[nbytes] = '\0';
-   outfile.write(buffer.get(), file_size);
+   if (nbytes > 0){
+      outfile.write(buffer.get(), file_size);
+   }
    header.command = cix_command::ACK;
    memset (header.filename, 0, FILENAME_SIZE);
    outlog << "sending header " << header << endl;
