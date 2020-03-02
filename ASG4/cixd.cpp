@@ -137,6 +137,9 @@ void run_server (accepted_socket& client_sock) {
                break;
             default:
                outlog << "invalid client header:" << header << endl;
+               header.command = cix_command::NAK;
+               header.nbytes = errno;
+               send_packet (client_sock, &header, sizeof header);
                break;
          }
       }
