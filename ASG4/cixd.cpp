@@ -38,7 +38,8 @@ void reply_ls (accepted_socket& client_sock, cix_header& header) {
       ls_output.append (buffer);
    }
    int status = pclose (ls_pipe);
-   if (status < 0) outlog << ls_cmd << ": " << strerror (errno) << endl;
+   if (status < 0) outlog << ls_cmd << ": "
+                          << strerror (errno) << endl;
               else outlog << ls_cmd << ": exit " << (status >> 8)
                           << " signal " << (status & 0x7F)
                           << " core " << (status >> 7 & 1) << endl;
@@ -68,7 +69,8 @@ void reply_get (accepted_socket& client_sock, cix_header& header) {
    infile.read(buffer.get(), buff_size);
    infile.close();
    int status = infile.fail() - 1;
-   if (status < 0) outlog << get_cmd << ": " << strerror (errno) << endl;
+   if (status < 0) outlog << get_cmd << ": " <<
+         strerror (errno) << endl;
               else outlog << get_cmd << ": exit " << (status >> 8)
                           << " signal " << (status & 0x7F)
                           << " core " << (status >> 7 & 1) << endl;
@@ -89,7 +91,7 @@ void reply_put (accepted_socket& client_sock, cix_header& header) {
       send_packet (client_sock, &header, sizeof header);
       return;
    }
-   
+
    unsigned file_size{header.nbytes};
    auto buffer = make_unique<char[]> (file_size);
    recv_packet (client_sock, buffer.get(), file_size);

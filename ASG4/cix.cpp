@@ -198,7 +198,8 @@ int main (int argc, char** argv) {
          getline (cin, line);
          if (cin.eof()) throw cix_exit();
          outlog << "command " << line << endl;
-         const auto& itor = command_map.find (line.substr(0, line.find(" ")));
+         const auto& itor = command_map.find
+            (line.substr(0, line.find(" ")));
          cix_command cmd = itor == command_map.end()
                          ? cix_command::ERROR : itor->second;
          string arguments = "";
