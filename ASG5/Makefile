@@ -41,7 +41,7 @@ ${EXECBIN} : ${OBJECTS}
 	- ${UTILBIN}/cpplint.py.perl $<
 
 colors.cppgen: mk-colors.perl
-	mk-colors.perl >colors.cppgen
+	./mk-colors.perl > colors.cppgen
 
 ci : ${ALLSOURCES}
 	${UTILBIN}/cid + ${ALLSOURCES}
