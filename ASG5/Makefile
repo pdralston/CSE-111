@@ -26,6 +26,9 @@ EXECBIN    = gdraw
 OBJECTS    = ${CPPSOURCE:.cpp=.o}
 LINKLIBS   = -lGL -lGLU -lglut -ldrm -lm -lX11
 LISTING     = Listing.ps
+MEMCHECK    = valgrind --leak-check=full -v
+PARTNER     = ../../PARTNER
+ASG         = asg5
 
 all : ${EXECBIN}
 
@@ -38,7 +41,7 @@ ${EXECBIN} : ${OBJECTS}
 	- ${UTILBIN}/cpplint.py.perl $<
 
 colors.cppgen: mk-colors.perl
-	mk-colors.perl >colors.cppgen
+	./mk-colors.perl > colors.cppgen
 
 ci : ${ALLSOURCES}
 	${UTILBIN}/cid + ${ALLSOURCES}
@@ -57,7 +60,6 @@ clean :
 spotless : clean
 	- rm ${EXECBIN} ${LISTING} ${LISTING:.ps=.pdf}
 
-
 dep : ${CPPSOURCE} ${GENFILES}
 	@ echo "# ${DEPFILE} created `LC_TIME=C date`" >${DEPFILE}
 	${MAKEDEPCPP} ${CPPSOURCE} >>${DEPFILE}
@@ -68,6 +70,15 @@ ${DEPFILE} :
 
 again :
 	${GMAKE} spotless dep ci all lis
+
+memcheck : ${EXECBIN}
+	${MEMCHECK} ./$^
+
+submit : ${filter-out ${DEPFILE},${ALLSOURCES}} README ${PARTNER}
+	submit  cse111-wm.w20 ${ASG} $^
+
+submitPartner : README ${PARTNER}
+	submit  cse111-wm.w20 ${ASG} $^
 
 ifeq (${NEEDINCL}, )
 include ${DEPFILE}
