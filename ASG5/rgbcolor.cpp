@@ -1,4 +1,6 @@
 // $Id: rgbcolor.cpp,v 1.2 2019-02-28 15:24:20-08 - - $
+// Sasank Madineni (smadinen)
+// Perry Ralston (pdralsto)
 
 #include <cctype>
 #include <iomanip>

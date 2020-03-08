@@ -1,4 +1,6 @@
 // $Id: shape.h,v 1.3 2020-02-19 14:51:52-08 - - $
+// Sasank Madineni (smadinen)
+// Perry Ralston (pdralsto)
 
 #ifndef __SHAPE_H__
 #define __SHAPE_H__
@@ -52,7 +54,6 @@ class shape {
       virtual void show (ostream&) const;
 };
 
-
 //
 // Class for printing text.
 //
@@ -105,7 +106,6 @@ class polygon: public shape {
       virtual void show (ostream&) const override;
 };
 
-
 //
 // Classes rectangle, square, etc.
 //

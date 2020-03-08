@@ -1,4 +1,6 @@
 // $Id: debug.h,v 1.5 2019-11-18 14:49:25-08 - - $
+// Sasank Madineni (smadinen)
+// Perry Ralston (pdralsto)
 
 #ifndef __DEBUG_H__
 #define __DEBUG_H__
@@ -28,7 +30,6 @@ class debugflags {
                          const char* pretty_function);
 };
 
-
 // DEBUGF -
 //    Macro which expands into debug code.  First argument is a
 //    debug flag char, second argument is output code that can

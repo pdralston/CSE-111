@@ -1,4 +1,6 @@
 // $Id: interp.cpp,v 1.3 2019-03-19 16:18:22-07 - - $
+// Sasank Madineni (smadinen)
+// Perry Ralston (pdralsto)
 
 #include <memory>
 #include <string>
@@ -53,7 +55,6 @@ void interpreter::do_define (param begin, param end) {
    objmap.emplace (name, make_shape (++begin, end));
 }
 
-
 void interpreter::do_draw (param begin, param end) {
    DEBUGF ('f', range (begin, end));
    if (end - begin != 4) throw runtime_error ("syntax error");

@@ -1,4 +1,6 @@
 // $Id: graphics.cpp,v 1.6 2019-05-15 18:02:12-07 - - $
+// Sasank Madineni (smadinen)
+// Perry Ralston (pdralsto)
 
 #include <iostream>
 using namespace std;
