@@ -1,4 +1,6 @@
 // $Id: interp.h,v 1.2 2016-05-04 16:26:26-07 - - $
+// Sasank Madineni (smadinen)
+// Perry Ralston (pdralsto)
 
 #ifndef __INTERP_H__
 #define __INTERP_H__

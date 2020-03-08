@@ -1,4 +1,6 @@
 // $Id: rgbcolor.h,v 1.3 2019-03-19 15:53:52-07 - - $
+// Sasank Madineni (smadinen)
+// Perry Ralston (pdralsto)
 
 #ifndef __RGBCOLOR_H__
 #define __RGBCOLOR_H__

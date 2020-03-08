@@ -1,4 +1,6 @@
 // $Id: graphics.h,v 1.2 2019-03-19 16:18:22-07 - - $
+// Sasank Madineni (smadinen)
+// Perry Ralston (pdralsto)
 
 #ifndef __GRAPHICS_H__
 #define __GRAPHICS_H__
@@ -38,7 +40,7 @@ class mouse {
       void draw();
 };
 
-
+
 class window {
       friend class mouse;
    private:

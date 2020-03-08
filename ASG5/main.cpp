@@ -1,4 +1,6 @@
 // $Id: main.cpp,v 1.3 2019-05-15 18:02:12-07 - - $
+// Sasank Madineni (smadinen)
+// Perry Ralston (pdralsto)
 
 #include <fstream>
 #include <iostream>
@@ -47,7 +49,6 @@ void parsefile (const string& infilename, istream& infile) {
    DEBUGF ('m', infilename << " EOF");
 }
 
-
 //
 // Scan the option -@ and check for operands.
 //
