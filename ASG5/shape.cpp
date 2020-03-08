@@ -82,7 +82,7 @@ void ellipse::draw (const vertex& center, const rgbcolor& color) const {
    glVertex2f(dimension.xpos/2 + center.xpos, dimension.ypos/2 + center.ypos);
    glVertex2f(dimension.xpos/2 + center.xpos, dimension.ypos/2 - center.ypos);
    glVertex2f(dimension.xpos/2 - center.xpos, dimension.ypos/2 + center.ypos);
-   glVertex2f(dimension.xpos/2 - center.xpos, dimension.ypos/2 + center.ypos);
+   glVertex2f(dimension.xpos/2 - center.xpos, dimension.ypos/2 - center.ypos);
    glEnd();
 }
 
