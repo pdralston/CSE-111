@@ -57,7 +57,6 @@ void mouse::draw() {
    }
 }
 
-
 // Executed when window system signals to shut down.
 void window::close() {
    DEBUGF ('g', sys_info::execname() << ": exit ("
@@ -98,7 +97,6 @@ void window::reshape (int width_, int height_) {
    glutPostRedisplay();
 }
 
-
 // Executed when a regular keyboard key is pressed.
 void window::keyboard (GLubyte key, int x, int y) {
    enum {BS = 8, TAB = 9, ESC = 27, SPACE = 32, DEL = 127};
@@ -135,7 +133,6 @@ void window::keyboard (GLubyte key, int x, int y) {
    glutPostRedisplay();
 }
 
-
 // Executed when a special function key is pressed.
 void window::special (int key, int x, int y) {
    DEBUGF ('g', "key=" << key << ", x=" << x << ", y=" << y);
@@ -164,7 +161,6 @@ void window::special (int key, int x, int y) {
    glutPostRedisplay();
 }
 
-
 void window::motion (int x, int y) {
    DEBUGF ('g', "x=" << x << ", y=" << y);
    window::mus.set (x, y);
