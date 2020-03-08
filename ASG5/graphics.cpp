@@ -107,16 +107,16 @@ void window::keyboard (GLubyte key, int x, int y) {
          window::close();
          break;
       case 'H': case 'h':
-         //move_selected_object (
+         move_selected_object (-1);
          break;
       case 'J': case 'j':
-         //move_selected_object (
+         move_selected_object (0, -1);
          break;
       case 'K': case 'k':
-         //move_selected_object (
+         move_selected_object (0, 1);
          break;
       case 'L': case 'l':
-         //move_selected_object (
+         move_selected_object (1);
          break;
       case 'N': case 'n': case SPACE: case TAB:
          break;
@@ -201,3 +201,7 @@ void window::main () {
    glutMainLoop();
 }
 
+void window::move_selected_object(int deltaX, int deltaY) {
+   objects[selected_obj].move(deltaX, deltaY);
+   glutPostRedisplay();
+}
