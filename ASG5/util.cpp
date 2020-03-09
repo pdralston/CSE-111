@@ -53,7 +53,6 @@ const string datestring() {
    return timebuf;
 }
 
-
 vector<string> split (const string& line, const string& delimiters) {
    vector<string> words;
    int end = 0;

@@ -1,4 +1,6 @@
 // $Id: graphics.h,v 1.2 2019-03-19 16:18:22-07 - - $
+// Sasank Madineni (smadinen)
+// Perry Ralston (pdralsto)
 
 #ifndef __GRAPHICS_H__
 #define __GRAPHICS_H__
@@ -38,7 +40,7 @@ class mouse {
       void draw();
 };
 
-
+
 class window {
       friend class mouse;
    private:
@@ -57,6 +59,8 @@ class window {
       static void motion (int x, int y);
       static void passivemotion (int x, int y);
       static void mousefn (int button, int state, int x, int y);
+      static void move_selected_object(int deltaX, int deltaY = 0);
+      static void select_object (GLubyte select);
    public:
       static void push_back (const object& obj) {
                   objects.push_back (obj); }

@@ -1,4 +1,6 @@
 // $Id: shape.cpp,v 1.2 2019-02-28 15:24:20-08 - - $
+// Sasank Madineni (smadinen)
+// Perry Ralston (pdralsto)
 
 #include <typeinfo>
 #include <unordered_map>
@@ -57,7 +59,6 @@ circle::circle (GLfloat diameter): ellipse (diameter, diameter) {
    dimension.xpos = dimension.ypos = diameter;
 }
 
-
 polygon::polygon (const vertex_list& vertices_): vertices(vertices_) {
    DEBUGF ('c', this);
 }

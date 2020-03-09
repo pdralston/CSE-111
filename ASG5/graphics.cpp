@@ -1,4 +1,6 @@
 // $Id: graphics.cpp,v 1.6 2019-05-15 18:02:12-07 - - $
+// Sasank Madineni (smadinen)
+// Perry Ralston (pdralsto)
 
 #include <iostream>
 using namespace std;
@@ -55,7 +57,6 @@ void mouse::draw() {
    }
 }
 
-
 // Executed when window system signals to shut down.
 void window::close() {
    DEBUGF ('g', sys_info::execname() << ": exit ("
@@ -96,7 +97,6 @@ void window::reshape (int width_, int height_) {
    glutPostRedisplay();
 }
 
-
 // Executed when a regular keyboard key is pressed.
 void window::keyboard (GLubyte key, int x, int y) {
    enum {BS = 8, TAB = 9, ESC = 27, SPACE = 32, DEL = 127};
@@ -107,24 +107,30 @@ void window::keyboard (GLubyte key, int x, int y) {
          window::close();
          break;
       case 'H': case 'h':
-         //move_selected_object (
+         move_selected_object (-1);
          break;
       case 'J': case 'j':
-         //move_selected_object (
+         move_selected_object (0, -1);
          break;
       case 'K': case 'k':
-         //move_selected_object (
+         move_selected_object (0, 1);
          break;
       case 'L': case 'l':
-         //move_selected_object (
+         move_selected_object (1);
          break;
       case 'N': case 'n': case SPACE: case TAB:
+         ++selected_obj;
+         if (selected_obj == objects.size())
+            selected_obj = 0;
          break;
       case 'P': case 'p': case BS:
+         --selected_obj;
+         //selected_obj is unsigned, so rollover takes to max value
+         if (selected_obj > objects.size()) selected_obj = objects.size() - 1;
          break;
       case '0': case '1': case '2': case '3': case '4':
       case '5': case '6': case '7': case '8': case '9':
-         //select_object (key - '0');
+         select_object (key - '0');
          break;
       default:
          cerr << unsigned (key) << ": invalid keystroke" << endl;
@@ -133,28 +139,27 @@ void window::keyboard (GLubyte key, int x, int y) {
    glutPostRedisplay();
 }
 
-
 // Executed when a special function key is pressed.
 void window::special (int key, int x, int y) {
    DEBUGF ('g', "key=" << key << ", x=" << x << ", y=" << y);
    window::mus.set (x, y);
    switch (key) {
-      case GLUT_KEY_LEFT: //move_selected_object (-1, 0); break;
-      case GLUT_KEY_DOWN: //move_selected_object (0, -1); break;
-      case GLUT_KEY_UP: //move_selected_object (0, +1); break;
-      case GLUT_KEY_RIGHT: //move_selected_object (+1, 0); break;
-      case GLUT_KEY_F1: //select_object (1); break;
-      case GLUT_KEY_F2: //select_object (2); break;
-      case GLUT_KEY_F3: //select_object (3); break;
-      case GLUT_KEY_F4: //select_object (4); break;
-      case GLUT_KEY_F5: //select_object (5); break;
-      case GLUT_KEY_F6: //select_object (6); break;
-      case GLUT_KEY_F7: //select_object (7); break;
-      case GLUT_KEY_F8: //select_object (8); break;
-      case GLUT_KEY_F9: //select_object (9); break;
-      case GLUT_KEY_F10: //select_object (10); break;
-      case GLUT_KEY_F11: //select_object (11); break;
-      case GLUT_KEY_F12: //select_object (12); break;
+      case GLUT_KEY_LEFT:  move_selected_object (-1); break;
+      case GLUT_KEY_DOWN:  move_selected_object (0, -1); break;
+      case GLUT_KEY_UP:    move_selected_object (0, +1); break;
+      case GLUT_KEY_RIGHT: move_selected_object (+1); break;
+      case GLUT_KEY_F1:    select_object (1); break;
+      case GLUT_KEY_F2:    select_object (2); break;
+      case GLUT_KEY_F3:    select_object (3); break;
+      case GLUT_KEY_F4:    select_object (4); break;
+      case GLUT_KEY_F5:    select_object (5); break;
+      case GLUT_KEY_F6:    select_object (6); break;
+      case GLUT_KEY_F7:    select_object (7); break;
+      case GLUT_KEY_F8:    select_object (8); break;
+      case GLUT_KEY_F9:    select_object (9); break;
+      case GLUT_KEY_F10:   select_object (10); break;
+      case GLUT_KEY_F11:   select_object (11); break;
+      case GLUT_KEY_F12:   select_object (12); break;
       default:
          cerr << unsigned (key) << ": invalid function key" << endl;
          break;
@@ -162,7 +167,6 @@ void window::special (int key, int x, int y) {
    glutPostRedisplay();
 }
 
-
 void window::motion (int x, int y) {
    DEBUGF ('g', "x=" << x << ", y=" << y);
    window::mus.set (x, y);
@@ -203,3 +207,15 @@ void window::main () {
    glutMainLoop();
 }
 
+void window::move_selected_object(int deltaX, int deltaY) {
+   objects[selected_obj].move(deltaX, deltaY);
+   glutPostRedisplay();
+}
+
+void window::select_object (GLubyte select) {
+   if (select < objects.size() and 0 < select) {
+      selected_obj = select;
+      return;
+   }
+   cerr << "Selection out of range.\n";
+}
