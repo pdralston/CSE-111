@@ -43,20 +43,15 @@ shape::shape() {
 text::text (void* glut_bitmap_font_, const string& textdata_):
       glut_bitmap_font(glut_bitmap_font_), textdata(textdata_) {
    DEBUGF ('c', this);
-   textdata = textdata_;
-
 }
 
 ellipse::ellipse (GLfloat width, GLfloat height):
 dimension ({width, height}) {
    DEBUGF ('c', this);
-   dimension.xpos = width;
-   dimension.ypos = height;
 }
 
 circle::circle (GLfloat diameter): ellipse (diameter, diameter) {
    DEBUGF ('c', this);
-   dimension.xpos = dimension.ypos = diameter;
 }
 
 polygon::polygon (const vertex_list& vertices_): vertices(vertices_) {
@@ -82,18 +77,11 @@ void ellipse::draw (const vertex& center, const rgbcolor& color) const {
    glBegin(GL_LINE_LOOP);
    const float delta = 2 * M_PI / 32;
    glColor3ubv(color.ubvec);
-<<<<<<< HEAD
    for (float theta = 0; theta < 2 * M_PI; theta += delta) {
       float xpos = dimension.xpos * cos (theta) + center.xpos;
       float ypos = dimension.ypos * sin (theta) + center.ypos;
       glVertex2f (xpos, ypos);
    }
-=======
-   glVertex2f(dimension.xpos/2 + center.xpos, dimension.ypos/2 + center.ypos);
-   glVertex2f(dimension.xpos/2 + center.xpos, dimension.ypos/2 - center.ypos);
-   glVertex2f(dimension.xpos/2 - center.xpos, dimension.ypos/2 + center.ypos);
-   glVertex2f(dimension.xpos/2 - center.xpos, dimension.ypos/2 - center.ypos);
->>>>>>> 53c000f12284f12d83a9214265af67db7a4e1089
    glEnd();
 }
 
