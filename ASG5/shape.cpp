@@ -81,11 +81,18 @@ void ellipse::draw (const vertex& center, const rgbcolor& color) const {
    glBegin(GL_LINE_LOOP);
    const float delta = 2 * M_PI / 32;
    glColor3ubv(color.ubvec);
+<<<<<<< HEAD
    for (float theta = 0; theta < 2 * M_PI; theta += delta) {
       float xpos = dimension.xpos * cos (theta) + center.xpos;
       float ypos = dimension.ypos * sin (theta) + center.ypos;
       glVertex2f (xpos, ypos);
    }
+=======
+   glVertex2f(dimension.xpos/2 + center.xpos, dimension.ypos/2 + center.ypos);
+   glVertex2f(dimension.xpos/2 + center.xpos, dimension.ypos/2 - center.ypos);
+   glVertex2f(dimension.xpos/2 - center.xpos, dimension.ypos/2 + center.ypos);
+   glVertex2f(dimension.xpos/2 - center.xpos, dimension.ypos/2 - center.ypos);
+>>>>>>> 53c000f12284f12d83a9214265af67db7a4e1089
    glEnd();
 }
 
