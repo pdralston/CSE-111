@@ -8,6 +8,7 @@ using namespace std;
 
 #include "shape.h"
 #include "util.h"
+#include <math.h>
 
 static unordered_map<void*,string> fontname {
    {GLUT_BITMAP_8_BY_13       , "Fixed-8x13"    },
@@ -36,20 +37,26 @@ ostream& operator<< (ostream& out, const vertex& where) {
 
 shape::shape() {
    DEBUGF ('c', this);
+
 }
 
 text::text (void* glut_bitmap_font_, const string& textdata_):
       glut_bitmap_font(glut_bitmap_font_), textdata(textdata_) {
    DEBUGF ('c', this);
+   textdata = textdata_;
+
 }
 
 ellipse::ellipse (GLfloat width, GLfloat height):
 dimension ({width, height}) {
    DEBUGF ('c', this);
+   dimension.xpos = width;
+   dimension.ypos = height;
 }
 
 circle::circle (GLfloat diameter): ellipse (diameter, diameter) {
    DEBUGF ('c', this);
+   dimension.xpos = dimension.ypos = diameter;
 }
 
 polygon::polygon (const vertex_list& vertices_): vertices(vertices_) {
@@ -59,6 +66,7 @@ polygon::polygon (const vertex_list& vertices_): vertices(vertices_) {
 rectangle::rectangle (GLfloat width, GLfloat height):
             polygon({}) {
    DEBUGF ('c', this << "(" << width << "," << height << ")");
+
 }
 
 square::square (GLfloat width): rectangle (width, width) {
@@ -71,10 +79,32 @@ void text::draw (const vertex& center, const rgbcolor& color) const {
 
 void ellipse::draw (const vertex& center, const rgbcolor& color) const {
    DEBUGF ('d', this << "(" << center << "," << color << ")");
+   glBegin(GL_LINE_LOOP);
+   const float delta = 2 * M_PI / 32;
+   glColor3ubv(color.ubvec);
+<<<<<<< HEAD
+   for (float theta = 0; theta < 2 * M_PI; theta += delta) {
+      float xpos = dimension.xpos * cos (theta) + center.xpos;
+      float ypos = dimension.ypos * sin (theta) + center.ypos;
+      glVertex2f (xpos, ypos);
+   }
+=======
+   glVertex2f(dimension.xpos/2 + center.xpos, dimension.ypos/2 + center.ypos);
+   glVertex2f(dimension.xpos/2 + center.xpos, dimension.ypos/2 - center.ypos);
+   glVertex2f(dimension.xpos/2 - center.xpos, dimension.ypos/2 + center.ypos);
+   glVertex2f(dimension.xpos/2 - center.xpos, dimension.ypos/2 - center.ypos);
+>>>>>>> 53c000f12284f12d83a9214265af67db7a4e1089
+   glEnd();
 }
 
 void polygon::draw (const vertex& center, const rgbcolor& color) const {
    DEBUGF ('d', this << "(" << center << "," << color << ")");
+   glBegin(GL_POLYGON);
+   glColor3ubv(color.ubvec);
+   for (const vertex& point : vertices) {
+     glVertex2f(point.xpos, point.ypos);
+   }
+   glEnd();
 }
 
 void shape::show (ostream& out) const {
@@ -101,4 +131,3 @@ ostream& operator<< (ostream& out, const shape& obj) {
    obj.show (out);
    return out;
 }
-
