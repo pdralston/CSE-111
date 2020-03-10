@@ -132,3 +132,4 @@ ostream& operator<< (ostream& out, const shape& obj) {
    obj.show (out);
    return out;
 }
+
