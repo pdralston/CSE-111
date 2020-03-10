@@ -138,3 +138,4 @@ class equilateral: public triangle {
 ostream& operator<< (ostream& out, const shape&);
 
 #endif
+
