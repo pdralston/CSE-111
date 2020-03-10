@@ -138,3 +138,4 @@ class triangle: public polygon {
 ostream& operator<< (ostream& out, const shape&);
 
 #endif
+
