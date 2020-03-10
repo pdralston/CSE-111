@@ -60,6 +60,7 @@ class window {
       static void passivemotion (int x, int y);
       static void mousefn (int button, int state, int x, int y);
       static void move_selected_object(int deltaX, int deltaY = 0);
+      static void select_object (GLubyte select);
    public:
       static void push_back (const object& obj) {
                   objects.push_back (obj); }
@@ -69,4 +70,3 @@ class window {
 };
 
 #endif
-

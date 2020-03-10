@@ -8,6 +8,7 @@ using namespace std;
 
 #include "shape.h"
 #include "util.h"
+#include <math.h>
 
 static unordered_map<void*,string> fontname {
    {GLUT_BITMAP_8_BY_13       , "Fixed-8x13"    },
@@ -71,10 +72,40 @@ void text::draw (const vertex& center, const rgbcolor& color) const {
 
 void ellipse::draw (const vertex& center, const rgbcolor& color) const {
    DEBUGF ('d', this << "(" << center << "," << color << ")");
+   glBegin(GL_POLYGON);
+   const float delta = 2 * M_PI / 32;
+   glColor3ubv(color.ubvec);
+   for (float theta = 0; theta < 2 * M_PI; theta += delta) {
+      float xpos = dimension.xpos * cos (theta) + center.xpos;
+      float ypos = dimension.ypos * sin (theta) + center.ypos;
+      glVertex2f (xpos, ypos);
+   }
+   glEnd();
 }
 
 void polygon::draw (const vertex& center, const rgbcolor& color) const {
    DEBUGF ('d', this << "(" << center << "," << color << ")");
+   glBegin(GL_POLYGON);
+   glColor3ubv(color.ubvec);
+   vertex average {0, 0};
+   int count = 0;
+   for (const vertex&point : vertices) {
+     average.xpos += point.xpos;
+     average.ypos += point.ypos;
+     count++;
+   }
+
+   average.ypos /= count;
+   average.xpos /= count;
+
+   for (const vertex& point : vertices) {
+     vertex temp {0, 0};
+      temp.xpos = point.xpos - average.xpos + center.xpos;
+      temp.ypos = point.ypos - average.xpos + center.ypos;
+      DEBUGF('d', this << " xpos: " << temp.xpos << ", ypos: " << temp.ypos);
+      glVertex2f(temp.xpos, temp.ypos);
+   }
+   glEnd();
 }
 
 void shape::show (ostream& out) const {
@@ -101,4 +132,3 @@ ostream& operator<< (ostream& out, const shape& obj) {
    obj.show (out);
    return out;
 }
-
