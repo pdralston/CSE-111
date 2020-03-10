@@ -60,10 +60,24 @@ polygon::polygon (const vertex_list& vertices_): vertices(vertices_) {
 rectangle::rectangle (GLfloat width, GLfloat height):
             polygon({}) {
    DEBUGF ('c', this << "(" << width << "," << height << ")");
+
 }
 
 square::square (GLfloat width): rectangle (width, width) {
    DEBUGF ('c', this);
+}
+
+diamond::diamond (GLfloat width, GLfloat height):
+            polygon({}) {
+   DEBUGF ('c', this << "(" << width << "," << height << ")");
+}
+
+triangle::triangle (const vertex_list& vertices_): vertices(vertices_) {
+   DEBUGF ('c', this);
+}
+
+equilateral::equilateral (GLfloat width) : polygon({}) {
+   DEBUGF ('c', this << "(" << width << "," << height << ")");
 }
 
 void text::draw (const vertex& center, const rgbcolor& color) const {
@@ -99,7 +113,7 @@ void polygon::draw (const vertex& center, const rgbcolor& color) const {
    average.xpos /= count;
 
    for (const vertex& point : vertices) {
-     vertex temp {0, 0};
+      vertex temp {0, 0};
       temp.xpos = point.xpos - average.xpos + center.xpos;
       temp.ypos = point.ypos - average.xpos + center.ypos;
       DEBUGF('d', this << " xpos: " << temp.xpos << ", ypos: " << temp.ypos);
