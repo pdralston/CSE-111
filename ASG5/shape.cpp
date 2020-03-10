@@ -72,12 +72,12 @@ diamond::diamond (GLfloat width, GLfloat height):
    DEBUGF ('c', this << "(" << width << "," << height << ")");
 }
 
-triangle::triangle (const vertex_list& vertices_): vertices(vertices_) {
+triangle::triangle (const vertex_list& vertices_): polygon(vertices_) {
    DEBUGF ('c', this);
 }
 
-equilateral::equilateral (GLfloat width) : polygon({}) {
-   DEBUGF ('c', this << "(" << width << "," << height << ")");
+equilateral::equilateral (GLfloat width) : triangle({}) {
+   DEBUGF ('c', this << "(" << width << ")");
 }
 
 void text::draw (const vertex& center, const rgbcolor& color) const {
