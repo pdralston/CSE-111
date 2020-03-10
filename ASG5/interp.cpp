@@ -22,12 +22,15 @@ interpreter::interp_map {
 
 unordered_map<string,interpreter::factoryfn>
 interpreter::factory_map {
-   {"text"     , &interpreter::make_text     },
-   {"ellipse"  , &interpreter::make_ellipse  },
-   {"circle"   , &interpreter::make_circle   },
-   {"polygon"  , &interpreter::make_polygon  },
-   {"rectangle", &interpreter::make_rectangle},
-   {"square"   , &interpreter::make_square   },
+   {"text"       , &interpreter::make_text       },
+   {"ellipse"    , &interpreter::make_ellipse    },
+   {"circle"     , &interpreter::make_circle     },
+   {"polygon"    , &interpreter::make_polygon    },
+   {"rectangle"  , &interpreter::make_rectangle  },
+   {"square"     , &interpreter::make_square     },
+   {"diamond"    , &interpreter::make_diamond    },
+   {"triangle"   , &interpreter::make_triangle   },
+   {"equilateral", &interpreter::make_equilateral},
 };
 
 interpreter::shape_map interpreter::objmap;
@@ -124,6 +127,31 @@ shape_ptr interpreter::make_polygon (param begin, param end) {
 
 shape_ptr interpreter::make_rectangle (param begin, param end) {
    DEBUGF ('f', range (begin, end));
+   if (begin == end) {
+      throw runtime_error ("syntax error");
+   }
+   GLfloat width {stof(*begin)};
+   ++begin;
+   if (begin == end) {
+      throw runtime_error ("syntax error");
+   }
+   GLfloat height {stof(*begin)};
+   if(height < 0 or width < 0) {
+      throw runtime_error ("Dimensions cannot be less than 0");
+   }
+   return make_shared<rectangle> (width,height);
+}
+
+shape_ptr interpreter::make_square (param begin, param end) {
+   DEBUGF ('f', range (begin, end));
+   if (begin == end) {
+      throw runtime_error ("syntax error");
+   }
+   GLfloat width {stof(*begin)};
+   return make_shared<square> (width);
+}
+
+shape_ptr interpreter::make_diamond (param begin, param end) {
    DEBUGF ('f', range (begin, end));
    if (begin == end) {
       throw runtime_error ("syntax error");
@@ -137,15 +165,28 @@ shape_ptr interpreter::make_rectangle (param begin, param end) {
    if(height < 0 or width < 0) {
       throw runtime_error ("Dimensions cannot be less than 0");
    }
-   return make_shared<rectangle> (height,width);
+   return make_shared<diamond> (width,height);
 }
 
-shape_ptr interpreter::make_square (param begin, param end) {
+shape_ptr interpreter::make_triangle (param begin, param end) {
+   DEBUGF ('f', range (begin, end));
+   vertex_list verticies {};
+   while (begin != end) {
+      vertex temp {stof(*begin), stof(*(begin + 1))};
+      verticies.push_back(temp);
+      begin += 2;
+   }
+   if (verticies.size() != 3) {
+     throw runtime_error("syntax error");
+   }
+   return make_shared<triangle> (verticies);
+}
+
+shape_ptr interpreter::make_equilateral (param begin, param end) {
    DEBUGF ('f', range (begin, end));
    if (begin == end) {
       throw runtime_error ("syntax error");
    }
    GLfloat width {stof(*begin)};
-   return make_shared<square> (width);
+   return make_shared<equilateral> (width);
 }
-
