@@ -87,26 +87,65 @@ shape_ptr interpreter::make_text (param begin, param end) {
 
 shape_ptr interpreter::make_ellipse (param begin, param end) {
    DEBUGF ('f', range (begin, end));
-   return make_shared<ellipse> (GLfloat(), GLfloat());
+   if (begin == end) {
+      throw runtime_error ("syntax error");
+   }
+   GLfloat width {stof(*begin)};
+   ++begin;
+   if (begin == end) {
+      throw runtime_error ("syntax error");
+   }
+   GLfloat height {stof(*begin)};
+   if(height < 0 or width < 0) {
+      throw runtime_error ("Dimensions cannot be less than 0");
+   }
+   return make_shared<ellipse> (width, height);
 }
 
 shape_ptr interpreter::make_circle (param begin, param end) {
    DEBUGF ('f', range (begin, end));
-   return make_shared<circle> (GLfloat());
+   if (begin == end) {
+      throw runtime_error ("syntax error");
+   }
+   GLfloat diameter {stof(*begin)};
+   return make_shared<circle> (diameter);
 }
 
 shape_ptr interpreter::make_polygon (param begin, param end) {
    DEBUGF ('f', range (begin, end));
-   return make_shared<polygon> (vertex_list());
+   vertex_list verticies {};
+   while (begin != end - 2) {
+      vertex temp {stof(*begin), stof(*(begin + 1))};
+      verticies.push_back(temp);
+      begin += 2;
+   }
+   return make_shared<polygon> (verticies);
 }
 
 shape_ptr interpreter::make_rectangle (param begin, param end) {
    DEBUGF ('f', range (begin, end));
-   return make_shared<rectangle> (GLfloat(), GLfloat());
+   DEBUGF ('f', range (begin, end));
+   if (begin == end) {
+      throw runtime_error ("syntax error");
+   }
+   GLfloat width {stof(*begin)};
+   ++begin;
+   if (begin == end) {
+      throw runtime_error ("syntax error");
+   }
+   GLfloat height {stof(*begin)};
+   if(height < 0 or width < 0) {
+      throw runtime_error ("Dimensions cannot be less than 0");
+   }
+   return make_shared<rectangle> (height,width);
 }
 
 shape_ptr interpreter::make_square (param begin, param end) {
    DEBUGF ('f', range (begin, end));
-   return make_shared<square> (GLfloat());
+   if (begin == end) {
+      throw runtime_error ("syntax error");
+   }
+   GLfloat width {stof(*begin)};
+   return make_shared<square> (width);
 }
 
