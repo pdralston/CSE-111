@@ -44,9 +44,9 @@ void mouse::draw() {
    static rgbcolor color ("green");
    ostringstream text;
    text << "(" << xpos << "," << window::height - ypos << ")";
-   if (left_state == GLUT_DOWN) text << "L"; 
-   if (middle_state == GLUT_DOWN) text << "M"; 
-   if (right_state == GLUT_DOWN) text << "R"; 
+   if (left_state == GLUT_DOWN) text << "L";
+   if (middle_state == GLUT_DOWN) text << "M";
+   if (right_state == GLUT_DOWN) text << "R";
    if (entered == GLUT_ENTERED) {
       void* font = GLUT_BITMAP_HELVETICA_18;
       glColor3ubv (color.ubvec);
