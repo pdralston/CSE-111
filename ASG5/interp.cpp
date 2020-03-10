@@ -114,7 +114,7 @@ shape_ptr interpreter::make_circle (param begin, param end) {
 shape_ptr interpreter::make_polygon (param begin, param end) {
    DEBUGF ('f', range (begin, end));
    vertex_list verticies {};
-   while (begin != end - 2) {
+   while (begin != end) {
       vertex temp {stof(*begin), stof(*(begin + 1))};
       verticies.push_back(temp);
       begin += 2;
