@@ -90,9 +90,9 @@ shape_ptr interpreter::make_text (param begin, param end) {
    for (++begin; begin != end - 1; ++begin) {
       contents += ((*begin) + " ");
    }
-   ++begin;
    contents += *begin;
    try {
+      DEBUGF('f', "Font: " << font << "\nString: " << contents);
       return make_shared<text> (font, contents);
    } catch (const runtime_error &err) {
       throw err;
