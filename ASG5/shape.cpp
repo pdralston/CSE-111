@@ -9,6 +9,7 @@ using namespace std;
 #include "shape.h"
 #include "util.h"
 #include <math.h>
+#include <map>
 
 static unordered_map<void*,string> fontname {
    {GLUT_BITMAP_8_BY_13       , "Fixed-8x13"    },
@@ -42,6 +43,17 @@ shape::shape() {
 text::text (void* glut_bitmap_font_, const string& textdata_):
       glut_bitmap_font(glut_bitmap_font_), textdata(textdata_) {
    DEBUGF ('c', this);
+}
+
+text::text (string glut_bitmap_font_, const string& textdata_) {
+  DEBUGF ('c', this);
+  try {
+     glut_bitmap_font = fontcode.at(glut_bitmap_font_);
+  }
+  catch (const out_of_range& err) {
+     throw runtime_error("invalid bitmap font");
+  }
+  textdata = textdata_;
 }
 
 ellipse::ellipse (GLfloat width, GLfloat height):
@@ -82,6 +94,13 @@ equilateral::equilateral (GLfloat width) : triangle({}) {
 
 void text::draw (const vertex& center, const rgbcolor& color) const {
    DEBUGF ('d', this << "(" << center << "," << color << ")");
+   glClearColor (0.2, 0.2, 0.2, 1.0);
+   glClear (GL_COLOR_BUFFER_BIT);
+   auto text_data = reinterpret_cast<const GLubyte*> (textdata.c_str());
+   glColor3ubv(color.ubvec);
+   glRasterPos2f (center.xpos, center.ypos);
+   glutBitmapString (glut_bitmap_font, text_data);
+   glutSwapBuffers();
 }
 
 void ellipse::draw (const vertex& center, const rgbcolor& color) const {
