@@ -50,7 +50,7 @@ text::text (string glut_bitmap_font_, const string& textdata_) {
   try {
      glut_bitmap_font = fontcode.at(glut_bitmap_font_);
   }
-  catch (...) {
+  catch (const exception &err) {
      throw runtime_error("invalid bitmap font");
   }
   textdata = textdata_;
@@ -165,4 +165,3 @@ ostream& operator<< (ostream& out, const shape& obj) {
    obj.show (out);
    return out;
 }
-
