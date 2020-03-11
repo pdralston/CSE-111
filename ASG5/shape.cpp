@@ -50,7 +50,7 @@ text::text (string glut_bitmap_font_, const string& textdata_) {
   try {
      glut_bitmap_font = fontcode.at(glut_bitmap_font_);
   }
-  catch (const out_of_range& err) {
+  catch (...) {
      throw runtime_error("invalid bitmap font");
   }
   textdata = textdata_;
