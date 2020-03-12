@@ -91,6 +91,18 @@ square::square (GLfloat width): rectangle (width, width) {
 diamond::diamond (GLfloat width, GLfloat height):
             polygon({}) {
    DEBUGF ('c', this << "(" << width << "," << height << ")");
+   vertex temp;
+   temp.ypos = height/2;
+   vertices.push_back(temp);
+   temp.ypos = 0;
+   temp.xpos = width/2;
+   vertices.push_back(temp);
+   temp.ypos = -height/2;
+   temp.xpos = 0;
+   vertices.push_back(temp);
+   temp.ypos = 0;
+   temp.xpos = -width/2;
+   vertices.push_back(temp);
 }
 
 triangle::triangle (const vertex_list& vertices_): polygon(vertices_) {
