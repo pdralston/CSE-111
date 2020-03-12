@@ -72,7 +72,16 @@ polygon::polygon (const vertex_list& vertices_): vertices(vertices_) {
 rectangle::rectangle (GLfloat width, GLfloat height):
             polygon({}) {
    DEBUGF ('c', this << "(" << width << "," << height << ")");
-
+   vertex temp;
+   temp.xpos = width/2;
+   temp.ypos = height/2;
+   vertices.push_back(temp);
+   temp.xpos = -width/2;
+   vertices.push_back(temp);
+   temp.ypos = -height/2;
+   vertices.push_back(temp);
+   temp.xpos = width/2;
+   vertices.push_back(temp);
 }
 
 square::square (GLfloat width): rectangle (width, width) {
@@ -90,6 +99,15 @@ triangle::triangle (const vertex_list& vertices_): polygon(vertices_) {
 
 equilateral::equilateral (GLfloat width) : triangle({}) {
    DEBUGF ('c', this << "(" << width << ")");
+   vertex temp;
+   GLfloat height = sqrt((width * width) - (width * width) / 4);
+   temp.ypos = height/2;
+   vertices.push_back(temp);
+   temp.ypos = -height/2;
+   temp.xpos = width/2;
+   vertices.push_back(temp);
+   temp.xpos = -width/2;
+   vertices.push_back(temp);
 }
 
 void text::draw (const vertex& center, const rgbcolor& color) const {
@@ -119,6 +137,7 @@ void polygon::draw (const vertex& center, const rgbcolor& color) const {
    glColor3ubv(color.ubvec);
    vertex average {0, 0};
    int count = 0;
+   //normalizing points
    for (const vertex&point : vertices) {
      average.xpos += point.xpos;
      average.ypos += point.ypos;
