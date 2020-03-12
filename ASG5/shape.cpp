@@ -57,7 +57,8 @@ void shape::set_thickness(GLfloat thickness) {
 void draw_label(const vertex& center) {
    ostringstream text;
    text << shape_count;
-   DEBUGF ('c', "draw label has been called and '" << text.str() << "' should be printed on the shape");
+   DEBUGF ('c', "draw label has been called and '" << text.str()
+      << "' should be printed on the shape");
    void* font = GLUT_BITMAP_HELVETICA_18;
    glColor3ubv (default_color.ubvec);
    glRasterPos2i (center.xpos, center.ypos);
@@ -218,7 +219,8 @@ void polygon::draw (const vertex& center, const rgbcolor& color) const {
       vertex temp {0, 0};
       temp.xpos = point.xpos - average.xpos + center.xpos;
       temp.ypos = point.ypos - average.xpos + center.ypos;
-      DEBUGF('d', this << " xpos: " << temp.xpos << ", ypos: " << temp.ypos);
+      DEBUGF('d', this << " xpos: " << temp.xpos
+         << ", ypos: " << temp.ypos);
       glVertex2f(temp.xpos, temp.ypos);
    }
    glEnd();
@@ -231,7 +233,8 @@ void polygon::draw (const vertex& center, const rgbcolor& color) const {
          vertex temp {0, 0};
          temp.xpos = point.xpos - average.xpos + center.xpos;
          temp.ypos = point.ypos - average.xpos + center.ypos;
-         DEBUGF('d', this << " xpos: " << temp.xpos << ", ypos: " << temp.ypos);
+         DEBUGF('d', this << " xpos: " << temp.xpos
+            << ", ypos: " << temp.ypos);
          glVertex2f(temp.xpos, temp.ypos);
       }
       glEnd();
