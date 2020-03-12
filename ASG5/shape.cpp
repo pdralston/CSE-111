@@ -161,8 +161,8 @@ equilateral::equilateral (GLfloat width) : triangle({}) {
 void text::draw (const vertex& center, const rgbcolor& color) const {
    DEBUGF ('d', this << "(" << center << "," << color << ")");
    shape_count++;
-   
-   if (selected_shape == shape_count) {
+
+   if (selected_shape == shape_count - 1) {
       glBegin(GL_LINE_LOOP);
       glColor3ubv(default_color.ubvec);
       glLineWidth(border);
