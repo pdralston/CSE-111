@@ -52,6 +52,7 @@ class shape {
       virtual ~shape() {}
       virtual void draw (const vertex&, const rgbcolor&) const = 0;
       virtual void show (ostream&) const;
+      void static reset_counter();
 };
 
 //

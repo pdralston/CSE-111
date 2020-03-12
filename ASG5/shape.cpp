@@ -31,13 +31,35 @@ static unordered_map<string,void*> fontcode {
    {"Times-Roman-24", GLUT_BITMAP_TIMES_ROMAN_24},
 };
 
+static int shape_count = 0;
+static int border = 4;
+static rgbcolor default_color ("red");
+
+
 ostream& operator<< (ostream& out, const vertex& where) {
    out << "(" << where.xpos << "," << where.ypos << ")";
    return out;
 }
 
+void draw_label(const vertex& center) {
+   ostringstream text;
+   text << shape_count;
+   DEBUGF ('c', "draw label has been called and '" << text.str() << "' should be printed on the shape");
+   void* font = GLUT_BITMAP_HELVETICA_18;
+   glColor3ubv (default_color.ubvec);
+   glRasterPos2i (center.xpos, center.ypos);
+   auto ubytes = reinterpret_cast<const GLubyte*>
+                 (text.str().c_str());
+   glutBitmapString (font, ubytes);
+   ++shape_count;
+}
+
 shape::shape() {
    DEBUGF ('c', this);
+}
+
+void shape::reset_counter() {
+   shape_count = 0;
 }
 
 text::text (void* glut_bitmap_font_, const string& textdata_):
@@ -57,7 +79,7 @@ text::text (string glut_bitmap_font_, const string& textdata_) {
 }
 
 ellipse::ellipse (GLfloat width, GLfloat height):
-dimension ({width, height}) {
+   dimension ({width, height}) {
    DEBUGF ('c', this);
 }
 
@@ -141,6 +163,7 @@ void ellipse::draw (const vertex& center, const rgbcolor& color) const {
       glVertex2f (xpos, ypos);
    }
    glEnd();
+   draw_label(center);
 }
 
 void polygon::draw (const vertex& center, const rgbcolor& color) const {
@@ -167,6 +190,7 @@ void polygon::draw (const vertex& center, const rgbcolor& color) const {
       glVertex2f(temp.xpos, temp.ypos);
    }
    glEnd();
+   draw_label(center);
 }
 
 void shape::show (ostream& out) const {

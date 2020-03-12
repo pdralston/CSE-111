@@ -15,6 +15,7 @@ int window::height = 480; // in pixels
 vector<object> window::objects;
 size_t window::selected_obj = 0;
 mouse window::mus;
+static double move_step = 4;
 
 // Implementation of object functions.
 object::object (shared_ptr<shape> pshape_, vertex center_,
@@ -73,6 +74,7 @@ void window::entry (int mouse_entered) {
            << ", height=" << window::height);
    }
    glutPostRedisplay();
+   shape::reset_counter();
 }
 
 // Called to display the objects in the window.
@@ -95,6 +97,7 @@ void window::reshape (int width_, int height_) {
    glViewport (0, 0, window::width, window::height);
    glClearColor (0.25, 0.25, 0.25, 1.0);
    glutPostRedisplay();
+   shape::reset_counter();
 }
 
 // Executed when a regular keyboard key is pressed.
@@ -137,6 +140,7 @@ void window::keyboard (GLubyte key, int x, int y) {
          break;
    }
    glutPostRedisplay();
+   shape::reset_counter();
 }
 
 // Executed when a special function key is pressed.
@@ -165,18 +169,21 @@ void window::special (int key, int x, int y) {
          break;
    }
    glutPostRedisplay();
+   shape::reset_counter();
 }
 
 void window::motion (int x, int y) {
    DEBUGF ('g', "x=" << x << ", y=" << y);
    window::mus.set (x, y);
    glutPostRedisplay();
+   shape::reset_counter();
 }
 
 void window::passivemotion (int x, int y) {
    DEBUGF ('g', "x=" << x << ", y=" << y);
    window::mus.set (x, y);
    glutPostRedisplay();
+   shape::reset_counter();
 }
 
 void window::mousefn (int button, int state, int x, int y) {
@@ -185,6 +192,7 @@ void window::mousefn (int button, int state, int x, int y) {
    window::mus.state (button, state);
    window::mus.set (x, y);
    glutPostRedisplay();
+   shape::reset_counter();
 }
 
 void window::main () {
@@ -208,14 +216,19 @@ void window::main () {
 }
 
 void window::move_selected_object(int deltaX, int deltaY) {
-   objects[selected_obj].move(deltaX, deltaY);
+   objects[selected_obj].move(deltaX * move_step, deltaY * move_step);
    glutPostRedisplay();
+   shape::reset_counter();
 }
 
 void window::select_object (GLubyte select) {
-   if (select < objects.size() and 0 < select) {
+   if (select < objects.size()) {
       selected_obj = select;
       return;
    }
    cerr << "Selection out of range.\n";
+}
+
+void window::move_by(double move_step_) {
+   move_step = move_step_;
 }
