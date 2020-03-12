@@ -32,13 +32,26 @@ static unordered_map<string,void*> fontcode {
 };
 
 static int shape_count = 0;
-static int border = 4;
+static int selected_shape;
+static GLfloat border = 4;
 static rgbcolor default_color ("red");
 
 
 ostream& operator<< (ostream& out, const vertex& where) {
    out << "(" << where.xpos << "," << where.ypos << ")";
    return out;
+}
+
+void shape::object_select(GLubyte select) {
+   selected_shape = select;
+}
+
+void shape::set_color(rgbcolor color) {
+   default_color = color;
+}
+
+void shape::set_thickness(GLfloat thickness) {
+  border = thickness;
 }
 
 void draw_label(const vertex& center) {
@@ -144,15 +157,15 @@ equilateral::equilateral (GLfloat width) : triangle({}) {
    vertices.push_back(temp);
 }
 
-void text::draw (const vertex& center, const rgbcolor& color,
-   const bool& is_selected) const {
+void text::draw (const vertex& center, const rgbcolor& color) const {
    DEBUGF ('d', this << "(" << center << "," << color << ")");
+   shape_count++;
    auto text_data = reinterpret_cast<const GLubyte*> (textdata.c_str());
    glColor3ubv(color.ubvec);
    glRasterPos2f (center.xpos, center.ypos);
    glutBitmapString (glut_bitmap_font, text_data);
 
-   if (is_selected) {
+   if (selected_shape == shape_count) {
       glBegin(GL_LINE_LOOP);
       glColor3ubv(default_color.ubvec);
       glLineWidth(border);
@@ -160,8 +173,7 @@ void text::draw (const vertex& center, const rgbcolor& color,
    }
 }
 
-void ellipse::draw (const vertex& center, const rgbcolor& color,
-   const bool& is_selected) const {
+void ellipse::draw (const vertex& center, const rgbcolor& color) const {
    DEBUGF ('d', this << "(" << center << "," << color << ")");
    glBegin(GL_POLYGON);
    const float delta = 2 * M_PI / 32;
@@ -172,7 +184,7 @@ void ellipse::draw (const vertex& center, const rgbcolor& color,
       glVertex2f (xpos, ypos);
    }
    glEnd();
-   if (is_selected) {
+   if (shape_count == selected_shape) {
       glBegin(GL_LINE_LOOP);
       glColor3ubv(default_color.ubvec);
       glLineWidth(border);
@@ -186,8 +198,7 @@ void ellipse::draw (const vertex& center, const rgbcolor& color,
    draw_label(center);
 }
 
-void polygon::draw (const vertex& center, const rgbcolor& color,
-   const bool& is_selected) const {
+void polygon::draw (const vertex& center, const rgbcolor& color) const {
    DEBUGF ('d', this << "(" << center << "," << color << ")");
    glBegin(GL_POLYGON);
    glColor3ubv(color.ubvec);
@@ -212,7 +223,7 @@ void polygon::draw (const vertex& center, const rgbcolor& color,
    }
    glEnd();
 
-   if (is_selected) {
+   if (selected_shape == shape_count) {
       glBegin(GL_LINE_LOOP);
       glColor3ubv(default_color.ubvec);
       glLineWidth(border);
