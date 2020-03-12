@@ -100,7 +100,7 @@ class circle: public ellipse {
 
 class polygon: public shape {
    protected:
-      const vertex_list vertices;
+      vertex_list vertices;
    public:
       polygon (const vertex_list& vertices);
       virtual void draw (const vertex&, const rgbcolor&) const override;
