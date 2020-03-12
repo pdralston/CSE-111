@@ -67,6 +67,7 @@ class window {
       static void setwidth (int width_) { width = width_; }
       static void setheight (int height_) { height = height_; }
       static void main();
+      static void move_by(double);
 };
 
 #endif

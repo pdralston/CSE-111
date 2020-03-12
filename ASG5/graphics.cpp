@@ -15,6 +15,7 @@ int window::height = 480; // in pixels
 vector<object> window::objects;
 size_t window::selected_obj = 0;
 mouse window::mus;
+static double move_step = 4;
 
 // Implementation of object functions.
 object::object (shared_ptr<shape> pshape_, vertex center_,
@@ -208,14 +209,18 @@ void window::main () {
 }
 
 void window::move_selected_object(int deltaX, int deltaY) {
-   objects[selected_obj].move(deltaX, deltaY);
+   objects[selected_obj].move(deltaX * move_step, deltaY * move_step);
    glutPostRedisplay();
 }
 
 void window::select_object (GLubyte select) {
-   if (select < objects.size() and 0 < select) {
+   if (select < objects.size()) {
       selected_obj = select;
       return;
    }
    cerr << "Selection out of range.\n";
+}
+
+void window::move_by(double move_step_) {
+   move_step = move_step_;
 }

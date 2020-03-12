@@ -13,11 +13,14 @@ using namespace std;
 #include "interp.h"
 #include "shape.h"
 #include "util.h"
+#include "graphics.h"
 
 unordered_map<string,interpreter::interpreterfn>
 interpreter::interp_map {
    {"define" , &interpreter::do_define },
    {"draw"   , &interpreter::do_draw   },
+   {"moveby" , &interpreter::move_by   },
+   //{"border" , &interpreter::do_draw   },
 };
 
 unordered_map<string,interpreter::factoryfn>
@@ -70,6 +73,15 @@ void interpreter::do_draw (param begin, param end) {
    vertex where {from_string<GLfloat> (begin[2]),
                  from_string<GLfloat> (begin[3])};
    window::push_back (object (itor->second, where, color));
+}
+
+void interpreter::move_by (param begin, param end) {
+   if (end - begin != 1) throw runtime_error ("syntax error");
+   try {
+      window::move_by(stof(*begin));
+   } catch (...) {
+      throw runtime_error ("syntax error");
+   }
 }
 
 shape_ptr interpreter::make_shape (param begin, param end) {

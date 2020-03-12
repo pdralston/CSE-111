@@ -36,6 +36,8 @@ class interpreter {
 
       static void do_define (param begin, param end);
       static void do_draw (param begin, param end);
+      static void move_by (param begin, param end);
+      static void border (param begin, param end);
 
       static shape_ptr make_shape (param begin, param end);
       static shape_ptr make_text (param begin, param end);
