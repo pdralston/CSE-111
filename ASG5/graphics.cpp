@@ -24,7 +24,7 @@ object::object (shared_ptr<shape> pshape_, vertex center_,
 }
 
 void object::draw() {
-   pshape->draw (center, color);
+   pshape->draw (center, color, true);
 }
 
 void object::move (GLfloat delta_x, GLfloat delta_y) {

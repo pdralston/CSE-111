@@ -34,7 +34,7 @@ using namespace std;
 class shape;
 struct vertex {GLfloat xpos; GLfloat ypos; };
 using vertex_list = vector<vertex>;
-using shape_ptr = shared_ptr<shape>; 
+using shape_ptr = shared_ptr<shape>;
 
 //
 // Abstract base class for all shapes in this system.
@@ -50,7 +50,7 @@ class shape {
       shape (shape&&) = delete; // Prevent moving.
       shape& operator= (shape&&) = delete; // Prevent moving.
       virtual ~shape() {}
-      virtual void draw (const vertex&, const rgbcolor&) const = 0;
+      virtual void draw (const vertex&, const rgbcolor&, const bool&) const = 0;
       virtual void show (ostream&) const;
       void static reset_counter();
 };
@@ -73,7 +73,8 @@ class text: public shape {
    public:
       text (void* glut_bitmap_font, const string& textdata);
       text (string glut_bitmap_font, const string& textdata);
-      virtual void draw (const vertex&, const rgbcolor&) const override;
+      virtual void draw (const vertex&, const rgbcolor&, const bool&)
+         const override;
       virtual void show (ostream&) const override;
 };
 
@@ -86,7 +87,8 @@ class ellipse: public shape {
       vertex dimension;
    public:
       ellipse (GLfloat width, GLfloat height);
-      virtual void draw (const vertex&, const rgbcolor&) const override;
+      virtual void draw (const vertex&, const rgbcolor&, const bool&)
+         const override;
       virtual void show (ostream&) const override;
 };
 
@@ -104,7 +106,8 @@ class polygon: public shape {
       vertex_list vertices;
    public:
       polygon (const vertex_list& vertices);
-      virtual void draw (const vertex&, const rgbcolor&) const override;
+      virtual void draw (const vertex&, const rgbcolor&, const bool&)
+         const override;
       virtual void show (ostream&) const override;
 };
 
@@ -140,4 +143,3 @@ class equilateral: public triangle {
 ostream& operator<< (ostream& out, const shape&);
 
 #endif
-

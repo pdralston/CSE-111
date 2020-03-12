@@ -144,15 +144,24 @@ equilateral::equilateral (GLfloat width) : triangle({}) {
    vertices.push_back(temp);
 }
 
-void text::draw (const vertex& center, const rgbcolor& color) const {
+void text::draw (const vertex& center, const rgbcolor& color,
+   const bool& is_selected) const {
    DEBUGF ('d', this << "(" << center << "," << color << ")");
    auto text_data = reinterpret_cast<const GLubyte*> (textdata.c_str());
    glColor3ubv(color.ubvec);
    glRasterPos2f (center.xpos, center.ypos);
    glutBitmapString (glut_bitmap_font, text_data);
+
+   if (is_selected) {
+      glBegin(GL_LINE_LOOP);
+      glColor3ubv(default_color.ubvec);
+      glLineWidth(border);
+      glEnd();
+   }
 }
 
-void ellipse::draw (const vertex& center, const rgbcolor& color) const {
+void ellipse::draw (const vertex& center, const rgbcolor& color,
+   const bool& is_selected) const {
    DEBUGF ('d', this << "(" << center << "," << color << ")");
    glBegin(GL_POLYGON);
    const float delta = 2 * M_PI / 32;
@@ -163,10 +172,22 @@ void ellipse::draw (const vertex& center, const rgbcolor& color) const {
       glVertex2f (xpos, ypos);
    }
    glEnd();
+   if (is_selected) {
+      glBegin(GL_LINE_LOOP);
+      glColor3ubv(default_color.ubvec);
+      glLineWidth(border);
+      for (float theta = 0; theta < 2 * M_PI; theta += delta) {
+         float xpos = dimension.xpos * cos (theta) + center.xpos;
+         float ypos = dimension.ypos * sin (theta) + center.ypos;
+         glVertex2f (xpos, ypos);
+      }
+      glEnd();
+   }
    draw_label(center);
 }
 
-void polygon::draw (const vertex& center, const rgbcolor& color) const {
+void polygon::draw (const vertex& center, const rgbcolor& color,
+   const bool& is_selected) const {
    DEBUGF ('d', this << "(" << center << "," << color << ")");
    glBegin(GL_POLYGON);
    glColor3ubv(color.ubvec);
@@ -190,6 +211,20 @@ void polygon::draw (const vertex& center, const rgbcolor& color) const {
       glVertex2f(temp.xpos, temp.ypos);
    }
    glEnd();
+
+   if (is_selected) {
+      glBegin(GL_LINE_LOOP);
+      glColor3ubv(default_color.ubvec);
+      glLineWidth(border);
+      for (const vertex& point : vertices) {
+         vertex temp {0, 0};
+         temp.xpos = point.xpos - average.xpos + center.xpos;
+         temp.ypos = point.ypos - average.xpos + center.ypos;
+         DEBUGF('d', this << " xpos: " << temp.xpos << ", ypos: " << temp.ypos);
+         glVertex2f(temp.xpos, temp.ypos);
+      }
+      glEnd();
+   }
    draw_label(center);
 }
 
