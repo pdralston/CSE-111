@@ -161,17 +161,22 @@ equilateral::equilateral (GLfloat width) : triangle({}) {
 void text::draw (const vertex& center, const rgbcolor& color) const {
    DEBUGF ('d', this << "(" << center << "," << color << ")");
    shape_count++;
-   auto text_data = reinterpret_cast<const GLubyte*> (textdata.c_str());
-   glColor3ubv(color.ubvec);
-   glRasterPos2f (center.xpos, center.ypos);
-   glutBitmapString (glut_bitmap_font, text_data);
-
+   
    if (selected_shape == shape_count) {
       glBegin(GL_LINE_LOOP);
       glColor3ubv(default_color.ubvec);
       glLineWidth(border);
+      glVertex2f(center.xpos + 10, center.ypos + 10);
+      glVertex2f(center.xpos - 10, center.ypos + 10);
+      glVertex2f(center.xpos - 10, center.ypos - 10);
+      glVertex2f(center.xpos + 10, center.ypos - 10);
       glEnd();
    }
+
+   auto text_data = reinterpret_cast<const GLubyte*> (textdata.c_str());
+   glColor3ubv(color.ubvec);
+   glRasterPos2f (center.xpos, center.ypos);
+   glutBitmapString (glut_bitmap_font, text_data);
 }
 
 void ellipse::draw (const vertex& center, const rgbcolor& color) const {
