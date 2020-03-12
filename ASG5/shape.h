@@ -44,7 +44,6 @@ class shape {
    friend ostream& operator<< (ostream& out, const shape&);
    protected:
       inline shape(); // Only subclass may instantiate.
-      int label;
    public:
       shape (const shape&) = delete; // Prevent copying.
       shape& operator= (const shape&) = delete; // Prevent copying.
@@ -53,6 +52,7 @@ class shape {
       virtual ~shape() {}
       virtual void draw (const vertex&, const rgbcolor&) const = 0;
       virtual void show (ostream&) const;
+      void static reset_counter();
 };
 
 //

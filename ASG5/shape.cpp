@@ -41,19 +41,25 @@ ostream& operator<< (ostream& out, const vertex& where) {
    return out;
 }
 
-void draw_label(const vertex& center, int label) {
+void draw_label(const vertex& center) {
    ostringstream text;
-   text << label;
+   text << shape_count;
+   DEBUGF ('c', "draw label has been called and '" << text.str() << "' should be printed on the shape");
    void* font = GLUT_BITMAP_HELVETICA_18;
    glColor3ubv (default_color.ubvec);
    glRasterPos2i (center.xpos, center.ypos);
    auto ubytes = reinterpret_cast<const GLubyte*>
                  (text.str().c_str());
    glutBitmapString (font, ubytes);
+   ++shape_count;
 }
 
 shape::shape() {
    DEBUGF ('c', this);
+}
+
+void shape::reset_counter() {
+   shape_count = 0;
 }
 
 text::text (void* glut_bitmap_font_, const string& textdata_):
@@ -74,53 +80,37 @@ text::text (string glut_bitmap_font_, const string& textdata_) {
 
 ellipse::ellipse (GLfloat width, GLfloat height):
    dimension ({width, height}) {
-   label = shape_count;
-   ++shape_count;
    DEBUGF ('c', this);
 }
 
 circle::circle (GLfloat diameter): ellipse (diameter, diameter) {
-   label = shape_count;
-   ++shape_count;
    DEBUGF ('c', this);
 }
 
 polygon::polygon (const vertex_list& vertices_): vertices(vertices_) {
-   label = shape_count;
-   ++shape_count;
    DEBUGF ('c', this);
 }
 
 rectangle::rectangle (GLfloat width, GLfloat height):
             polygon({}) {
-   label = shape_count;
-   ++shape_count;
    DEBUGF ('c', this << "(" << width << "," << height << ")");
 
 }
 
 square::square (GLfloat width): rectangle (width, width) {
-   label = shape_count;
-   ++shape_count;
    DEBUGF ('c', this);
 }
 
 diamond::diamond (GLfloat width, GLfloat height):
             polygon({}) {
-   label = shape_count;
-   ++shape_count;
    DEBUGF ('c', this << "(" << width << "," << height << ")");
 }
 
 triangle::triangle (const vertex_list& vertices_): polygon(vertices_) {
-   label = shape_count;
-   ++shape_count;
    DEBUGF ('c', this);
 }
 
 equilateral::equilateral (GLfloat width) : triangle({}) {
-   label = shape_count;
-   ++shape_count;
    DEBUGF ('c', this << "(" << width << ")");
 }
 
@@ -142,8 +132,8 @@ void ellipse::draw (const vertex& center, const rgbcolor& color) const {
       float ypos = dimension.ypos * sin (theta) + center.ypos;
       glVertex2f (xpos, ypos);
    }
-   draw_label(center, label);
    glEnd();
+   draw_label(center);
 }
 
 void polygon::draw (const vertex& center, const rgbcolor& color) const {
@@ -168,8 +158,8 @@ void polygon::draw (const vertex& center, const rgbcolor& color) const {
       DEBUGF('d', this << " xpos: " << temp.xpos << ", ypos: " << temp.ypos);
       glVertex2f(temp.xpos, temp.ypos);
    }
-   draw_label(center, label);
    glEnd();
+   draw_label(center);
 }
 
 void shape::show (ostream& out) const {
