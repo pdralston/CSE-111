@@ -238,6 +238,7 @@ void window::move_selected_object(int deltaX, int deltaY) {
 void window::select_object (GLubyte select) {
    if (select < objects.size()) {
       selected_obj = select;
+      shape::object_select(select);
       return;
    }
    cerr << "Selection out of range.\n";
