@@ -30,6 +30,20 @@ void object::draw() {
 void object::move (GLfloat delta_x, GLfloat delta_y) {
    center.xpos += delta_x;
    center.ypos += delta_y;
+   int height = window::get_height();
+   int width = window::get_width();
+   if (center.xpos > width) {
+      center.xpos = 0;
+   }
+   if (center.xpos < 0) {
+      center.xpos = width;
+   }
+   if (center.ypos > height) {
+      center.ypos = 0;
+   }
+   if (center.ypos < 0) {
+      center.ypos = height;
+   }
 }
 
 // Implementation of mouse functions.
