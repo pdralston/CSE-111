@@ -34,7 +34,7 @@ using namespace std;
 class shape;
 struct vertex {GLfloat xpos; GLfloat ypos; };
 using vertex_list = vector<vertex>;
-using shape_ptr = shared_ptr<shape>; 
+using shape_ptr = shared_ptr<shape>;
 
 //
 // Abstract base class for all shapes in this system.
@@ -53,6 +53,9 @@ class shape {
       virtual void draw (const vertex&, const rgbcolor&) const = 0;
       virtual void show (ostream&) const;
       void static reset_counter();
+      void static object_select(GLubyte select);
+      void static set_color(rgbcolor color);
+      void static set_thickness(GLfloat thickness);
 };
 
 //
@@ -140,4 +143,3 @@ class equilateral: public triangle {
 ostream& operator<< (ostream& out, const shape&);
 
 #endif
-

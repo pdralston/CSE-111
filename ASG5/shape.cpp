@@ -32,7 +32,8 @@ static unordered_map<string,void*> fontcode {
 };
 
 static int shape_count = 0;
-static int border = 4;
+static int selected_shape;
+static GLfloat border = 4;
 static rgbcolor default_color ("red");
 
 
@@ -41,10 +42,23 @@ ostream& operator<< (ostream& out, const vertex& where) {
    return out;
 }
 
+void shape::object_select(GLubyte select) {
+   selected_shape = select;
+}
+
+void shape::set_color(rgbcolor color) {
+   default_color = color;
+}
+
+void shape::set_thickness(GLfloat thickness) {
+  border = thickness;
+}
+
 void draw_label(const vertex& center) {
    ostringstream text;
    text << shape_count;
-   DEBUGF ('c', "draw label has been called and '" << text.str() << "' should be printed on the shape");
+   DEBUGF ('c', "draw label has been called and '" << text.str()
+      << "' should be printed on the shape");
    void* font = GLUT_BITMAP_HELVETICA_18;
    glColor3ubv (default_color.ubvec);
    glRasterPos2i (center.xpos, center.ypos);
@@ -146,6 +160,19 @@ equilateral::equilateral (GLfloat width) : triangle({}) {
 
 void text::draw (const vertex& center, const rgbcolor& color) const {
    DEBUGF ('d', this << "(" << center << "," << color << ")");
+   shape_count++;
+
+   if (selected_shape == shape_count - 1) {
+      glBegin(GL_LINE_LOOP);
+      glColor3ubv(default_color.ubvec);
+      glLineWidth(border);
+      glVertex2f(center.xpos + 10, center.ypos + 10);
+      glVertex2f(center.xpos - 10, center.ypos + 10);
+      glVertex2f(center.xpos - 10, center.ypos - 10);
+      glVertex2f(center.xpos + 10, center.ypos - 10);
+      glEnd();
+   }
+
    auto text_data = reinterpret_cast<const GLubyte*> (textdata.c_str());
    glColor3ubv(color.ubvec);
    glRasterPos2f (center.xpos, center.ypos);
@@ -163,6 +190,17 @@ void ellipse::draw (const vertex& center, const rgbcolor& color) const {
       glVertex2f (xpos, ypos);
    }
    glEnd();
+   if (shape_count == selected_shape) {
+      glBegin(GL_LINE_LOOP);
+      glColor3ubv(default_color.ubvec);
+      glLineWidth(border);
+      for (float theta = 0; theta < 2 * M_PI; theta += delta) {
+         float xpos = dimension.xpos * cos (theta) + center.xpos;
+         float ypos = dimension.ypos * sin (theta) + center.ypos;
+         glVertex2f (xpos, ypos);
+      }
+      glEnd();
+   }
    draw_label(center);
 }
 
@@ -186,10 +224,26 @@ void polygon::draw (const vertex& center, const rgbcolor& color) const {
       vertex temp {0, 0};
       temp.xpos = point.xpos - average.xpos + center.xpos;
       temp.ypos = point.ypos - average.xpos + center.ypos;
-      DEBUGF('d', this << " xpos: " << temp.xpos << ", ypos: " << temp.ypos);
+      DEBUGF('d', this << " xpos: " << temp.xpos
+         << ", ypos: " << temp.ypos);
       glVertex2f(temp.xpos, temp.ypos);
    }
    glEnd();
+
+   if (selected_shape == shape_count) {
+      glBegin(GL_LINE_LOOP);
+      glColor3ubv(default_color.ubvec);
+      glLineWidth(border);
+      for (const vertex& point : vertices) {
+         vertex temp {0, 0};
+         temp.xpos = point.xpos - average.xpos + center.xpos;
+         temp.ypos = point.ypos - average.xpos + center.ypos;
+         DEBUGF('d', this << " xpos: " << temp.xpos
+            << ", ypos: " << temp.ypos);
+         glVertex2f(temp.xpos, temp.ypos);
+      }
+      glEnd();
+   }
    draw_label(center);
 }
 

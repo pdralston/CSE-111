@@ -20,7 +20,7 @@ interpreter::interp_map {
    {"define" , &interpreter::do_define },
    {"draw"   , &interpreter::do_draw   },
    {"moveby" , &interpreter::move_by   },
-   //{"border" , &interpreter::do_draw   },
+   {"border" , &interpreter::border    },
 };
 
 unordered_map<string,interpreter::factoryfn>
@@ -72,7 +72,18 @@ void interpreter::do_draw (param begin, param end) {
    rgbcolor color {begin[0]};
    vertex where {from_string<GLfloat> (begin[2]),
                  from_string<GLfloat> (begin[3])};
+
    window::push_back (object (itor->second, where, color));
+}
+
+void interpreter::border (param begin, param end) {
+   DEBUGF ('f', range (begin, end));
+   if (end - begin != 2) throw runtime_error ("syntax error");
+   rgbcolor color {begin[0]};
+   GLfloat thickness {from_string<GLfloat> (begin[1])};
+
+   shape::set_color(color);
+   shape::set_thickness(thickness);
 }
 
 void interpreter::move_by (param begin, param end) {
